@@ -1,0 +1,35 @@
+{
+  "project_info": {
+    "project_number": "636708510793",
+    "firebase_url": "https://cahgame-dev.firebaseio.com",
+    "project_id": "cahgame-dev",
+    "storage_bucket": "cahgame-dev.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:636708510793:android:eee9bbadee38317e",
+        "android_client_info": {
+          "package_name": "com.afms.cahgame"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBA0YRMFixzpWxYR1HjKFfXkgXet9w6c2M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "636708510793-gmdp1pc50u6v5s3cvtt4mlqclq5gupbm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
