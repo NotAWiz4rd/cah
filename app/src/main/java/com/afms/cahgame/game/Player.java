@@ -13,6 +13,12 @@ public class Player {
         this.score = 0;
     }
 
+    @Override
+    public String toString() {
+        // this should only be used for in-lobby player identification
+        return name;
+    }
+
     public String getName() {
         return name;
     }

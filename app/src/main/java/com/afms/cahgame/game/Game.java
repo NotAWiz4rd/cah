@@ -21,7 +21,7 @@ public class Game {
 
     public Game(Deck deck, List<Player> players, int handCardCount) {
         this.deck = deck;
-        this.players = players;
+        this.players = removeDuplicates(players);
         this.cardCzar = players.get(0);
         this.discardPile = new ArrayList<>();
         this.newCardsPile = Arrays.asList(deck.getWhiteCards());
@@ -30,6 +30,26 @@ public class Game {
         this.handCardCount = handCardCount;
 
         drawInitialCards();
+    }
+
+    private List<Player> removeDuplicates(List<Player> players) {
+        for (int i = 0; i < players.size(); i++) {
+            for (int j = 0; j < players.size(); j++) {
+                if (i != j && players.get(i).getName().equals(players.get(j).getName())) {
+                    renameDuplicateNames(players, players.get(i).getName());
+                }
+            }
+        }
+        return null;
+    }
+
+    private void renameDuplicateNames(List<Player> players, String name) {
+        int count = 1;
+        for (int i = 0; i < players.size(); i++) {
+            if (players.get(i).getName().equals(name)) {
+                players.get(i).setName(name + "(" + count + ")");
+            }
+        }
     }
 
     public void startNewRound() {
@@ -65,7 +85,6 @@ public class Game {
             }
         }
     }
-
 
     public Player nextCardSzar() {
         int cardCzarIndex = this.players.indexOf(cardCzar);

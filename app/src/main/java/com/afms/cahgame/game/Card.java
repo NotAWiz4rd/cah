@@ -11,6 +11,15 @@ public class Card {
         this.text = text;
     }
 
+    @Override
+    public String toString() {
+        if (owner != null) {
+            return "{\"text\": \"" + text + "\", \"color\":\"" + colour.toString() + "\"," +
+                    "\"owner\": \"" + owner.toString() + "\"}";
+        }
+        return "{\"text\": \"" + text + "\", \"color\":\"" + colour.toString() + "\"}";
+    }
+
     public Colour getColour() {
         return colour;
     }
