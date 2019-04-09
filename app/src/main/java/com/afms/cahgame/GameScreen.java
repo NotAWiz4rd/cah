@@ -5,9 +5,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.view.MotionEvent;
 import android.view.View;
 
+import com.afms.cahgame.game.Card;
 import com.afms.cahgame.game.Deck;
 import com.afms.cahgame.game.Game;
 import com.afms.cahgame.game.Player;
@@ -42,15 +42,16 @@ public class GameScreen extends AppCompatActivity {
      * system UI. This is to prevent the jarring behavior of controls going away
      * while interacting with activity UI.
      */
-    private final View.OnTouchListener mDelayHideTouchListener = new View.OnTouchListener() {
-        @Override
-        public boolean onTouch(View view, MotionEvent motionEvent) {
-            if (AUTO_HIDE) {
-                delayedHide(AUTO_HIDE_DELAY_MILLIS);
-            }
-            return false;
+    private final View.OnTouchListener mDelayHideTouchListener = (view, motionEvent) -> {
+        if (AUTO_HIDE) {
+            delayedHide(AUTO_HIDE_DELAY_MILLIS);
         }
+        return false;
     };
+
+    private Game game;
+    private boolean isHost = false;
+
     private View mContentView;
     private final Runnable mHidePart2Runnable = new Runnable() {
         @SuppressLint("InlinedApi")
@@ -82,12 +83,7 @@ public class GameScreen extends AppCompatActivity {
         }
     };
     private boolean mVisible;
-    private final Runnable mHideRunnable = new Runnable() {
-        @Override
-        public void run() {
-            hide();
-        }
-    };
+    private final Runnable mHideRunnable = this::hide;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,12 +97,7 @@ public class GameScreen extends AppCompatActivity {
 
 
         // Set up the user interaction to manually show or hide the system UI.
-        mContentView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                toggle();
-            }
-        });
+        mContentView.setOnClickListener(view -> toggle());
 
         // Upon interacting with UI controls, delay any scheduled hide()
         // operations to prevent the jarring behavior of controls going away
@@ -125,8 +116,16 @@ public class GameScreen extends AppCompatActivity {
     }
 
     private void startGame(Deck deck, List<Player> players, int handCardCount) {
-        Game game = new Game(deck, players, handCardCount);
+        game = new Game(deck, players, handCardCount); // todo this should come from outside
         game.startNewRound();
+    }
+
+    private void submitPlayerData() {
+        // TODO submit changed player data to server so other players can pull it
+    }
+
+    private void submitCard(Card card) {
+        // TODO submit card to server, set user of card beforehand
     }
 
     private void toggle() {
