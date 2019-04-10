@@ -4,6 +4,8 @@
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="loremIpsum">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.</string>
     <string name="selectCardHint">Wähle eine Karte aus, welche du spielen möchtest.</string>
+    <string name="gameName">Cards Against Humanity</string>
+    <string name="close">Schließen</string>
     <string-array name="sample_card_texts">
         <item>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.</item>
         <item>At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</item>

@@ -2,7 +2,6 @@ package com.afms.cahgame.gui.components;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.constraint.ConstraintLayout;
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,19 +24,19 @@ public class CardListAdapter extends ArrayAdapter<Card> {
     Map<Colour, HashMap<String, Integer>> colorMap = new HashMap<Colour, HashMap<String, Integer>>(){{
         put(Colour.BLACK, new HashMap<String, Integer>() {{
             put("icon", R.drawable.cardblack);
-            put("background", R.color.cardBackgroundColorBlack);
+            put("background", R.color.cardTransparentBackgroundColorBlack);
             put("textcolor", Color.WHITE);
         }});
         put(Colour.WHITE, new HashMap<String, Integer>() {{
             put("icon", R.drawable.card);
-            put("background", R.color.cardBackgroundColorWhite);
+            put("background", R.color.cardTransparentBackgroundColorWhite);
             put("textcolor", Color.BLACK);
         }});
     }};
 
     Map<Colour, Integer> backgroundMap = new HashMap<Colour, Integer>(){{
-        put(Colour.BLACK, R.color.cardBackgroundColorBlack);
-        put(Colour.WHITE, R.color.cardBackgroundColorWhite);
+        put(Colour.BLACK, R.color.cardTransparentBackgroundColorBlack);
+        put(Colour.WHITE, R.color.cardTransparentBackgroundColorWhite);
     }};
 
     public CardListAdapter(@NonNull Context context, ArrayList<Card> cards) {

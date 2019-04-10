@@ -5,6 +5,11 @@
     <color name="colorAccent">#D81B60</color>
 
     <color name="black_overlay">#66000000</color>
-    <color name="cardBackgroundColorWhite">#80ead8b9</color>
-    <color name="cardBackgroundColorBlack">#801A1816</color>
+    <color name="cardBackgroundColorWhite">#ead8b9</color>
+    <color name="cardBackgroundColorBlack">#1A1816</color>
+    <color name="cardBackgroundBorderColorWhite">#856C44</color>
+    <color name="cardBackgroundBorderColorBlack">#312E2B</color>
+    <color name="cardTransparentBackgroundColorWhite">#80ead8b9</color>
+    <color name="cardTransparentBackgroundColorBlack">#801A1816</color>
+    <color name="cardTextColorWhite">#494138</color>
 </resources>

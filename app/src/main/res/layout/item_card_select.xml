@@ -4,7 +4,7 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:id="@+id/cardLayout"
     android:layout_height="wrap_content"
-    android:background="@color/cardBackgroundColorWhite">
+    android:background="@color/cardTransparentBackgroundColorWhite">
 
     <ImageView
         android:id="@+id/cardIcon"
