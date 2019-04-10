@@ -36,12 +36,7 @@ public class FullscreenActivity extends AppCompatActivity {
         guiController = new MainController(this);
 
         // Set up the user interaction to manually show or hide the system UI.
-        mContentView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(getApplicationContext(), "hallo", Toast.LENGTH_LONG).show();
-            }
-        });
+        mContentView.setOnClickListener(view -> Toast.makeText(getApplicationContext(), "hallo", Toast.LENGTH_LONG).show());
     }
 
     @SuppressLint("NewApi")
@@ -64,16 +59,10 @@ public class FullscreenActivity extends AppCompatActivity {
             // show up and won't hide
             final View decorView = getWindow().getDecorView();
             decorView
-                    .setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener()
-                    {
-
-                        @Override
-                        public void onSystemUiVisibilityChange(int visibility)
+                    .setOnSystemUiVisibilityChangeListener(visibility -> {
+                        if((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0)
                         {
-                            if((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0)
-                            {
-                                decorView.setSystemUiVisibility(flags);
-                            }
+                            decorView.setSystemUiVisibility(flags);
                         }
                     });
         }

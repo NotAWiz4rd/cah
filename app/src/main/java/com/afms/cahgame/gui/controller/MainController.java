@@ -44,8 +44,7 @@ public class MainController {
         for(int i = 0; i < 15; i++){
             userSelectionListAdapter.add(new Card(
                     Colour.values()[(int)(Math.random()*Colour.values().length)],
-                    Arrays.asList(mainActivity.getResources().getStringArray(R.array.sample_card_texts))
-                            .stream()
+                    Arrays.stream(mainActivity.getResources().getStringArray(R.array.sample_card_texts))
                             .sorted((o1, o2) -> ThreadLocalRandom.current().nextInt(-1, 2))
                             .findAny()
                             .get()));
@@ -69,9 +68,7 @@ public class MainController {
             fullSizeGameName.setTextColor(card.getColour() == Colour.WHITE ? ContextCompat.getColor(mainActivity.getApplicationContext(), R.color.cardTextColorWhite) : Color.WHITE);
             Button fullSizeCardButton = fullSizeCard.findViewById(R.id.fullSizeOptionButton);
             fullSizeCardButton.setText(mainActivity.getString(R.string.close));
-            fullSizeCardButton.setOnClickListener(v -> {
-                ((ViewManager)fullSizeCard.getParent()).removeView(fullSizeCard);
-            });
+            fullSizeCardButton.setOnClickListener(v -> ((ViewManager)fullSizeCard.getParent()).removeView(fullSizeCard));
             Button fullSizeCardButton2 = fullSizeCard.findViewById(R.id.fullSizeOptionButton2);
             ((ViewManager)fullSizeCardButton2.getParent()).removeView(fullSizeCardButton2);
             mainFrame.addView(fullSizeCard);
