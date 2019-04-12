@@ -1,4 +1,4 @@
-package com.afms.cahgame;
+package com.afms.cahgame.gui;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
@@ -7,9 +7,12 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
+import com.afms.cahgame.Client;
+import com.afms.cahgame.R;
 import com.afms.cahgame.game.Card;
 import com.afms.cahgame.game.Deck;
 import com.afms.cahgame.game.Game;
+import com.afms.cahgame.game.Lobby;
 import com.afms.cahgame.game.Player;
 
 import java.util.List;
@@ -103,6 +106,11 @@ public class GameScreen extends AppCompatActivity {
         // operations to prevent the jarring behavior of controls going away
         // while interacting with the UI.
         findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
+
+        Lobby lobby = (Lobby) getIntent().getSerializableExtra("lobby");
+
+        Client client = new Client("player1", lobby.getName(), "START");
+
     }
 
     @Override
