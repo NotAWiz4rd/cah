@@ -1,23 +1,16 @@
 package com.afms.cahgame.gui.controller;
 
 import android.app.Activity;
-import android.graphics.Color;
-import android.support.constraint.ConstraintLayout;
-import android.support.v4.content.ContextCompat;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewManager;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ListView;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import com.afms.cahgame.R;
 import com.afms.cahgame.game.Card;
 import com.afms.cahgame.game.Colour;
 import com.afms.cahgame.gui.components.CardListAdapter;
-
-import org.w3c.dom.Text;
+import com.afms.cahgame.gui.components.FullSizeCard;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -58,19 +51,7 @@ public class MainController {
 
         userSelectionListView.setOnItemClickListener((parent, view, position, id) -> {
             Card card = (Card) parent.getItemAtPosition(position);
-            View fullSizeCard = LayoutInflater.from(mainActivity.getApplicationContext()).inflate(R.layout.fullsize_card_options, parent, false);
-            ConstraintLayout fullsizeCardLayout = fullSizeCard.findViewById(R.id.fullsizeCardLayout);
-            fullsizeCardLayout.setBackgroundResource(card.getColour() == Colour.WHITE ? R.drawable.card_background_white : R.drawable.card_background_black);
-            TextView fullSizeCardText = fullSizeCard.findViewById(R.id.fullsizeCardText);
-            fullSizeCardText.setTextColor(card.getColour() == Colour.WHITE ? ContextCompat.getColor(mainActivity.getApplicationContext(), R.color.cardTextColorWhite) : Color.WHITE);
-            fullSizeCardText.setText(card.getText());
-            TextView fullSizeGameName = fullSizeCard.findViewById(R.id.fullsizeGameName);
-            fullSizeGameName.setTextColor(card.getColour() == Colour.WHITE ? ContextCompat.getColor(mainActivity.getApplicationContext(), R.color.cardTextColorWhite) : Color.WHITE);
-            Button fullSizeCardButton = fullSizeCard.findViewById(R.id.fullSizeOptionButton);
-            fullSizeCardButton.setText(mainActivity.getString(R.string.close));
-            fullSizeCardButton.setOnClickListener(v -> ((ViewManager)fullSizeCard.getParent()).removeView(fullSizeCard));
-            Button fullSizeCardButton2 = fullSizeCard.findViewById(R.id.fullSizeOptionButton2);
-            ((ViewManager)fullSizeCardButton2.getParent()).removeView(fullSizeCardButton2);
+            View fullSizeCard = new FullSizeCard(mainActivity, card);
             mainFrame.addView(fullSizeCard);
         });
     }

@@ -1,38 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/fullsizeCardLayout"
-    android:background="@drawable/card_background_white">
+    android:id="@+id/fullSizeCardLayout"
+    android:clickable="true"
+    android:background="@drawable/card_background_white"
+    android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/fullsizeCardText"
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:textSize="36sp"
-        android:fontFamily="@font/helveticaneuebold"
-        android:text="@string/loremIpsum"
-        android:textColor="@color/cardTextColorWhite"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="match_parent"
+        android:id="@+id/fullSizeCardConstraintLayout">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginBottom="16dp"
-        android:fontFamily="@font/helveticaneuebold"
-        android:text="@string/gameName"
-        android:id="@+id/fullsizeGameName"
-        android:textColor="@color/cardTextColorWhite"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        <TextView
+            android:id="@+id/fullSizeCardText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:textSize="36sp"
+            android:fontFamily="@font/helveticaneuebold"
+            android:text="@string/loremIpsum"
+            android:textColor="@color/cardTextColorWhite"
+            app:layout_constraintEnd_toEndOf="@id/fullSizeCardConstraintLayout"
+            app:layout_constraintStart_toStartOf="@id/fullSizeCardConstraintLayout"
+            app:layout_constraintTop_toTopOf="@id/fullSizeCardConstraintLayout" />
 
-</android.support.constraint.ConstraintLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="16dp"
+            android:fontFamily="@font/helveticaneuebold"
+            android:text="@string/gameName"
+            android:id="@+id/fullSizeGameName"
+            android:textColor="@color/cardTextColorWhite"
+            app:layout_constraintBottom_toBottomOf="@id/fullSizeCardConstraintLayout"
+            app:layout_constraintEnd_toEndOf="@id/fullSizeCardConstraintLayout"
+            app:layout_constraintStart_toStartOf="@id/fullSizeCardConstraintLayout" />
+
+
+    </android.support.constraint.ConstraintLayout>
+
+</LinearLayout>
