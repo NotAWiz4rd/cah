@@ -3,14 +3,15 @@ package com.afms.cahgame.game;
 import java.util.List;
 
 public class Lobby {
-   private String id;
-   private Player host;
-   private List<Player> players;
-   private String name;
-   private String password;
-   private Game game;
+    private String id;
+    private Player host;
+    private List<Player> players;
+    private String name;
+    private String password;
+    private Game game;
 
     public Lobby(String id, Player host, List<Player> players, String name, String password, Game game) {
+        this.id = id;
         this.host = host;
         this.players = players;
         this.name = name;
