@@ -8,15 +8,15 @@ public class Lobby {
     private List<Player> players;
     private String name;
     private String password;
-    private Game game;
+    private Gamestate gamestate;
 
-    public Lobby(String id, Player host, List<Player> players, String name, String password, Game game) {
+    public Lobby(String id, Player host, List<Player> players, String name, String password, Gamestate state) {
         this.id = id;
         this.host = host;
         this.players = players;
         this.name = name;
         this.password = password;
-        this.game = game;
+        this.gamestate = state;
     }
 
     public String getId() {
@@ -59,11 +59,11 @@ public class Lobby {
         this.password = password;
     }
 
-    public Game getGame() {
-        return game;
+    public Gamestate getGamestate() {
+        return gamestate;
     }
 
-    public void setGame(Game game) {
-        this.game = game;
+    public void setGamestate(Gamestate gamestate) {
+        this.gamestate = gamestate;
     }
 }
