@@ -3,18 +3,28 @@ package com.afms.cahgame.game;
 import java.util.List;
 
 public class Lobby {
-   private Player host;
-   private List<Player> players;
-   private String name;
-   private String password;
-   private Game game;
+    private String id;
+    private Player host;
+    private List<Player> players;
+    private String name;
+    private String password;
+    private Gamestate gamestate;
 
-    public Lobby(Player host, List<Player> players, String name, String password, Game game) {
+    public Lobby(String id, Player host, List<Player> players, String name, String password, Gamestate state) {
+        this.id = id;
         this.host = host;
         this.players = players;
         this.name = name;
         this.password = password;
-        this.game = game;
+        this.gamestate = state;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public Player getHost() {
@@ -49,11 +59,11 @@ public class Lobby {
         this.password = password;
     }
 
-    public Game getGame() {
-        return game;
+    public Gamestate getGamestate() {
+        return gamestate;
     }
 
-    public void setGame(Game game) {
-        this.game = game;
+    public void setGamestate(Gamestate gamestate) {
+        this.gamestate = gamestate;
     }
 }
