@@ -14,7 +14,7 @@
         android:layout_height="match_parent"
         android:id="@+id/fullSizeCardConstraintLayout">
 
-        <TextView
+        <EditText
             android:id="@+id/fullSizeCardText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -24,6 +24,8 @@
             android:textSize="36sp"
             android:fontFamily="@font/helveticaneuebold"
             android:text="@string/loremIpsum"
+            android:enabled="false"
+            android:background="@null"
             android:textColor="@color/cardTextColorWhite"
             app:layout_constraintEnd_toEndOf="@id/fullSizeCardConstraintLayout"
             app:layout_constraintStart_toStartOf="@id/fullSizeCardConstraintLayout"

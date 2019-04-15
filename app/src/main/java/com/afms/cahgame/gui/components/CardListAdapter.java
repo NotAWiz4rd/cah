@@ -1,4 +1,8 @@
 package com.afms.cahgame.gui.components;
+import android.app.Activity;
+import android.arch.lifecycle.LifecycleOwner;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProvider;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.constraint.ConstraintLayout;
@@ -21,6 +25,8 @@ import java.util.Map;
 
 public class CardListAdapter extends ArrayAdapter<Card> {
 
+    private Activity mainActivity;
+
     Map<Colour, HashMap<String, Integer>> colorMap = new HashMap<Colour, HashMap<String, Integer>>(){{
         put(Colour.BLACK, new HashMap<String, Integer>() {{
             put("icon", R.drawable.cardblack);
@@ -41,6 +47,7 @@ public class CardListAdapter extends ArrayAdapter<Card> {
 
     public CardListAdapter(@NonNull Context context, ArrayList<Card> cards) {
         super(context, 0, cards);
+        this.mainActivity = (Activity) context;
     }
 
     @NonNull
@@ -59,7 +66,12 @@ public class CardListAdapter extends ArrayAdapter<Card> {
 
         TextView cardText = convertView.findViewById(R.id.cardText);
         cardText.setTextColor(colorMap.getOrDefault(card.getColour(), colorMap.get(Colour.WHITE)).get("textcolor"));
-        cardText.setText(card.getText());
+        cardText.setText(card.getText().getValue());
+
+
+        // Observer
+        final Observer<String> fullSizeCardTextObserver = cardText::setText;
+        card.getText().observe((LifecycleOwner) mainActivity, fullSizeCardTextObserver);
 
         return convertView;
     }
