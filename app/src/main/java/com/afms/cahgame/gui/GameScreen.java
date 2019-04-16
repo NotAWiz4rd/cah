@@ -124,6 +124,7 @@ public class GameScreen extends AppCompatActivity {
         // operations to prevent the jarring behavior of controls going away
         // while interacting with the UI.
         findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
+        // todo get current player from intent
 
         Lobby lobby = (Lobby) getIntent().getSerializableExtra("lobby");
         this.isHost = lobby.getHost().getName().equals(this.player.getName());
@@ -135,10 +136,22 @@ public class GameScreen extends AppCompatActivity {
             startGame(deck, Arrays.asList(players), handCardCount);
         } else {
             String playerName = (String) getIntent().getSerializableExtra("name");
+
+            // todo do we need this if we keep the current lobby??
             Client client = new Client(playerName, lobby.getName(), "START");
-            gameStartClient(lobby.getId());
+            gameStartClient(client.getLobbyId());
         }
 
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+
+        // Trigger the initial hide() shortly after the activity has been
+        // created, to briefly hint to the user that UI controls
+        // are available.
+        delayedHide(100);
     }
 
     private void gameStartClient(String lobbyId) {
@@ -160,37 +173,63 @@ public class GameScreen extends AppCompatActivity {
      * @param lobby The current Lobby.
      */
     private void gameStateLoop(Lobby lobby) {
-        // todo implement this
         switch (lobby.getGamestate()) {
             case START:
+                onStartGamestate();
                 break;
             case ROUNDSTART:
+                onRoundStartGamestate();
                 break;
             case SUBMIT:
+                onSubmitGamestate();
                 break;
             case WAITING:
+                onWaitingGamestate();
                 break;
             case ROUNDEND:
+                onRoundEndGamestate();
                 break;
             default:
+                onGamestateError();
                 break;
         }
     }
 
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-
-        // Trigger the initial hide() shortly after the activity has been
-        // created, to briefly hint to the user that UI controls
-        // are available.
-        delayedHide(100);
+    private void onStartGamestate() {
+        // todo get lobby from server
+        GetCurrentLobby getCurrentLobby = new GetCurrentLobby();
+        lobby = getCurrentLobby.doInBackground(lobby.getId());
+        Optional<Player> playerOptional = lobby.getPlayers().stream().filter(player1 -> player1.getName().equals(player.getName())).findFirst();
+        playerOptional.ifPresent(player1 -> player = player1);
+        gameStateLoop(lobby);
     }
+
+    private void onRoundStartGamestate() {
+        // todo implement me
+    }
+
+    private void onSubmitGamestate() {
+        // todo somehow wait for user input, then submit player card/updated lobby
+    }
+
+    private void onWaitingGamestate() {
+        // todo implement me
+    }
+
+    private void onRoundEndGamestate() {
+        // todo implement me
+    }
+
+    private void onGamestateError() {
+        // todo implement me
+    }
+
 
     private void startGame(Deck deck, List<Player> players, int handCardCount) {
         game = new Game(deck, players, handCardCount);
         game.startNewRound();
 
+        // todo get these parameters from lobby creation screen
         lobby = new Lobby("", player, game.getPlayers(), "blub", "pw", Gamestate.START);
         Gson gson = new Gson();
         String lobbyJson = gson.toJson(lobby);
@@ -200,7 +239,24 @@ public class GameScreen extends AppCompatActivity {
     }
 
     private void submitCard(Card card) {
-        // TODO submit card to server, set user of card beforehand
+        List<Player> lobbyPlayers = lobby.getPlayers();
+        card.setOwner(player);
+        Player lobbyPlayer = null;
+        Optional<Player> lobbyPlayerOptional = lobbyPlayers.stream().filter(player1 -> player1.getName().equals(player.getName())).findFirst();
+        if (lobbyPlayerOptional.isPresent()) {
+            lobbyPlayer = lobbyPlayerOptional.get();
+        }
+
+        // todo test if this changes the lobby's player
+        if (lobbyPlayer != null) {
+            SubmitGameToServer submitGameToServer = new SubmitGameToServer();
+            submitGameToServer.doInBackground(convertToJson(lobby));
+        }
+    }
+
+    private String convertToJson(Lobby lobby) {
+        Gson gson = new Gson();
+        return gson.toJson(lobby);
     }
 
     private void toggle() {
@@ -246,6 +302,9 @@ public class GameScreen extends AppCompatActivity {
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
     }
 
+    /**
+     * Input lobby as String (?)
+     */
     static class SubmitGameToServer extends AsyncTask<String, Void, Void> {
         @Override
         protected Void doInBackground(String... strings) {
@@ -278,6 +337,9 @@ public class GameScreen extends AppCompatActivity {
         }
     }
 
+    /**
+     * Input lobbyId into doInBackground()
+     */
     static class GetCurrentLobby extends AsyncTask<String, Void, Lobby> {
         @Override
         protected Lobby doInBackground(String... strings) {
