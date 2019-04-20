@@ -8,7 +8,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
-import com.afms.cahgame.Client;
 import com.afms.cahgame.R;
 import com.afms.cahgame.game.Card;
 import com.afms.cahgame.game.Deck;
@@ -136,39 +135,34 @@ public class GameScreen extends AppCompatActivity {
             startGame(deck, Arrays.asList(players), handCardCount);
         } else {
             String playerName = (String) getIntent().getSerializableExtra("name");
-
-            // todo do we need this if we keep the current lobby??
-            Client client = new Client(playerName, lobby.getName(), "START");
-            gameStartClient(client.getLobbyId());
+            String lobbyId = (String) getIntent().getSerializableExtra("lobbyId");
+            gameStartClient(lobbyId, playerName);
         }
 
     }
 
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-
-        // Trigger the initial hide() shortly after the activity has been
-        // created, to briefly hint to the user that UI controls
-        // are available.
-        delayedHide(100);
-    }
-
-    private void gameStartClient(String lobbyId) {
-        getCurrentLobby(lobbyId);
+    private void gameStartClient(String lobbyId, String playerName) {
+        player = new Player(playerName, null);
+        updateLobby(lobbyId);
         gameStateLoop(lobby);
     }
 
-    private void getCurrentLobby(String lobbyId) {
+    private void updateLobby(String lobbyId) {
         GetCurrentLobby getCurrentLobby = new GetCurrentLobby();
         while (lobby == null) {
             lobby = getCurrentLobby.doInBackground(lobbyId);
         }
 
+        updatePlayer();
+    }
+
+    private void updatePlayer() {
+        Optional<Player> playerOptional = lobby.getPlayers().stream().filter(player1 -> player1.getName().equals(player.getName())).findFirst();
+        playerOptional.ifPresent(player1 -> player = player1);
     }
 
     /**
-     * Executes things based on the current gamestate of the lobby - for clients only.
+     * Executes things based on the current gamestate of the lobby - for clients only!
      *
      * @param lobby The current Lobby.
      */
@@ -196,10 +190,7 @@ public class GameScreen extends AppCompatActivity {
     }
 
     private void onStartGamestate() {
-        GetCurrentLobby getCurrentLobby = new GetCurrentLobby();
-        lobby = getCurrentLobby.doInBackground(lobby.getId());
-        Optional<Player> playerOptional = lobby.getPlayers().stream().filter(player1 -> player1.getName().equals(player.getName())).findFirst();
-        playerOptional.ifPresent(player1 -> player = player1);
+        updateLobby(lobby.getId());
         gameStateLoop(lobby);
     }
 
@@ -232,7 +223,14 @@ public class GameScreen extends AppCompatActivity {
         // todo What should happen here? Display error and quit lobby?
     }
 
-
+    /**
+     * For host only!
+     * Initializes lobby and pushes it to server.
+     *
+     * @param deck          The deck to be used.
+     * @param players       Players in the lobby.
+     * @param handCardCount Amount of initial handcards.
+     */
     private void startGame(Deck deck, List<Player> players, int handCardCount) {
         game = new Game(deck, players, handCardCount);
         game.startNewRound();
@@ -246,6 +244,11 @@ public class GameScreen extends AppCompatActivity {
         submitGameToServer.doInBackground(lobbyJson);
     }
 
+    /**
+     * For clients only!
+     *
+     * @param card Card to sumbit.
+     */
     private void submitCard(Card card) {
         List<Player> lobbyPlayers = lobby.getPlayers();
         card.setOwner(player);
