@@ -6,6 +6,7 @@ public class Player {
     private String name;
     private List<Card> hand;
     private int score;
+    private boolean isReady;
 
     public Player(String name, List<Card> hand) {
         this.name = name;
@@ -13,10 +14,19 @@ public class Player {
         this.score = 0;
     }
 
+
     @Override
     public String toString() {
         // this should only be used for in-lobby player identification
         return name;
+    }
+
+    public boolean isReady() {
+        return isReady;
+    }
+
+    public void setReady(boolean ready) {
+        isReady = ready;
     }
 
     public String getName() {

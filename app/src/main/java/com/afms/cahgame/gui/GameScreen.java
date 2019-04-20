@@ -196,7 +196,6 @@ public class GameScreen extends AppCompatActivity {
     }
 
     private void onStartGamestate() {
-        // todo get lobby from server
         GetCurrentLobby getCurrentLobby = new GetCurrentLobby();
         lobby = getCurrentLobby.doInBackground(lobby.getId());
         Optional<Player> playerOptional = lobby.getPlayers().stream().filter(player1 -> player1.getName().equals(player.getName())).findFirst();
@@ -205,23 +204,32 @@ public class GameScreen extends AppCompatActivity {
     }
 
     private void onRoundStartGamestate() {
-        // todo implement me
+        // todo get lobby
+        // todo show new cards and black card
+        // todo put player on ready
     }
 
     private void onSubmitGamestate() {
-        // todo somehow wait for user input, then submit player card/updated lobby
+        // todo enable user to submit a card from his hand
+
+
+        // then wait for input -> do nothing here
+        // todo put player on ready
     }
 
     private void onWaitingGamestate() {
-        // todo implement me
+        // todo display "waiting for other players"
+        // todo put player on ready
     }
 
     private void onRoundEndGamestate() {
         // todo implement me
+        // todo notify player of winning card, show updated scores
+        // todo put player on ready
     }
 
     private void onGamestateError() {
-        // todo implement me
+        // todo What should happen here? Display error and quit lobby?
     }
 
 
