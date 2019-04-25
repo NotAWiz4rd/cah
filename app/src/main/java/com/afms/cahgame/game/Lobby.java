@@ -1,8 +1,9 @@
 package com.afms.cahgame.game;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Lobby {
+public class Lobby implements Serializable {
     private String id;
     private Player host;
     private List<Player> players;

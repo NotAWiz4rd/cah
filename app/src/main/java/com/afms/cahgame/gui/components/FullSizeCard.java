@@ -51,7 +51,7 @@ public class FullSizeCard extends ConstraintLayout {
         fullSizeCardLayout.setBackgroundResource(card.getColour() == Colour.WHITE ? R.drawable.card_background_white : R.drawable.card_background_black);
         fullSizeCardText = findViewById(R.id.fullSizeCardText);
         fullSizeCardText.setTextColor(card.getColour() == Colour.WHITE ? ContextCompat.getColor(context, R.color.cardTextColorWhite) : Color.WHITE);
-        fullSizeCardText.setText(card.getText().getValue());
+        fullSizeCardText.setText(card.getText());
         fullSizeGameName = findViewById(R.id.fullSizeGameName);
         fullSizeGameName.setTextColor(card.getColour() == Colour.WHITE ? ContextCompat.getColor(context, R.color.cardTextColorWhite) : Color.WHITE);
         fullSizeCardButton = findViewById(R.id.fullSizeOptionButton);
@@ -64,10 +64,6 @@ public class FullSizeCard extends ConstraintLayout {
         ((ViewManager) fullSizeCardButton2.getParent()).removeView(fullSizeCardButton2);
 
         oldPos = fullSizeCardLayout.getY();
-
-        // Observer
-        final Observer<String> fullSizeCardTextObserver = fullSizeCardText::setText;
-        card.getText().observe((LifecycleOwner) mainActivity, fullSizeCardTextObserver);
 
         fullSizeCardLayout.setOnTouchListener((v, event) -> {
             switch(event.getAction()){

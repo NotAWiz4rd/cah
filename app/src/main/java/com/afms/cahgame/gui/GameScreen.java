@@ -12,7 +12,6 @@ import com.afms.cahgame.R;
 import com.afms.cahgame.game.Card;
 import com.afms.cahgame.game.Deck;
 import com.afms.cahgame.game.Game;
-import com.afms.cahgame.game.Gamestate;
 import com.afms.cahgame.game.Lobby;
 import com.afms.cahgame.game.Player;
 import com.google.gson.Gson;
@@ -123,26 +122,24 @@ public class GameScreen extends AppCompatActivity {
         // operations to prevent the jarring behavior of controls going away
         // while interacting with the UI.
         findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
-        // todo get current player from intent
 
         Lobby lobby = (Lobby) getIntent().getSerializableExtra("lobby");
-        this.isHost = lobby.getHost().getName().equals(this.player.getName());
+        String playerName = (String) getIntent().getSerializableExtra("name");
+        this.isHost = lobby.getHost().getName().equals(playerName);
 
         if (isHost) {
             Deck deck = (Deck) getIntent().getSerializableExtra("deck");
-            Player[] players = (Player[]) getIntent().getSerializableExtra("players");
             int handCardCount = (int) getIntent().getSerializableExtra("handcardcount");
-            startGame(deck, Arrays.asList(players), handCardCount);
+            startGame(deck, handCardCount, lobby);
         } else {
-            String playerName = (String) getIntent().getSerializableExtra("name");
-            String lobbyId = (String) getIntent().getSerializableExtra("lobbyId");
+            String lobbyId = lobby.getId();
             gameStartClient(lobbyId, playerName);
         }
 
     }
 
     private void gameStartClient(String lobbyId, String playerName) {
-        player = new Player(playerName, null);
+        player = new Player(playerName);
         updateLobby(lobbyId);
         gameStateLoop(lobby);
     }
@@ -228,20 +225,20 @@ public class GameScreen extends AppCompatActivity {
      * Initializes lobby and pushes it to server.
      *
      * @param deck          The deck to be used.
-     * @param players       Players in the lobby.
      * @param handCardCount Amount of initial handcards.
+     * @param lobby         The lobby.
      */
-    private void startGame(Deck deck, List<Player> players, int handCardCount) {
-        game = new Game(deck, players, handCardCount);
+    private void startGame(Deck deck, int handCardCount, Lobby lobby) {
+        game = new Game(deck, lobby.getPlayers(), handCardCount);
         game.startNewRound();
 
-        // todo get these parameters from lobby creation screen
-        lobby = new Lobby("", player, game.getPlayers(), "blub", "pw", Gamestate.START);
+        lobby.setPlayers(game.getPlayers());
         Gson gson = new Gson();
         String lobbyJson = gson.toJson(lobby);
 
         SubmitGameToServer submitGameToServer = new SubmitGameToServer();
-        submitGameToServer.doInBackground(lobbyJson);
+        submitGameToServer.doInBackground(lobbyJson); // todo somehow this gets started on the Main thread, throwing an exception
+        gameStateLoop(lobby);
     }
 
     /**

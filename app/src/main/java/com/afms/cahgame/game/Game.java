@@ -24,8 +24,10 @@ public class Game {
         this.players = removeDuplicates(players);
         this.cardCzar = players.get(0);
         this.discardPile = new ArrayList<>();
-        this.newCardsPile = Arrays.asList(deck.getWhiteCards());
-        this.blackCardsPile = Arrays.asList(deck.getBlackCards());
+        this.newCardsPile = new ArrayList<>();
+        newCardsPile.addAll(Arrays.asList(deck.getWhiteCards()));
+        this.blackCardsPile = new ArrayList<>();
+        blackCardsPile.addAll(Arrays.asList(deck.getBlackCards()));
         this.playedCards = new ArrayList<>();
         this.handCardCount = handCardCount;
 
@@ -40,7 +42,7 @@ public class Game {
                 }
             }
         }
-        return null;
+        return players;
     }
 
     private void renameDuplicateNames(List<Player> players, String name) {
@@ -73,7 +75,7 @@ public class Game {
     private void drawCards() {
         for (Player player : players) {
             if (!player.equals(cardCzar)) {
-                player.getHand().add(newCardsPile.remove(newCardsPile.size() - 1));
+                player.addCard(newCardsPile.remove(newCardsPile.size() - 1));
             }
         }
     }
@@ -81,7 +83,7 @@ public class Game {
     private void drawInitialCards() {
         for (int i = 0; i < handCardCount; i++) {
             for (Player player : players) {
-                player.getHand().add(newCardsPile.remove(newCardsPile.size() - 1));
+                player.addCard(newCardsPile.remove(newCardsPile.size() - 1));
             }
         }
     }
