@@ -12,6 +12,7 @@ import com.afms.cahgame.R;
 import com.afms.cahgame.game.Card;
 import com.afms.cahgame.game.Deck;
 import com.afms.cahgame.game.Game;
+import com.afms.cahgame.game.Gamestate;
 import com.afms.cahgame.game.Lobby;
 import com.afms.cahgame.game.Player;
 import com.google.gson.Gson;
@@ -28,6 +29,7 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -70,6 +72,7 @@ public class GameScreen extends AppCompatActivity {
     private Player player;
     private boolean isHost = false;
     private Lobby lobby;
+    private Gamestate gamestate = Gamestate.START;
 
     private View mContentView;
     private final Runnable mHidePart2Runnable = new Runnable() {
@@ -123,34 +126,42 @@ public class GameScreen extends AppCompatActivity {
         // while interacting with the UI.
         findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
 
-        Lobby lobby = (Lobby) getIntent().getSerializableExtra("lobby");
+        lobby = (Lobby) getIntent().getSerializableExtra("lobby");
         String playerName = (String) getIntent().getSerializableExtra("name");
         this.isHost = lobby.getHost().getName().equals(playerName);
+        player = new Player(playerName);
 
         if (isHost) {
             Deck deck = (Deck) getIntent().getSerializableExtra("deck");
             int handCardCount = (int) getIntent().getSerializableExtra("handcardcount");
-            startGame(deck, handCardCount, lobby);
+            startGame(deck, handCardCount);
         } else {
-            String lobbyId = lobby.getId();
-            gameStartClient(lobbyId, playerName);
+            gameStartClient();
         }
 
     }
 
-    private void gameStartClient(String lobbyId, String playerName) {
-        player = new Player(playerName);
-        updateLobby(lobbyId);
-        gameStateLoop(lobby);
+    private void gameStartClient() {
+        updateLobby(lobby.getId());
+        gameStateLoop();
     }
 
     private void updateLobby(String lobbyId) {
-        GetCurrentLobby getCurrentLobby = new GetCurrentLobby();
-        while (lobby == null) {
-            lobby = getCurrentLobby.doInBackground(lobbyId);
+        if (lobby.getGamestate() == gamestate) {
+            try {
+                lobby = new GetCurrentLobby().execute(lobbyId).get();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } finally {
+                updatePlayer();
+                updateLobby(lobbyId);
+            }
+        } else {
+            gamestate = lobby.getGamestate();
+            gameStateLoop();
         }
-
-        updatePlayer();
     }
 
     private void updatePlayer() {
@@ -160,10 +171,8 @@ public class GameScreen extends AppCompatActivity {
 
     /**
      * Executes things based on the current gamestate of the lobby - for clients only!
-     *
-     * @param lobby The current Lobby.
      */
-    private void gameStateLoop(Lobby lobby) {
+    private void gameStateLoop() {
         switch (lobby.getGamestate()) {
             case START:
                 onStartGamestate();
@@ -188,7 +197,6 @@ public class GameScreen extends AppCompatActivity {
 
     private void onStartGamestate() {
         updateLobby(lobby.getId());
-        gameStateLoop(lobby);
     }
 
     private void onRoundStartGamestate() {
@@ -226,9 +234,8 @@ public class GameScreen extends AppCompatActivity {
      *
      * @param deck          The deck to be used.
      * @param handCardCount Amount of initial handcards.
-     * @param lobby         The lobby.
      */
-    private void startGame(Deck deck, int handCardCount, Lobby lobby) {
+    private void startGame(Deck deck, int handCardCount) {
         game = new Game(deck, lobby.getPlayers(), handCardCount);
         game.startNewRound();
 
@@ -236,9 +243,8 @@ public class GameScreen extends AppCompatActivity {
         Gson gson = new Gson();
         String lobbyJson = gson.toJson(lobby);
 
-        SubmitGameToServer submitGameToServer = new SubmitGameToServer();
-        submitGameToServer.doInBackground(lobbyJson); // todo somehow this gets started on the Main thread, throwing an exception
-        gameStateLoop(lobby);
+        new SubmitGameToServer().execute(lobbyJson);
+        gameStateLoop();
     }
 
     /**
@@ -257,8 +263,7 @@ public class GameScreen extends AppCompatActivity {
 
         // todo test if this changes the lobby's player
         if (lobbyPlayer != null) {
-            SubmitGameToServer submitGameToServer = new SubmitGameToServer();
-            submitGameToServer.doInBackground(convertToJson(lobby));
+            new SubmitGameToServer().execute(convertToJson(lobby));
         }
     }
 
