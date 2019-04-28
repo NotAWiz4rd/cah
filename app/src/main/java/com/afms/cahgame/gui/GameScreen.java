@@ -240,6 +240,7 @@ public class GameScreen extends AppCompatActivity {
         game.startNewRound();
 
         lobby.setPlayers(game.getPlayers());
+        lobby.setGamestate(Gamestate.START);
         Gson gson = new Gson();
         String lobbyJson = gson.toJson(lobby);
 
@@ -331,6 +332,7 @@ public class GameScreen extends AppCompatActivity {
                 con.setReadTimeout(5000);
                 con.setDoOutput(true);
 
+                // todo this somehow doesnt work correctly...
                 OutputStream outputPost = new BufferedOutputStream(con.getOutputStream());
                 outputPost.write(strings[0].getBytes());
                 outputPost.flush();
