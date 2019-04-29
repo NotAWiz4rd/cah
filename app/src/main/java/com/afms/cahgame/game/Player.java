@@ -56,6 +56,10 @@ public class Player implements Serializable {
         this.hand = hand;
     }
 
+    public List<Card> getHand() {
+        return hand;
+    }
+
     public int getScore() {
         return score;
     }

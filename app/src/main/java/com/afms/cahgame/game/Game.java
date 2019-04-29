@@ -72,12 +72,20 @@ public class Game {
         card.getOwner().setScore(card.getOwner().getScore() + 1);
     }
 
-    private void drawCards() {
+    public void drawCards() {
         for (Player player : players) {
             if (!player.equals(cardCzar)) {
+                if (newCardsPile.size() == 0) {
+                    reshuffleCards();
+                }
                 player.addCard(newCardsPile.remove(newCardsPile.size() - 1));
             }
         }
+    }
+
+    private void reshuffleCards() {
+        // todo shuffle discrd pile
+        newCardsPile = discardPile;
     }
 
     private void drawInitialCards() {

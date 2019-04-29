@@ -70,7 +70,6 @@ public class GameScreen extends AppCompatActivity {
 
     private Game game;
     private Player player;
-    private boolean isHost = false;
     private Lobby lobby;
     private Gamestate gamestate = Gamestate.START;
 
@@ -128,10 +127,9 @@ public class GameScreen extends AppCompatActivity {
 
         lobby = (Lobby) getIntent().getSerializableExtra("lobby");
         String playerName = (String) getIntent().getSerializableExtra("name");
-        this.isHost = lobby.getHost().getName().equals(playerName);
         player = new Player(playerName);
 
-        if (isHost) {
+        if (currentPlayerIsCardSzar()) {
             Deck deck = (Deck) getIntent().getSerializableExtra("deck");
             int handCardCount = (int) getIntent().getSerializableExtra("handcardcount");
             startGame(deck, handCardCount);
@@ -170,7 +168,7 @@ public class GameScreen extends AppCompatActivity {
     }
 
     /**
-     * Executes things based on the current gamestate of the lobby - for clients only!
+     * Executes things based on the current gamestate of the lobby
      */
     private void gameStateLoop() {
         switch (lobby.getGamestate()) {
@@ -200,28 +198,45 @@ public class GameScreen extends AppCompatActivity {
     }
 
     private void onRoundStartGamestate() {
-        // todo get lobby
-        // todo show new cards and black card
-        // todo put player on ready
+        if (currentPlayerIsCardSzar()) {
+            //todo draw card for everyone
+            game.drawCards();
+        }
+        this.player.setReady(true);
+        updateLobbyPlayer();
+    }
+
+    private boolean currentPlayerIsCardSzar() {
+        return game.getCardCzar().getName().equals(player.getName());
     }
 
     private void onSubmitGamestate() {
-        // todo enable user to submit a card from his hand
+        // todo show new cards and black card
 
+        // todo enable user to submit a card from his hand
+        this.player.setReady(true);
+
+        if (!currentPlayerIsCardSzar()) {
+            submitCard(player.getHand().remove(0)); // todo for testing only
+        }
 
         // then wait for input -> do nothing here
-        // todo put player on ready
+        updateLobby(lobby.getId());
     }
 
     private void onWaitingGamestate() {
         // todo display "waiting for other players"
-        // todo put player on ready
+        this.player.setReady(true);
+        updateLobbyPlayer();
     }
 
     private void onRoundEndGamestate() {
-        // todo implement me
-        // todo notify player of winning card, show updated scores
-        // todo put player on ready
+        if (currentPlayerIsCardSzar()) {
+            game.nextCardSzar();
+        }
+        // todo notify player of winning card (only if player is not cardszar), show updated scores
+        this.player.setReady(true);
+        updateLobbyPlayer();
     }
 
     private void onGamestateError() {
@@ -249,13 +264,21 @@ public class GameScreen extends AppCompatActivity {
     }
 
     /**
-     * For clients only!
+     * Submits a card.
      *
      * @param card Card to sumbit.
      */
     private void submitCard(Card card) {
-        List<Player> lobbyPlayers = lobby.getPlayers();
         card.setOwner(player);
+        game.submitCard(card);
+        updateLobbyPlayer();
+    }
+
+    /**
+     * Submits the updated game/player to the server.
+     */
+    private void updateLobbyPlayer() {
+        List<Player> lobbyPlayers = lobby.getPlayers();
         Player lobbyPlayer = null;
         Optional<Player> lobbyPlayerOptional = lobbyPlayers.stream().filter(player1 -> player1.getName().equals(player.getName())).findFirst();
         if (lobbyPlayerOptional.isPresent()) {
