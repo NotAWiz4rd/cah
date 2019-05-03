@@ -24,7 +24,6 @@
             android:textSize="36sp"
             android:fontFamily="@font/helveticaneuebold"
             android:text="@string/loremIpsum"
-            android:enabled="false"
             android:background="@null"
             android:textColor="@color/cardTextColorWhite"
             app:layout_constraintEnd_toEndOf="@id/fullSizeCardConstraintLayout"

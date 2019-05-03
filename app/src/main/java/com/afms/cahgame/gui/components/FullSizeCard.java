@@ -69,6 +69,8 @@ public class FullSizeCard extends ConstraintLayout {
         final Observer<String> fullSizeCardTextObserver = fullSizeCardText::setText;
         card.getText().observe((LifecycleOwner) mainActivity, fullSizeCardTextObserver);
 
+        editTextMode(fullSizeCardText, false);
+
         fullSizeCardLayout.setOnTouchListener((v, event) -> {
             switch(event.getAction()){
                 case MotionEvent.ACTION_DOWN:
@@ -80,7 +82,7 @@ public class FullSizeCard extends ConstraintLayout {
                     v.setY(newPos);
                     break;
                 case MotionEvent.ACTION_UP:
-                    if(v.getY() > -1100){
+                    if(v.getY() > -500){
                         v.setY(oldPos);
                     }else{
                         ObjectAnimator animation = ObjectAnimator.ofFloat(v, "translationY", -2800f);
@@ -103,6 +105,15 @@ public class FullSizeCard extends ConstraintLayout {
 
     public Card getCard() {
         return card;
+    }
+
+    public void editTextMode(EditText o, boolean state){
+        o.setClickable(state);
+        o.setLongClickable(state);
+        o.setLinksClickable(state);
+        o.setFocusable(state);
+        o.setFocusableInTouchMode(state);
+        o.setEnabled(state);
     }
 
 }
