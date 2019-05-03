@@ -32,7 +32,7 @@ public class LobbyActivity extends AppCompatActivity {
 
     private void createLobby() {
         Intent intent = new Intent(this, GameScreen.class);
-        intent.putExtra("lobby", new Lobby("012", createSamplePlayers().get(0), createSamplePlayers(), "Testlobby", "", Gamestate.START));
+        intent.putExtra("lobby", new Lobby("012", createSamplePlayers(), "Testlobby", "", Gamestate.START));
         intent.putExtra("deck", createSampleDeck());
         intent.putExtra("handcardcount", 6);
         intent.putExtra("name", "Player1");
