@@ -8,7 +8,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
-import com.afms.cahgame.Client;
 import com.afms.cahgame.R;
 import com.afms.cahgame.game.Card;
 import com.afms.cahgame.game.Deck;
@@ -30,6 +29,7 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -70,8 +70,8 @@ public class GameScreen extends AppCompatActivity {
 
     private Game game;
     private Player player;
-    private boolean isHost = false;
     private Lobby lobby;
+    private Gamestate gamestate = Gamestate.START;
 
     private View mContentView;
     private final Runnable mHidePart2Runnable = new Runnable() {
@@ -125,82 +125,175 @@ public class GameScreen extends AppCompatActivity {
         // while interacting with the UI.
         findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
 
-        Lobby lobby = (Lobby) getIntent().getSerializableExtra("lobby");
-        this.isHost = lobby.getHost().getName().equals(this.player.getName());
+        lobby = (Lobby) getIntent().getSerializableExtra("lobby");
+        String playerName = (String) getIntent().getSerializableExtra("name");
+        player = new Player(playerName);
 
-        if (isHost) {
+        if (currentPlayerIsCardSzar()) {
             Deck deck = (Deck) getIntent().getSerializableExtra("deck");
-            Player[] players = (Player[]) getIntent().getSerializableExtra("players");
             int handCardCount = (int) getIntent().getSerializableExtra("handcardcount");
-            startGame(deck, Arrays.asList(players), handCardCount);
+            startGame(deck, handCardCount);
         } else {
-            String playerName = (String) getIntent().getSerializableExtra("name");
-            Client client = new Client(playerName, lobby.getName(), "START");
-            gameStartClient(lobby.getId());
+            gameStartClient();
         }
 
     }
 
-    private void gameStartClient(String lobbyId) {
-        getCurrentLobby(lobbyId);
-        gameStateLoop(lobby);
+    private void gameStartClient() {
+        updateLobby(lobby.getId());
+        gameStateLoop();
     }
 
-    private void getCurrentLobby(String lobbyId) {
-        GetCurrentLobby getCurrentLobby = new GetCurrentLobby();
-        while (lobby == null) {
-            lobby = getCurrentLobby.doInBackground(lobbyId);
+    private void updateLobby(String lobbyId) {
+        if (lobby.getGamestate() == gamestate) {
+            try {
+                lobby = new GetCurrentLobby().execute(lobbyId).get();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } finally {
+                updatePlayer();
+                updateLobby(lobbyId);
+            }
+        } else {
+            gamestate = lobby.getGamestate();
+            gameStateLoop();
         }
+    }
 
+    private void updatePlayer() {
+        Optional<Player> playerOptional = lobby.getPlayers().stream().filter(player1 -> player1.getName().equals(player.getName())).findFirst();
+        playerOptional.ifPresent(player1 -> player = player1);
     }
 
     /**
-     * Executes things based on the current gamestate of the lobby - for clients only.
-     *
-     * @param lobby The current Lobby.
+     * Executes things based on the current gamestate of the lobby
      */
-    private void gameStateLoop(Lobby lobby) {
-        // todo implement this
+    private void gameStateLoop() {
         switch (lobby.getGamestate()) {
             case START:
+                onStartGamestate();
                 break;
             case ROUNDSTART:
+                onRoundStartGamestate();
                 break;
             case SUBMIT:
+                onSubmitGamestate();
                 break;
             case WAITING:
+                onWaitingGamestate();
                 break;
             case ROUNDEND:
+                onRoundEndGamestate();
                 break;
             default:
+                onGamestateError();
                 break;
         }
     }
 
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-
-        // Trigger the initial hide() shortly after the activity has been
-        // created, to briefly hint to the user that UI controls
-        // are available.
-        delayedHide(100);
+    private void onStartGamestate() {
+        updateLobby(lobby.getId());
     }
 
-    private void startGame(Deck deck, List<Player> players, int handCardCount) {
-        game = new Game(deck, players, handCardCount);
+    private void onRoundStartGamestate() {
+        if (currentPlayerIsCardSzar()) {
+            //todo draw card for everyone
+            game.drawCards();
+        }
+        this.player.setReady(true);
+        updateLobbyPlayer();
+    }
+
+    private boolean currentPlayerIsCardSzar() {
+        return game.getCardCzar().getName().equals(player.getName());
+    }
+
+    private void onSubmitGamestate() {
+        // todo show new cards and black card
+
+        // todo enable user to submit a card from his hand
+        this.player.setReady(true);
+
+        if (!currentPlayerIsCardSzar()) {
+            submitCard(player.getHand().remove(0)); // todo for testing only
+        }
+
+        // then wait for input -> do nothing here
+        updateLobby(lobby.getId());
+    }
+
+    private void onWaitingGamestate() {
+        // todo display "waiting for other players"
+        this.player.setReady(true);
+        updateLobbyPlayer();
+    }
+
+    private void onRoundEndGamestate() {
+        if (currentPlayerIsCardSzar()) {
+            game.nextCardSzar();
+        }
+        // todo notify player of winning card (only if player is not cardszar), show updated scores
+        this.player.setReady(true);
+        updateLobbyPlayer();
+    }
+
+    private void onGamestateError() {
+        // todo What should happen here? Display error and quit lobby?
+    }
+
+    /**
+     * For host only!
+     * Initializes lobby and pushes it to server.
+     *
+     * @param deck          The deck to be used.
+     * @param handCardCount Amount of initial handcards.
+     */
+    private void startGame(Deck deck, int handCardCount) {
+        game = new Game(deck, lobby.getPlayers(), handCardCount);
         game.startNewRound();
 
-        lobby = new Lobby("", player, game.getPlayers(), "blub", "pw", Gamestate.START);
+        lobby.setPlayers(game.getPlayers());
+        lobby.setGamestate(Gamestate.START);
         Gson gson = new Gson();
         String lobbyJson = gson.toJson(lobby);
 
-        SubmitGameToServer submitGameToServer = new SubmitGameToServer();
-        submitGameToServer.doInBackground(lobbyJson);
+        new SubmitGameToServer().execute(lobbyJson);
+        gameStateLoop();
     }
 
+    /**
+     * Submits a card.
+     *
+     * @param card Card to sumbit.
+     */
     private void submitCard(Card card) {
-        // TODO submit card to server, set user of card beforehand
+        card.setOwner(player);
+        game.submitCard(card);
+        updateLobbyPlayer();
+    }
+
+    /**
+     * Submits the updated game/player to the server.
+     */
+    private void updateLobbyPlayer() {
+        List<Player> lobbyPlayers = lobby.getPlayers();
+        Player lobbyPlayer = null;
+        Optional<Player> lobbyPlayerOptional = lobbyPlayers.stream().filter(player1 -> player1.getName().equals(player.getName())).findFirst();
+        if (lobbyPlayerOptional.isPresent()) {
+            lobbyPlayer = lobbyPlayerOptional.get();
+        }
+
+        // todo test if this changes the lobby's player
+        if (lobbyPlayer != null) {
+            new SubmitGameToServer().execute(convertToJson(lobby));
+        }
+    }
+
+    private String convertToJson(Lobby lobby) {
+        Gson gson = new Gson();
+        return gson.toJson(lobby);
     }
 
     private void toggle() {
@@ -246,6 +339,9 @@ public class GameScreen extends AppCompatActivity {
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
     }
 
+    /**
+     * Input lobby as String (?)
+     */
     static class SubmitGameToServer extends AsyncTask<String, Void, Void> {
         @Override
         protected Void doInBackground(String... strings) {
@@ -259,6 +355,7 @@ public class GameScreen extends AppCompatActivity {
                 con.setReadTimeout(5000);
                 con.setDoOutput(true);
 
+                // todo this somehow doesnt work correctly...
                 OutputStream outputPost = new BufferedOutputStream(con.getOutputStream());
                 outputPost.write(strings[0].getBytes());
                 outputPost.flush();
@@ -278,6 +375,9 @@ public class GameScreen extends AppCompatActivity {
         }
     }
 
+    /**
+     * Input lobbyId into doInBackground()
+     */
     static class GetCurrentLobby extends AsyncTask<String, Void, Lobby> {
         @Override
         protected Lobby doInBackground(String... strings) {

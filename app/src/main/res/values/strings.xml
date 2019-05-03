@@ -13,4 +13,5 @@
         <item>Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.</item>
     </string-array>
     <string name="title_activity_game_screen">GameScreen</string>
+    <string name="title_activity_lobby">LobbyActivity</string>
 </resources>

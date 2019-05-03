@@ -1,17 +1,18 @@
 package com.afms.cahgame.game;
 
 
-import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 
-public class Card extends ViewModel {
-    private MutableLiveData<Colour> colour = new MutableLiveData<>();
-    private MutableLiveData<String> text = new MutableLiveData<>();
-    private MutableLiveData<Player> owner = new MutableLiveData<>();
+import java.io.Serializable;
+
+public class Card extends ViewModel implements Serializable {
+    private Colour colour;
+    private String text;
+    private Player owner;
 
     public Card(Colour colour, String text) {
-        this.colour.setValue(colour);
-        this.text.setValue(text);
+        this.colour = colour;
+        this.text = text;
     }
 
     @Override
@@ -24,26 +25,26 @@ public class Card extends ViewModel {
     }
 
     public Colour getColour() {
-        return colour.getValue();
+        return colour;
     }
 
     public void setColour(Colour colour) {
-        this.colour.setValue(colour);
+        this.colour = colour;
     }
 
-    public MutableLiveData<String> getText() {
+    public String getText() {
         return text;
     }
 
     public void setText(String text) {
-        this.text.setValue(text);
+        this.text = text;
     }
 
     public Player getOwner() {
-        return owner.getValue();
+        return owner;
     }
 
     public void setOwner(Player owner) {
-        this.owner.setValue(owner);
+        this.owner = owner;
     }
 }

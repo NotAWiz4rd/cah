@@ -10,10 +10,20 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".gui.LobbyActivity"
+            android:label="@string/title_activity_lobby"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name=".gui.GameScreen"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_game_screen"
-            android:theme="@style/FullscreenTheme"></activity>
+            android:theme="@style/FullscreenTheme" />
         <activity
             android:name=".gui.FullscreenActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
@@ -26,5 +36,5 @@
             </intent-filter>
         </activity>
     </application>
-
+    <uses-permission android:name="android.permission.INTERNET" />
 </manifest>

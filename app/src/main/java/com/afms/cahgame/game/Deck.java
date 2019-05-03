@@ -1,9 +1,17 @@
 package com.afms.cahgame.game;
 
-public class Deck {
+import java.io.Serializable;
+
+public class Deck implements Serializable {
    private String name;
    private Card[] whiteCards;
    private Card[] blackCards;
+
+    public Deck(String name, Card[] whiteCards, Card[] blackCards) {
+        this.name = name;
+        this.whiteCards = whiteCards;
+        this.blackCards = blackCards;
+    }
 
     public String getName() {
         return name;

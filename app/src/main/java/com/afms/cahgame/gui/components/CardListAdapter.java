@@ -66,12 +66,7 @@ public class CardListAdapter extends ArrayAdapter<Card> {
 
         TextView cardText = convertView.findViewById(R.id.cardText);
         cardText.setTextColor(colorMap.getOrDefault(card.getColour(), colorMap.get(Colour.WHITE)).get("textcolor"));
-        cardText.setText(card.getText().getValue());
-
-
-        // Observer
-        final Observer<String> fullSizeCardTextObserver = cardText::setText;
-        card.getText().observe((LifecycleOwner) mainActivity, fullSizeCardTextObserver);
+        cardText.setText(card.getText());
 
         return convertView;
     }
