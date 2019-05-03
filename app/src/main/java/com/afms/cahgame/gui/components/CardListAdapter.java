@@ -30,19 +30,14 @@ public class CardListAdapter extends ArrayAdapter<Card> {
     Map<Colour, HashMap<String, Integer>> colorMap = new HashMap<Colour, HashMap<String, Integer>>(){{
         put(Colour.BLACK, new HashMap<String, Integer>() {{
             put("icon", R.drawable.cardblack);
-            put("background", R.color.cardTransparentBackgroundColorBlack);
+            put("background", R.drawable.card_background_small_black);
             put("textcolor", Color.WHITE);
         }});
         put(Colour.WHITE, new HashMap<String, Integer>() {{
             put("icon", R.drawable.card);
-            put("background", R.color.cardTransparentBackgroundColorWhite);
+            put("background", R.drawable.card_background_small_white);
             put("textcolor", Color.BLACK);
         }});
-    }};
-
-    Map<Colour, Integer> backgroundMap = new HashMap<Colour, Integer>(){{
-        put(Colour.BLACK, R.color.cardTransparentBackgroundColorBlack);
-        put(Colour.WHITE, R.color.cardTransparentBackgroundColorWhite);
     }};
 
     public CardListAdapter(@NonNull Context context, ArrayList<Card> cards) {
