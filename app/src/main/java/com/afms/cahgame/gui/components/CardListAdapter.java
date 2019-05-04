@@ -1,9 +1,11 @@
 package com.afms.cahgame.gui.components;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProvider;
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.support.constraint.ConstraintLayout;
 import android.view.LayoutInflater;
@@ -16,8 +18,10 @@ import com.afms.cahgame.game.Card;
 import com.afms.cahgame.game.Colour;
 
 import android.support.annotation.*;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,6 +49,7 @@ public class CardListAdapter extends ArrayAdapter<Card> {
         this.mainActivity = (Activity) context;
     }
 
+    @SuppressLint("DefaultLocale")
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
@@ -56,12 +61,18 @@ public class CardListAdapter extends ArrayAdapter<Card> {
         ImageView cardIcon = convertView.findViewById(R.id.cardIcon);
         cardIcon.setImageResource(colorMap.getOrDefault(card.getColour(), colorMap.get(Colour.WHITE)).get("icon"));
 
-        ConstraintLayout cardLayout = convertView.findViewById(R.id.cardLayout);
+        ConstraintLayout cardLayout = convertView.findViewById(R.id.innerCardLayout);
         cardLayout.setBackgroundResource(colorMap.getOrDefault(card.getColour(), colorMap.get(Colour.WHITE)).get("background"));
 
         TextView cardText = convertView.findViewById(R.id.cardText);
         cardText.setTextColor(colorMap.getOrDefault(card.getColour(), colorMap.get(Colour.WHITE)).get("textcolor"));
         cardText.setText(card.getText());
+
+
+        ImageButton deleteButton = convertView.findViewById(R.id.deleteButton);
+        deleteButton.setOnClickListener(v -> {
+            Toast.makeText(mainActivity, String.format("Clicked: deleteButton pos: %d", position), Toast.LENGTH_SHORT).show();
+        });
 
         return convertView;
     }

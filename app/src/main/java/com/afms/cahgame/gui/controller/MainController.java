@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.util.Log;
 import android.widget.FrameLayout;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.afms.cahgame.R;
 import com.afms.cahgame.game.Card;
@@ -23,6 +24,7 @@ public class MainController {
 
     // user card selection
     private ListView userSelectionListView;
+    private int selectedListViewPosition;
     private CardListAdapter userSelectionListAdapter;
 
     // instances
@@ -37,7 +39,7 @@ public class MainController {
 
         // dummy data
 
-        for (int i = 0; i < 15; i++) {
+        for (int i = 0; i < 5; i++) {
             userSelectionListAdapter.add(new Card(
                     Colour.values()[(int) (Math.random() * Colour.values().length)],
                     Arrays.stream(mainActivity.getResources().getStringArray(R.array.sample_card_texts))
@@ -56,7 +58,9 @@ public class MainController {
         userSelectionListView.setAdapter(userSelectionListAdapter);
 
         userSelectionListView.setOnItemClickListener((parent, view, position, id) -> {
-            Card card = (Card) parent.getItemAtPosition(position);
+            selectedListViewPosition = position;
+            Toast.makeText(mainActivity, String.valueOf(selectedListViewPosition), Toast.LENGTH_SHORT).show();
+            Card card = (Card) parent.getItemAtPosition(selectedListViewPosition);
             mainFrame.addView(getFullSizeCardInstance(card));
         });
     }
@@ -68,10 +72,25 @@ public class MainController {
         if(fullSizeCardList.stream().anyMatch(f -> f.getCard().equals(card))){
             return fullSizeCardList.stream().filter(f -> f.getCard().equals(card)).findFirst().get();
         } else {
-            FullSizeCard returnValue = new FullSizeCard(mainActivity, card);
+            FullSizeCard returnValue = new FullSizeCard(mainActivity, this, card);
             fullSizeCardList.add(returnValue);
             return returnValue;
         }
+    }
+
+    public void showNextViewFromList(){
+        int nextPos = (selectedListViewPosition + 1) % userSelectionListView.getCount();
+        selectedListViewPosition = nextPos;
+        Toast.makeText(mainActivity, String.valueOf(nextPos), Toast.LENGTH_SHORT).show();
+        mainFrame.addView(getFullSizeCardInstance((Card) userSelectionListView.getItemAtPosition(nextPos)));
+    }
+
+
+    public void showPreviousViewFromList(){
+        int nextPos = (selectedListViewPosition - 1) % userSelectionListView.getCount();
+        selectedListViewPosition = nextPos;
+        Toast.makeText(mainActivity, String.valueOf(nextPos), Toast.LENGTH_SHORT).show();
+        mainFrame.addView(getFullSizeCardInstance((Card) userSelectionListView.getItemAtPosition(nextPos)));
     }
 
 }

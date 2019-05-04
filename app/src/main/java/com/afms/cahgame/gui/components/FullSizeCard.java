@@ -23,6 +23,7 @@ import android.widget.TextView;
 import com.afms.cahgame.R;
 import com.afms.cahgame.game.Card;
 import com.afms.cahgame.game.Colour;
+import com.afms.cahgame.gui.controller.MainController;
 
 public class FullSizeCard extends ConstraintLayout {
 
@@ -38,12 +39,14 @@ public class FullSizeCard extends ConstraintLayout {
     private float newPos;
 
     private Activity mainActivity;
+    private MainController mainController;
 
     @SuppressLint("ClickableViewAccessibility")
-    public FullSizeCard(Context context, Card card) {
+    public FullSizeCard(Context context, MainController mainController, Card card) {
         super(context);
         this.card = card;
         mainActivity = (Activity) context;
+        this.mainController = mainController;
         LayoutInflater.from(context).inflate(R.layout.fullsize_card_options, this);
         setOnClickListener(v -> {
         });
@@ -67,6 +70,7 @@ public class FullSizeCard extends ConstraintLayout {
 
         editTextMode(fullSizeCardText, false);
 
+        MainController finalMainController = mainController;
         fullSizeCardLayout.setOnTouchListener((v, event) -> {
             switch(event.getAction()){
                 case MotionEvent.ACTION_DOWN:
@@ -89,6 +93,7 @@ public class FullSizeCard extends ConstraintLayout {
                                 super.onAnimationEnd(animation);
                                 ((ViewManager) v.getParent().getParent().getParent()).removeView(((View)v.getParent().getParent()));
                                 v.setY(oldPos);
+                                finalMainController.showNextViewFromList();
                             }
                         });
                         animation.start();
@@ -111,5 +116,6 @@ public class FullSizeCard extends ConstraintLayout {
         o.setFocusableInTouchMode(state);
         o.setEnabled(state);
     }
+
 
 }
