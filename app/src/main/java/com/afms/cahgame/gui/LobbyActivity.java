@@ -16,7 +16,6 @@ import com.afms.cahgame.game.Player;
 
 import java.util.ArrayList;
 import java.util.List;
-
 public class LobbyActivity extends AppCompatActivity {
 
     @Override
@@ -59,6 +58,7 @@ public class LobbyActivity extends AppCompatActivity {
 
     private Card[] getSampleWhiteCards() {
         return new Card[]{
+                //lol
                 new Card(Colour.WHITE, "White Lorem Ipsum0"),
                 new Card(Colour.WHITE, "White Lorem Ipsum1"),
                 new Card(Colour.WHITE, "White Lorem Ipsum2"),

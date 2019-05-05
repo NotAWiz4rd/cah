@@ -2,11 +2,10 @@ package com.afms.cahgame.gui.components;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.arch.lifecycle.LifecycleOwner;
-import android.arch.lifecycle.Observer;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.constraint.ConstraintLayout;
@@ -15,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewManager;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -33,10 +33,12 @@ public class FullSizeCard extends ConstraintLayout {
     private Button fullSizeCardButton;
     private Button fullSizeCardButton2;
     private Card card;
-    private float downPos;
-    private float movedPos;
-    private float oldPos;
-    private float newPos;
+    private float downPosY;
+    private float downPosX;
+    private float movedPosY;
+    private float movedPosX;
+    private int[] oldLocation = new int[2];
+    private boolean switchedCard = true;
 
     private Activity mainActivity;
     private MainController mainController;
@@ -61,42 +63,57 @@ public class FullSizeCard extends ConstraintLayout {
         fullSizeCardButton.setText(context.getString(R.string.close));
         fullSizeCardButton.setOnClickListener(v -> {
             ((ViewManager) getParent()).removeView(this);
-            fullSizeCardLayout.setY(oldPos);
         });
         fullSizeCardButton2 = findViewById(R.id.fullSizeOptionButton2);
         ((ViewManager) fullSizeCardButton2.getParent()).removeView(fullSizeCardButton2);
 
-        oldPos = fullSizeCardLayout.getY();
+        fullSizeCardLayout.getViewTreeObserver().addOnGlobalLayoutListener(
+                new ViewTreeObserver.OnGlobalLayoutListener() {
+                    public void onGlobalLayout() {
+                        //Remove the listener before proceeding
+                        //fullSizeCardLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                        fullSizeCardLayout.getLocationOnScreen(oldLocation);
+                        if (switchedCard) {
+                            fullSizeCardLayout.setScaleX(0.1f);
+                            fullSizeCardLayout.setScaleY(0.1f);
+                            ObjectAnimator scaleUpX = ObjectAnimator.ofFloat(fullSizeCardLayout, "scaleX", 1f);
+                            ObjectAnimator scaleUpY = ObjectAnimator.ofFloat(fullSizeCardLayout, "scaleY", 1f);
+                            scaleUpX.setDuration(700);
+                            scaleUpY.setDuration(700);
+                            AnimatorSet scaleUp = new AnimatorSet();
+                            scaleUp.play(scaleUpX).with(scaleUpY);
+                            scaleUp.start();
+                        }
+                    }
+                }
+        );
 
         editTextMode(fullSizeCardText, false);
 
         MainController finalMainController = mainController;
         fullSizeCardLayout.setOnTouchListener((v, event) -> {
-            switch(event.getAction()){
+            switchedCard = false;
+            switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
-                    downPos = event.getY();
+                    downPosY = event.getY();
+                    downPosX = event.getX();
                     break;
                 case MotionEvent.ACTION_MOVE:
-                    movedPos = event.getY();
-                    newPos = v.getY()+ movedPos-downPos;
-                    v.setY(newPos);
+                    movedPosY = event.getY();
+                    movedPosX = event.getX();
+                    v.setY(v.getY() + movedPosY - downPosY);
+                    v.setX(v.getX() + movedPosX - downPosX);
                     break;
                 case MotionEvent.ACTION_UP:
-                    if(v.getY() > -500){
-                        v.setY(oldPos);
-                    }else{
-                        ObjectAnimator animation = ObjectAnimator.ofFloat(v, "translationY", -2800f);
-                        animation.setDuration(400);
-                        animation.addListener(new AnimatorListenerAdapter() {
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-                                super.onAnimationEnd(animation);
-                                ((ViewManager) v.getParent().getParent().getParent()).removeView(((View)v.getParent().getParent()));
-                                v.setY(oldPos);
-                                finalMainController.showNextViewFromList();
-                            }
-                        });
-                        animation.start();
+                    if (v.getY() > -500 && v.getX() < 300 && v.getX() > -200) {
+                        v.setY(oldLocation[1]);
+                        v.setX(oldLocation[0]);
+                    } else if (v.getX() > 300) {
+                        generateAnimation(v, "translationX", 1000f, 300, finalMainController, 1);
+                    } else if (v.getX() < -200) {
+                        generateAnimation(v, "translationX", -1000f, 300, finalMainController, 2);
+                    } else {
+                        generateAnimation(v, "translationY", -1800f, 400, finalMainController, 0);
                     }
                     break;
             }
@@ -104,11 +121,35 @@ public class FullSizeCard extends ConstraintLayout {
         });
     }
 
+    private void generateAnimation(View v, String translation, float value, int duration, MainController finalMainController, int prevOrNext) {
+        ObjectAnimator animation = ObjectAnimator.ofFloat(v, translation, value);
+        animation.setDuration(duration);
+        animation.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                ((ViewManager) v.getParent().getParent().getParent()).removeView(((View) v.getParent().getParent()));
+                v.setX(oldLocation[0]);
+                v.setY(oldLocation[1]);
+                switch (prevOrNext) {
+                    case 1:
+                        finalMainController.showPreviousViewFromList();
+                        break;
+                    case 2:
+                        finalMainController.showNextViewFromList();
+                        break;
+                }
+                switchedCard = true;
+            }
+        });
+        animation.start();
+    }
+
     public Card getCard() {
         return card;
     }
 
-    public void editTextMode(EditText o, boolean state){
+    public void editTextMode(EditText o, boolean state) {
         o.setClickable(state);
         o.setLongClickable(state);
         o.setLinksClickable(state);

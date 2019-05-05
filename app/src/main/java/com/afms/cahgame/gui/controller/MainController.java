@@ -87,7 +87,10 @@ public class MainController {
 
 
     public void showPreviousViewFromList(){
-        int nextPos = (selectedListViewPosition - 1) % userSelectionListView.getCount();
+        int nextPos = selectedListViewPosition - 1;
+        if(nextPos < 0){
+            nextPos = userSelectionListView.getCount();
+        }
         selectedListViewPosition = nextPos;
         Toast.makeText(mainActivity, String.valueOf(nextPos), Toast.LENGTH_SHORT).show();
         mainFrame.addView(getFullSizeCardInstance((Card) userSelectionListView.getItemAtPosition(nextPos)));
