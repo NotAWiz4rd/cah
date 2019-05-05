@@ -339,6 +339,37 @@ public class GameScreen extends AppCompatActivity {
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
     }
 
+    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+    protected void onPause() {
+        super.onPause();
+
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putString("player", player.getName());
+        editor.putString("lobbyId", lobby.getId());
+
+        editor.apply();
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+    protected void onResume() {
+        super.onResume();
+
+        player = new Player(settings.getString("player", ""));
+        try {
+            lobby = new GetCurrentLobby().execute(settings.getString("lobbyId", "")).get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        if (lobby == null) {
+            // todo throw player into lobby browser with message that lobby couldnt be found
+        } else {
+            gameStateLoop();
+        }
+    }
+
     /**
      * Input lobby as String (?)
      */
