@@ -89,7 +89,7 @@ public class MainController {
     public void showPreviousViewFromList(){
         int nextPos = selectedListViewPosition - 1;
         if(nextPos < 0){
-            nextPos = userSelectionListView.getCount();
+            nextPos = userSelectionListView.getCount() - 1;
         }
         selectedListViewPosition = nextPos;
         Toast.makeText(mainActivity, String.valueOf(nextPos), Toast.LENGTH_SHORT).show();
