@@ -1,15 +1,12 @@
 package com.afms.cahgame.gui;
 
-import android.annotation.SuppressLint;
 import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.OnLifecycleEvent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 
 import com.afms.cahgame.R;
 import com.afms.cahgame.game.Card;
@@ -20,12 +17,10 @@ import com.afms.cahgame.game.Lobby;
 import com.afms.cahgame.game.Player;
 import com.google.gson.Gson;
 
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -33,7 +28,6 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
@@ -44,75 +38,12 @@ import java.util.concurrent.ExecutionException;
 public class GameScreen extends AppCompatActivity {
     private static final String BACKEND_URL_GAMES = "https://api.mlab.com/api/1/databases/cah/collections/games?apiKey=06Yem6JpYP8TSlm48U-Ze0Tb49Gnu0NA";
 
-    /**
-     * Whether or not the system UI should be auto-hidden after
-     * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
-     */
-    private static final boolean AUTO_HIDE = true;
-
-    /**
-     * If {@link #AUTO_HIDE} is set, the number of milliseconds to wait after
-     * user interaction before hiding the system UI.
-     */
-    private static final int AUTO_HIDE_DELAY_MILLIS = 3000;
-
-    /**
-     * Some older devices needs a small delay between UI widget updates
-     * and a change of the status and navigation bar.
-     */
-    private static final int UI_ANIMATION_DELAY = 300;
-    private final Handler mHideHandler = new Handler();
-    /**
-     * Touch listener to use for in-layout UI controls to delay hiding the
-     * system UI. This is to prevent the jarring behavior of controls going away
-     * while interacting with activity UI.
-     */
-    private final View.OnTouchListener mDelayHideTouchListener = (view, motionEvent) -> {
-        if (AUTO_HIDE) {
-            delayedHide(AUTO_HIDE_DELAY_MILLIS);
-        }
-        return false;
-    };
-
     private Game game;
     private Player player;
     private Lobby lobby;
     private Gamestate gamestate = Gamestate.START;
 
     private SharedPreferences settings;
-
-    private View mContentView;
-    private final Runnable mHidePart2Runnable = new Runnable() {
-        @SuppressLint("InlinedApi")
-        @Override
-        public void run() {
-            // Delayed removal of status and navigation bar
-
-            // Note that some of these constants are new as of API 16 (Jelly Bean)
-            // and API 19 (KitKat). It is safe to use them, as they are inlined
-            // at compile-time and do nothing on earlier devices.
-            mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
-                    | View.SYSTEM_UI_FLAG_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-        }
-    };
-    private View mControlsView;
-    private final Runnable mShowPart2Runnable = new Runnable() {
-        @Override
-        public void run() {
-            // Delayed display of UI elements
-            ActionBar actionBar = getSupportActionBar();
-            if (actionBar != null) {
-                actionBar.show();
-            }
-            mControlsView.setVisibility(View.VISIBLE);
-        }
-    };
-    private boolean mVisible;
-    private final Runnable mHideRunnable = this::hide;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,19 +52,6 @@ public class GameScreen extends AppCompatActivity {
         settings = getSharedPreferences("Preferences", MODE_PRIVATE);
 
         setContentView(R.layout.activity_game_screen);
-
-        mVisible = true;
-        mControlsView = findViewById(R.id.fullscreen_content_controls);
-        mContentView = findViewById(R.id.fullscreen_content);
-
-
-        // Set up the user interaction to manually show or hide the system UI.
-        mContentView.setOnClickListener(view -> toggle());
-
-        // Upon interacting with UI controls, delay any scheduled hide()
-        // operations to prevent the jarring behavior of controls going away
-        // while interacting with the UI.
-        findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
 
         lobby = (Lobby) getIntent().getSerializableExtra("lobby");
         String playerName = (String) getIntent().getSerializableExtra("name");
@@ -150,6 +68,7 @@ public class GameScreen extends AppCompatActivity {
             gameStartClient();
         }
     }
+
     private void gameStartClient() {
         updateLobby(lobby.getId());
     }
@@ -181,7 +100,7 @@ public class GameScreen extends AppCompatActivity {
     }
 
     private void updatePlayer() {
-        Optional<Player> playerOptional = lobby.getPlayers().stream().filter(player1 -> player1.getName().equals(player.getName())).findFirst();
+        Optional<Player> playerOptional = lobby.players.stream().filter(player1 -> player1.getName().equals(player.getName())).findFirst();
         playerOptional.ifPresent(player1 -> player = player1);
     }
 
@@ -212,12 +131,9 @@ public class GameScreen extends AppCompatActivity {
     }
 
     private void onStartGamestate() {
-        player.setReady(true);
-        submitLobbyPlayer();
-
         if (currentPlayerIsCardSzar()) {
-            advanceGamestate();
-            gameStateLoop();
+            updatePlayer();
+            onRoundStartGamestate();
         } else {
             updateLobby(lobby.getId());
         }
@@ -225,8 +141,10 @@ public class GameScreen extends AppCompatActivity {
 
     private void onRoundStartGamestate() {
         if (currentPlayerIsCardSzar()) {
-            game.drawCards();
-            // todo change gamestate
+            game.startNewRound();
+            this.player.setReady(true);
+            submitLobbyPlayer();
+            advanceGamestate();
         }
         this.player.setReady(true);
         submitLobbyPlayer();
@@ -277,10 +195,10 @@ public class GameScreen extends AppCompatActivity {
      * @param handCardCount Amount of initial handcards.
      */
     private void startGame(Deck deck, int handCardCount) {
-        game = new Game(deck, lobby.getPlayers(), handCardCount);
+        game = new Game(deck, lobby.players, handCardCount);
         game.startNewRound();
 
-        lobby.setPlayers(game.getPlayers());
+        lobby.players = game.players;
         lobby.setGamestate(Gamestate.START);
 
         submitLobby();
@@ -292,7 +210,7 @@ public class GameScreen extends AppCompatActivity {
      * If players ready: Executes Gamestateloop
      * if not: waits 1000ms, then calls itself again
      */
-    private void waitForPlayers() {
+    private boolean waitForPlayers() {
         try {
             lobby = new GetCurrentLobby().execute(lobby.getId()).get();
         } catch (ExecutionException e) {
@@ -300,17 +218,14 @@ public class GameScreen extends AppCompatActivity {
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
-            if (lobby != null) {
-                if (!lobby.allPlayersReady()) {
-                    Handler handler = new Handler();
-                    handler.postDelayed(this::waitForPlayers, 1000);
-                    return;
-                }
+            if (!lobby.allPlayersReady()) {
+                Handler handler = new Handler();
+                handler.postDelayed(this::waitForPlayers, 1000);
+            } else {
+                return true;
             }
-            // todo this is temporary
-            Handler handler = new Handler();
-            handler.postDelayed(this::waitForPlayers, 1000);
         }
+        return false;
     }
 
     /**
@@ -325,43 +240,43 @@ public class GameScreen extends AppCompatActivity {
     }
 
     private void advanceGamestate() {
-        waitForPlayers();
-        switch (lobby.getGamestate()) {
-            case START:
-                lobby.setGamestate(Gamestate.ROUNDSTART);
-                break;
-            case ROUNDSTART:
-                lobby.setGamestate(Gamestate.SUBMIT);
-                break;
-            case SUBMIT:
-                lobby.setGamestate(Gamestate.WAITING);
-                break;
-            case WAITING:
-                lobby.setGamestate(Gamestate.ROUNDEND);
-                break;
-            case ROUNDEND:
-                lobby.setGamestate(Gamestate.ROUNDSTART);
-                break;
-            default:
-                lobby.setGamestate(Gamestate.ROUNDSTART);
-                break;
+        if (!waitForPlayers()) {
+            advanceGamestate();
+        } else {
+            switch (lobby.getGamestate()) {
+                case START:
+                    lobby.setGamestate(Gamestate.ROUNDSTART);
+                    break;
+                case ROUNDSTART:
+                    lobby.setGamestate(Gamestate.SUBMIT);
+                    break;
+                case SUBMIT:
+                    lobby.setGamestate(Gamestate.WAITING);
+                    break;
+                case WAITING:
+                    lobby.setGamestate(Gamestate.ROUNDEND);
+                    break;
+                case ROUNDEND:
+                    lobby.setGamestate(Gamestate.ROUNDSTART);
+                    break;
+                default:
+                    lobby.setGamestate(Gamestate.ROUNDSTART);
+                    break;
+            }
         }
+
     }
 
     /**
      * Submits the updated game/player to the server.
      */
     private void submitLobbyPlayer() {
-        List<Player> lobbyPlayers = lobby.getPlayers();
-        Player lobbyPlayer = null;
-        Optional<Player> lobbyPlayerOptional = lobbyPlayers.stream().filter(player1 -> player1.getName().equals(player.getName())).findFirst();
-        if (lobbyPlayerOptional.isPresent()) {
-            lobbyPlayer = lobbyPlayerOptional.get();
-        }
-
-        // todo test if this changes the lobby's player
-        if (lobbyPlayer != null) {
-            submitLobby();
+        for (int i = 0; i < lobby.players.size(); i++) {
+            if (lobby.players.get(i).getName().equals(player.getName())) {
+                lobby.players.set(i, player);
+                submitLobby();
+                return;
+            }
         }
     }
 
@@ -374,50 +289,7 @@ public class GameScreen extends AppCompatActivity {
         return gson.toJson(lobby);
     }
 
-    private void toggle() {
-        if (mVisible) {
-            hide();
-        } else {
-            show();
-        }
-    }
-
-    private void hide() {
-        // Hide UI first
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.hide();
-        }
-        mControlsView.setVisibility(View.GONE);
-        mVisible = false;
-
-        // Schedule a runnable to remove the status and navigation bar after a delay
-        mHideHandler.removeCallbacks(mShowPart2Runnable);
-        mHideHandler.postDelayed(mHidePart2Runnable, UI_ANIMATION_DELAY);
-    }
-
-    @SuppressLint("InlinedApi")
-    private void show() {
-        // Show the system bar
-        mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
-        mVisible = true;
-
-        // Schedule a runnable to display UI elements after a delay
-        mHideHandler.removeCallbacks(mHidePart2Runnable);
-        mHideHandler.postDelayed(mShowPart2Runnable, UI_ANIMATION_DELAY);
-    }
-
-    /**
-     * Schedules a call to hide() in delay milliseconds, canceling any
-     * previously scheduled calls.
-     */
-    private void delayedHide(int delayMillis) {
-        mHideHandler.removeCallbacks(mHideRunnable);
-        mHideHandler.postDelayed(mHideRunnable, delayMillis);
-    }
-
-    private void saveInfo(){
+    private void saveInfo() {
         SharedPreferences.Editor editor = settings.edit();
         editor.putString("player", player.getName());
         editor.putString("lobbyId", lobby.getId());

@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Lobby implements Serializable {
     private String _id;
-    private List<Player> players;
+    public List<Player> players;
     private String name;
     private String password;
     private Gamestate gamestate;
@@ -31,14 +31,6 @@ public class Lobby implements Serializable {
 
     public void setId(String id) {
         this._id = id;
-    }
-
-    public List<Player> getPlayers() {
-        return players;
-    }
-
-    public void setPlayers(List<Player> players) {
-        this.players = players;
     }
 
     public String getName() {

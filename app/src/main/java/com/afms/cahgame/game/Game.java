@@ -8,8 +8,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Game {
+    public List<Player> players;
     private Deck deck;
-    private List<Player> players;
     private int handCardCount;
 
     private List<Card> blackCardsPile;
@@ -58,6 +58,7 @@ public class Game {
         discardPile.addAll(playedCards);
         playedCards = new ArrayList<>();
         currentBlackCard = blackCardsPile.remove(blackCardsPile.size() - 1);
+        drawCards();
     }
 
     public void submitCard(Card card) {
@@ -75,9 +76,9 @@ public class Game {
     /**
      * Draws cards for every player except the cardCzar
      */
-    public void drawCards() {
+    private void drawCards() {
         for (Player player : players) {
-            if (!player.equals(cardCzar)) {
+            if (!player.equals(cardCzar) && player.getHand().size() < handCardCount) {
                 if (newCardsPile.size() == 0) {
                     reshuffleCards();
                 }
@@ -99,7 +100,7 @@ public class Game {
         }
     }
 
-    public Player nextCardSzar() {
+    public void nextCardSzar() {
         int cardCzarIndex = this.players.indexOf(cardCzar);
 
         if (cardCzarIndex + 1 < players.size() - 1) {
@@ -107,7 +108,6 @@ public class Game {
         } else {
             cardCzar = players.get(0);
         }
-        return cardCzar;
     }
 
     public Deck getDeck() {
@@ -116,14 +116,6 @@ public class Game {
 
     public void setDeck(Deck deck) {
         this.deck = deck;
-    }
-
-    public List<Player> getPlayers() {
-        return players;
-    }
-
-    public void setPlayers(List<Player> players) {
-        this.players = players;
     }
 
     public int getHandCardCount() {
