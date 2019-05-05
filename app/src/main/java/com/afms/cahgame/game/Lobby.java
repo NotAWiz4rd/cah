@@ -4,26 +4,33 @@ import java.io.Serializable;
 import java.util.List;
 
 public class Lobby implements Serializable {
-    private String id;
+    private String _id;
     private List<Player> players;
     private String name;
     private String password;
     private Gamestate gamestate;
 
     public Lobby(String id, List<Player> players, String name, String password, Gamestate state) {
-        this.id = id;
+        this._id = id;
         this.players = players;
         this.name = name;
         this.password = password;
         this.gamestate = state;
     }
 
+    public boolean allPlayersReady() {
+        for (Player player : players) {
+            if (!player.isReady()) return false;
+        }
+        return true;
+    }
+
     public String getId() {
-        return id;
+        return _id;
     }
 
     public void setId(String id) {
-        this.id = id;
+        this._id = id;
     }
 
     public List<Player> getPlayers() {
