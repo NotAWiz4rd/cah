@@ -1,27 +1,24 @@
 package com.afms.cahgame.gui.components;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.arch.lifecycle.LifecycleOwner;
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProvider;
 import android.content.Context;
-import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-
-import com.afms.cahgame.R;
-import com.afms.cahgame.game.Card;
-import com.afms.cahgame.game.Colour;
-
-import android.support.annotation.*;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.afms.cahgame.R;
+import com.afms.cahgame.game.Card;
+import com.afms.cahgame.game.Colour;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,7 +28,7 @@ public class CardListAdapter extends ArrayAdapter<Card> {
 
     private Activity mainActivity;
 
-    Map<Colour, HashMap<String, Integer>> colorMap = new HashMap<Colour, HashMap<String, Integer>>(){{
+    private Map<Colour, HashMap<String, Integer>> colorMap = new HashMap<Colour, HashMap<String, Integer>>() {{
         put(Colour.BLACK, new HashMap<String, Integer>() {{
             put("icon", R.drawable.cardblack);
             put("background", R.drawable.card_background_small_black);
@@ -54,7 +51,7 @@ public class CardListAdapter extends ArrayAdapter<Card> {
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         Card card = getItem(position);
-        if (convertView == null){
+        if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_card_select, parent, false);
         }
 

@@ -72,6 +72,9 @@ public class Game {
         card.getOwner().setScore(card.getOwner().getScore() + 1);
     }
 
+    /**
+     * Draws cards for every player except the cardCzar
+     */
     public void drawCards() {
         for (Player player : players) {
             if (!player.equals(cardCzar)) {

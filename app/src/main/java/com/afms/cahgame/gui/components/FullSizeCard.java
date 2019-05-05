@@ -14,7 +14,6 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewManager;
-import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -68,29 +67,26 @@ public class FullSizeCard extends ConstraintLayout {
         ((ViewManager) fullSizeCardButton2.getParent()).removeView(fullSizeCardButton2);
 
         fullSizeCardLayout.getViewTreeObserver().addOnGlobalLayoutListener(
-                new ViewTreeObserver.OnGlobalLayoutListener() {
-                    public void onGlobalLayout() {
-                        //Remove the listener before proceeding
-                        //fullSizeCardLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                        fullSizeCardLayout.getLocationOnScreen(oldLocation);
-                        if (switchedCard) {
-                            fullSizeCardLayout.setScaleX(0.1f);
-                            fullSizeCardLayout.setScaleY(0.1f);
-                            ObjectAnimator scaleUpX = ObjectAnimator.ofFloat(fullSizeCardLayout, "scaleX", 1f);
-                            ObjectAnimator scaleUpY = ObjectAnimator.ofFloat(fullSizeCardLayout, "scaleY", 1f);
-                            scaleUpX.setDuration(700);
-                            scaleUpY.setDuration(700);
-                            AnimatorSet scaleUp = new AnimatorSet();
-                            scaleUp.play(scaleUpX).with(scaleUpY);
-                            scaleUp.start();
-                        }
+                () -> {
+                    //Remove the listener before proceeding
+                    //fullSizeCardLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    fullSizeCardLayout.getLocationOnScreen(oldLocation);
+                    if (switchedCard) {
+                        fullSizeCardLayout.setScaleX(0.1f);
+                        fullSizeCardLayout.setScaleY(0.1f);
+                        ObjectAnimator scaleUpX = ObjectAnimator.ofFloat(fullSizeCardLayout, "scaleX", 1f);
+                        ObjectAnimator scaleUpY = ObjectAnimator.ofFloat(fullSizeCardLayout, "scaleY", 1f);
+                        scaleUpX.setDuration(700);
+                        scaleUpY.setDuration(700);
+                        AnimatorSet scaleUp = new AnimatorSet();
+                        scaleUp.play(scaleUpX).with(scaleUpY);
+                        scaleUp.start();
                     }
                 }
         );
 
         editTextMode(fullSizeCardText, false);
 
-        MainController finalMainController = mainController;
         fullSizeCardLayout.setOnTouchListener((v, event) -> {
             switchedCard = false;
             switch (event.getAction()) {
@@ -109,11 +105,11 @@ public class FullSizeCard extends ConstraintLayout {
                         v.setY(oldLocation[1]);
                         v.setX(oldLocation[0]);
                     } else if (v.getX() > 300) {
-                        generateAnimation(v, "translationX", 1000f, 300, finalMainController, 1);
+                        generateAnimation(v, "translationX", 1000f, 300, mainController, 1);
                     } else if (v.getX() < -200) {
-                        generateAnimation(v, "translationX", -1000f, 300, finalMainController, 2);
+                        generateAnimation(v, "translationX", -1000f, 300, mainController, 2);
                     } else {
-                        generateAnimation(v, "translationY", -1800f, 400, finalMainController, 0);
+                        generateAnimation(v, "translationY", -1800f, 400, mainController, 0);
                     }
                     break;
             }

@@ -67,9 +67,9 @@ public class MainController {
 
     // get instances
 
-    public FullSizeCard getFullSizeCardInstance(Card card){
+    public FullSizeCard getFullSizeCardInstance(Card card) {
         Log.d("Test", "test");
-        if(fullSizeCardList.stream().anyMatch(f -> f.getCard().equals(card))){
+        if (fullSizeCardList.stream().anyMatch(f -> f.getCard().equals(card))) {
             return fullSizeCardList.stream().filter(f -> f.getCard().equals(card)).findFirst().get();
         } else {
             FullSizeCard returnValue = new FullSizeCard(mainActivity, this, card);
@@ -78,7 +78,7 @@ public class MainController {
         }
     }
 
-    public void showNextViewFromList(){
+    public void showNextViewFromList() {
         int nextPos = (selectedListViewPosition + 1) % userSelectionListView.getCount();
         selectedListViewPosition = nextPos;
         Toast.makeText(mainActivity, String.valueOf(nextPos), Toast.LENGTH_SHORT).show();
@@ -86,9 +86,9 @@ public class MainController {
     }
 
 
-    public void showPreviousViewFromList(){
+    public void showPreviousViewFromList() {
         int nextPos = selectedListViewPosition - 1;
-        if(nextPos < 0){
+        if (nextPos < 0) {
             nextPos = userSelectionListView.getCount();
         }
         selectedListViewPosition = nextPos;

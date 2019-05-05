@@ -199,8 +199,8 @@ public class GameScreen extends AppCompatActivity {
 
     private void onRoundStartGamestate() {
         if (currentPlayerIsCardSzar()) {
-            //todo draw card for everyone
             game.drawCards();
+            // todo change gamestate
         }
         this.player.setReady(true);
         updateLobbyPlayer();
