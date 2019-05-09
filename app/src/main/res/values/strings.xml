@@ -15,4 +15,12 @@
     <string name="title_activity_game_screen">GameScreen</string>
     <string name="title_activity_lobby">LobbyActivity</string>
     <string name="delete">Löschen</string>
+    <string name="hint_Username">Enter username</string>
+    <string name="button_createLobby">Create Lobby</string>
+    <string name="hint_lobbyname">Enter lobbyname</string>
+    <string name="label_handcardcount">Handcard Count:</string>
+    <string name="placeholder_number1">5</string>
+    <string name="label_PlayerCount">Player count:</string>
+    <string name="hint_DeckSelect">Please select a deck</string>
+    <string name="button_SelectDeck">Select Deck</string>
 </resources>
