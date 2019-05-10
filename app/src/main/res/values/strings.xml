@@ -23,4 +23,7 @@
     <string name="label_PlayerCount">Player count:</string>
     <string name="hint_DeckSelect">Please select a deck</string>
     <string name="button_SelectDeck">Select Deck</string>
+    <string name="button_searchLobby">Search for lobby</string>
+    <string name="string_Version">Version alpha-0.0.1</string>
+    <string name="button_exploreDecks">Explore decks</string>
 </resources>
