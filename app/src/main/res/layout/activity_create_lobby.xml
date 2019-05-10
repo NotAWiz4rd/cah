@@ -8,7 +8,7 @@
     tools:context=".gui.LobbyActivity">
 
     <TextView
-        android:id="@+id/lobbyGameName"
+        android:id="@+id/text_createLobby_gameName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -20,11 +20,11 @@
         android:text="@string/gameName"
         android:textSize="40sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/imageView"
+        app:layout_constraintStart_toEndOf="@+id/img_create_lobby_card_logo"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/editText"
+        android:id="@+id/input_create_lobby_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -37,11 +37,11 @@
         android:textSize="22sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/lobbyGameName" />
+        app:layout_constraintTop_toBottomOf="@id/text_createLobby_gameName" />
 
 
     <TextView
-        android:id="@+id/labelHandcardCount"
+        android:id="@+id/label_create_lobby_handcard_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -52,10 +52,10 @@
         android:text="@string/label_handcardcount"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText" />
+        app:layout_constraintTop_toBottomOf="@+id/input_create_lobby_name" />
 
     <EditText
-        android:id="@+id/valueHandcardCount"
+        android:id="@+id/input_create_lobby_handcard_count"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="64dp"
@@ -68,11 +68,11 @@
         android:padding="10dp"
         android:textSize="22sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/labelHandcardCount"
-        app:layout_constraintTop_toBottomOf="@+id/editText" />
+        app:layout_constraintStart_toEndOf="@+id/label_create_lobby_handcard_count"
+        app:layout_constraintTop_toBottomOf="@+id/input_create_lobby_name" />
 
     <TextView
-        android:id="@+id/labelPlayerCount"
+        android:id="@+id/label_create_lobby_player_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -83,10 +83,10 @@
         android:text="@string/label_PlayerCount"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/valueHandcardCount" />
+        app:layout_constraintTop_toBottomOf="@+id/input_create_lobby_handcard_count" />
 
     <EditText
-        android:id="@+id/valuePlayerCount"
+        android:id="@+id/input_create_lobby_player_count"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="64dp"
@@ -99,11 +99,11 @@
         android:padding="10dp"
         android:textSize="22sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/labelHandcardCount"
-        app:layout_constraintTop_toBottomOf="@+id/valueHandcardCount" />
+        app:layout_constraintStart_toEndOf="@+id/label_create_lobby_handcard_count"
+        app:layout_constraintTop_toBottomOf="@+id/input_create_lobby_handcard_count" />
 
     <EditText
-        android:id="@+id/lobbySelectDeck"
+        android:id="@+id/input_create_lobby_select_deck"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -114,10 +114,11 @@
         android:padding="10dp"
         android:textSize="22sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/valuePlayerCount" />
+        app:layout_constraintTop_toBottomOf="@+id/input_create_lobby_player_count" />
 
 
     <Button
+        android:id="@+id/btn_create_lobby_create_lobby"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -132,7 +133,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/button_SelectDeck"
+        android:id="@+id/btn_create_lobby_select_deck"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -143,11 +144,11 @@
         android:text="@string/button_SelectDeck"
         android:textColor="@android:color/white"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/lobbySelectDeck"
-        app:layout_constraintTop_toBottomOf="@+id/valuePlayerCount" />
+        app:layout_constraintStart_toEndOf="@+id/input_create_lobby_select_deck"
+        app:layout_constraintTop_toBottomOf="@+id/input_create_lobby_player_count" />
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/img_create_lobby_card_logo"
         android:layout_width="52dp"
         android:layout_height="71dp"
         android:layout_marginStart="16dp"
