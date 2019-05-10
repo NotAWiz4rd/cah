@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#EEEEEE"
+    tools:context=".gui.LobbyActivity">
+
+    <TextView
+        android:id="@+id/text_createLobby_gameName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:fontFamily="@font/helveticaneuebold"
+        android:text="@string/gameName"
+        android:textSize="40sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/img_create_lobby_card_logo"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/input_create_lobby_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/input_background_black"
+        android:fontFamily="@font/helveticaneuelight"
+        android:hint="@string/hint_lobbyname"
+        android:padding="10dp"
+        android:textSize="22sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_createLobby_gameName" />
+
+
+    <TextView
+        android:id="@+id/label_create_lobby_handcard_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="16dp"
+        android:fontFamily="@font/helveticaneuelight"
+        android:text="@string/label_handcardcount"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/input_create_lobby_name" />
+
+    <EditText
+        android:id="@+id/input_create_lobby_handcard_count"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="64dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/input_background_black"
+        android:fontFamily="@font/helveticaneuelight"
+        android:gravity="center"
+        android:hint="@string/placeholder_number1"
+        android:padding="10dp"
+        android:textSize="22sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/label_create_lobby_handcard_count"
+        app:layout_constraintTop_toBottomOf="@+id/input_create_lobby_name" />
+
+    <TextView
+        android:id="@+id/label_create_lobby_player_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="16dp"
+        android:fontFamily="@font/helveticaneuelight"
+        android:text="@string/label_PlayerCount"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/input_create_lobby_handcard_count" />
+
+    <EditText
+        android:id="@+id/input_create_lobby_player_count"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="64dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/input_background_black"
+        android:fontFamily="@font/helveticaneuelight"
+        android:gravity="center"
+        android:hint="@string/placeholder_number1"
+        android:padding="10dp"
+        android:textSize="22sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/label_create_lobby_handcard_count"
+        app:layout_constraintTop_toBottomOf="@+id/input_create_lobby_handcard_count" />
+
+    <EditText
+        android:id="@+id/input_create_lobby_select_deck"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/input_background_black"
+        android:fontFamily="@font/helveticaneuelight"
+        android:hint="@string/hint_DeckSelect"
+        android:padding="10dp"
+        android:textSize="22sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/input_create_lobby_player_count" />
+
+
+    <Button
+        android:id="@+id/btn_create_lobby_create_lobby"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="16dp"
+        android:padding="10dp"
+        android:textColor="@android:color/white"
+        android:background="@drawable/button_background_black"
+        android:text="@string/button_createLobby"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/btn_create_lobby_select_deck"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/button_background_black"
+        android:padding="10dp"
+        android:text="@string/button_SelectDeck"
+        android:textColor="@android:color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/input_create_lobby_select_deck"
+        app:layout_constraintTop_toBottomOf="@+id/input_create_lobby_player_count" />
+
+    <ImageView
+        android:id="@+id/img_create_lobby_card_logo"
+        android:layout_width="52dp"
+        android:layout_height="71dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/cardblack" />
+
+</android.support.constraint.ConstraintLayout>
