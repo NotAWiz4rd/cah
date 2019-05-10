@@ -1,8 +1,7 @@
-package com.afms.cahgame.gui;
+package com.afms.cahgame.gui.activitys;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
 
@@ -17,7 +16,7 @@ import com.afms.cahgame.game.Player;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LobbyActivity extends AppCompatActivity {
+public class create_lobby extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +28,7 @@ public class LobbyActivity extends AppCompatActivity {
     }
 
     private void createLobby() {
-        Intent intent = new Intent(this, GameScreen.class);
+        Intent intent = new Intent(this, game_screen.class);
         intent.putExtra("lobby", new Lobby("012", createSamplePlayers(), "Testlobby", "", Gamestate.START));
         intent.putExtra("deck", createSampleDeck());
         intent.putExtra("handcardcount", 6);

@@ -13,7 +13,7 @@
         tools:ignore="GoogleAppIndexingWarning"
         android:fullBackupContent="">
         <activity
-            android:name=".gui.FullscreenActivity"
+            android:name=".gui.activitys.Test"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name"
             android:theme="@style/FullscreenTheme">
@@ -24,7 +24,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".gui.LobbyActivity"
+            android:name=".gui.activitys.create_lobby"
             android:label="@string/title_activity_lobby"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -34,7 +34,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".gui.GameScreen"
+            android:name=".gui.activitys.game_screen"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_game_screen"
             android:theme="@style/FullscreenTheme" />

@@ -1,4 +1,4 @@
-package com.afms.cahgame.gui;
+package com.afms.cahgame.gui.activitys;
 
 import android.annotation.SuppressLint;
 import android.os.AsyncTask;
@@ -35,7 +35,7 @@ import java.util.concurrent.ExecutionException;
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
-public class GameScreen extends AppCompatActivity {
+public class game_screen extends AppCompatActivity {
     private static final String BACKEND_URL_GAMES = "https://api.mlab.com/api/1/databases/cah/collections/games?apiKey=06Yem6JpYP8TSlm48U-Ze0Tb49Gnu0NA";
 
     /**
