@@ -7,6 +7,17 @@
     android:background="#EEEEEE"
     tools:context=".gui.activitys.create_lobby">
 
+    <ImageButton
+        android:id="@+id/btn_create_lobby_back"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/ic_arrow_back_black_24dp"
+        android:backgroundTint="@color/cardview_dark_background"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/text_createLobby_gameName"
         android:layout_width="0dp"
@@ -21,7 +32,7 @@
         android:textSize="40sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/img_create_lobby_card_logo"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/btn_create_lobby_back" />
 
     <EditText
         android:id="@+id/input_create_lobby_name"
@@ -35,6 +46,8 @@
         android:hint="@string/hint_lobbyname"
         android:padding="10dp"
         android:textSize="22sp"
+        android:textColor="@color/inputTextColorBlack"
+        android:singleLine="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/text_createLobby_gameName" />
@@ -64,8 +77,12 @@
         android:background="@drawable/input_background_black"
         android:fontFamily="@font/helveticaneuelight"
         android:gravity="center"
-        android:hint="@string/placeholder_number1"
+        android:textColor="@color/inputTextColorBlack"
         android:padding="10dp"
+        android:clickable="true"
+        android:cursorVisible="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
         android:textSize="22sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/label_create_lobby_handcard_count"
@@ -95,9 +112,13 @@
         android:background="@drawable/input_background_black"
         android:fontFamily="@font/helveticaneuelight"
         android:gravity="center"
-        android:hint="@string/placeholder_number1"
+        android:textColor="@color/inputTextColorBlack"
         android:padding="10dp"
         android:textSize="22sp"
+        android:clickable="true"
+        android:cursorVisible="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/label_create_lobby_handcard_count"
         app:layout_constraintTop_toBottomOf="@+id/input_create_lobby_handcard_count" />
@@ -111,6 +132,11 @@
         android:background="@drawable/input_background_black"
         android:fontFamily="@font/helveticaneuelight"
         android:hint="@string/hint_DeckSelect"
+        android:clickable="true"
+        android:cursorVisible="false"
+        android:focusable="false"
+        android:textColor="@color/inputTextColorBlack"
+        android:focusableInTouchMode="false"
         android:padding="10dp"
         android:textSize="22sp"
         app:layout_constraintStart_toStartOf="parent"
@@ -154,7 +180,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="32dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_create_lobby_back"
         app:srcCompat="@drawable/cardblack" />
 
 </android.support.constraint.ConstraintLayout>

@@ -68,7 +68,7 @@ public class MainController {
     // get instances
 
     public FullSizeCard getFullSizeCardInstance(Card card) {
-        Log.d("Test", "test");
+        Log.d("test", "test");
         if (fullSizeCardList.stream().anyMatch(f -> f.getCard().equals(card))) {
             return fullSizeCardList.stream().filter(f -> f.getCard().equals(card)).findFirst().get();
         } else {
