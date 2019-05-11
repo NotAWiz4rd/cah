@@ -1,51 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0099cc"
+    android:background="#8D000000"
     tools:context=".gui.activitys.game_screen">
 
-    <!-- The primary full-screen view. This can be replaced with whatever view
-         is needed to present your content, e.g. VideoView, SurfaceView,
-         TextureView, etc. -->
-    <TextView
-        android:id="@+id/fullscreen_content"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:keepScreenOn="true"
-        android:text="@string/dummy_content"
-        android:textColor="#33b5e5"
-        android:textSize="50sp"
-        android:textStyle="bold" />
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/playedBlackCard"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/card_background_small_black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="p"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-    <!-- This FrameLayout insets its children based on system windows using
-         android:fitsSystemWindows. -->
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fitsSystemWindows="true">
-
-        <LinearLayout
-            android:id="@+id/fullscreen_content_controls"
-            style="?metaButtonBarStyle"
-            android:layout_width="match_parent"
+        <ImageView
+            android:id="@+id/cardIcon"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center_horizontal"
-            android:background="@color/black_overlay"
-            android:orientation="horizontal"
-            tools:ignore="UselessParent">
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:src="@drawable/cardblack"
+            app:layout_constraintBottom_toBottomOf="@id/playedBlackCard"
+            app:layout_constraintStart_toStartOf="@id/playedBlackCard"
+            app:layout_constraintTop_toTopOf="@id/playedBlackCard"
+            app:layout_constraintVertical_bias="0.0" />
 
-            <Button
-                android:id="@+id/dummy_button"
-                style="?metaButtonBarButtonStyle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/dummy_button" />
+        <TextView
+            android:id="@+id/blackCardText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:fontFamily="@font/helveticaneuebold"
+            android:justificationMode="inter_word"
+            android:text="@string/loremIpsum"
+            android:textColor="@android:color/white"
+            app:layout_constraintBottom_toBottomOf="@id/playedBlackCard"
+            app:layout_constraintEnd_toEndOf="@id/playedBlackCard"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@id/cardIcon"
+            app:layout_constraintTop_toTopOf="@id/playedBlackCard"
+            app:layout_constraintVertical_bias="0.0" />
 
-        </LinearLayout>
-    </FrameLayout>
 
-</FrameLayout>
+    </android.support.constraint.ConstraintLayout>
+
+    <include
+        android:id="@+id/include"
+        layout="@layout/layout_card"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/playedBlackCard" />
+
+
+</android.support.constraint.ConstraintLayout>

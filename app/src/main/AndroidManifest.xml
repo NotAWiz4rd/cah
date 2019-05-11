@@ -10,8 +10,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:ignore="GoogleAppIndexingWarning"
-        android:fullBackupContent="">
+        tools:ignore="GoogleAppIndexingWarning">
         <activity
             android:name=".gui.activitys.Test"
             android:configChanges="orientation|keyboardHidden|screenSize"
