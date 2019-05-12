@@ -13,7 +13,7 @@ import android.widget.Toast;
 
 import com.afms.cahgame.R;
 import com.afms.cahgame.game.Card;
-import com.afms.cahgame.game.Colour;
+import com.afms.cahgame.data.Colour;
 import com.afms.cahgame.game.Deck;
 import com.afms.cahgame.game.Game;
 import com.afms.cahgame.game.Lobby;

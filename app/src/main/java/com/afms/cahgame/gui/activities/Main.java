@@ -12,7 +12,7 @@ import android.widget.Toast;
 
 import com.afms.cahgame.R;
 import com.afms.cahgame.game.Card;
-import com.afms.cahgame.game.Colour;
+import com.afms.cahgame.data.Colour;
 import com.afms.cahgame.gui.components.FullSizeCard;
 import com.afms.cahgame.gui.components.SwipeResultListener;
 
@@ -58,6 +58,8 @@ public class Main extends AppCompatActivity {
         });
         btn_explore_decks.setOnClickListener(event -> {
             Toast.makeText(this, "clicked " + btn_explore_decks.toString(), Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, ExploreDecks.class);
+            startActivity(intent);
         });
         btn_settings.setOnClickListener(event -> {
             Toast.makeText(this, "clicked " + btn_settings.toString(), Toast.LENGTH_SHORT).show();

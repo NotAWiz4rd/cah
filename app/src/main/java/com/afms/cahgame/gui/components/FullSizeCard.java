@@ -5,7 +5,6 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.constraint.ConstraintLayout;
@@ -21,7 +20,7 @@ import android.widget.TextView;
 
 import com.afms.cahgame.R;
 import com.afms.cahgame.game.Card;
-import com.afms.cahgame.game.Colour;
+import com.afms.cahgame.data.Colour;
 
 import java.util.ArrayList;
 import java.util.List;

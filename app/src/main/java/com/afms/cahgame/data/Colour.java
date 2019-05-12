@@ -1,4 +1,4 @@
-package com.afms.cahgame.game;
+package com.afms.cahgame.data;
 
 import java.io.Serializable;
 

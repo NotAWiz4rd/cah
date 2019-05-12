@@ -18,7 +18,7 @@ import android.widget.Toast;
 
 import com.afms.cahgame.R;
 import com.afms.cahgame.game.Card;
-import com.afms.cahgame.game.Colour;
+import com.afms.cahgame.data.Colour;
 
 import java.util.ArrayList;
 import java.util.HashMap;

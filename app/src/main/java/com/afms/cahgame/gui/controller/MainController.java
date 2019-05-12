@@ -1,14 +1,13 @@
 package com.afms.cahgame.gui.controller;
 
 import android.app.Activity;
-import android.util.Log;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.afms.cahgame.R;
 import com.afms.cahgame.game.Card;
-import com.afms.cahgame.game.Colour;
+import com.afms.cahgame.data.Colour;
 import com.afms.cahgame.gui.components.CardListAdapter;
 import com.afms.cahgame.gui.components.FullSizeCard;
 
