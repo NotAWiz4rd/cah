@@ -30,4 +30,5 @@
     <string name="select_player_count">Select player count</string>
     <string name="select_handcard_count">Select handcard count</string>
     <string name="start_game">Start Game</string>
+    <string name="no_password">No password</string>
 </resources>

@@ -22,9 +22,21 @@ import android.widget.TextView;
 import com.afms.cahgame.R;
 import com.afms.cahgame.game.Card;
 import com.afms.cahgame.game.Colour;
-import com.afms.cahgame.gui.controller.MainController;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class FullSizeCard extends ConstraintLayout {
+
+    public static int SWIPE_DISABLE = 0;
+    public static int SWIPE_ALL_DIRECTION = 1;
+    public static int SWIPE_Y_AXIS = 2;
+    public static int SWIPE_X_AXIS = 3;
+    public static int SWIPE_LEFT = 4;
+    public static int SWIPE_RIGHT = 5;
+    public static int SWIPE_UP = 6;
+    public static int SWIPE_DOWN = 7;
+
 
     private EditText fullSizeCardText;
     private LinearLayout fullSizeCardLayout;
@@ -38,16 +50,20 @@ public class FullSizeCard extends ConstraintLayout {
     private float movedPosX;
     private int[] oldLocation = new int[2];
     private boolean switchedCard = true;
+    private SwipeResultListener swipeResultListener;
+    private List<Integer> swipeStates;
 
-    private Activity mainActivity;
-    private MainController mainController;
+    public void setSwipeResultListener(SwipeResultListener swipeResultListener) {
+        this.swipeResultListener = swipeResultListener;
+    }
 
     @SuppressLint("ClickableViewAccessibility")
-    public FullSizeCard(Context context, MainController mainController, Card card) {
+    public FullSizeCard(Context context, Card card) {
         super(context);
         this.card = card;
-        mainActivity = (Activity) context;
-        this.mainController = mainController;
+        swipeStates = new ArrayList<>();
+        swipeStates.add(SWIPE_DISABLE);
+
         LayoutInflater.from(context).inflate(R.layout.fullsize_card_options, this);
         setOnClickListener(v -> {
         });
@@ -89,35 +105,52 @@ public class FullSizeCard extends ConstraintLayout {
 
         fullSizeCardLayout.setOnTouchListener((v, event) -> {
             switchedCard = false;
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    downPosY = event.getY();
-                    downPosX = event.getX();
-                    break;
-                case MotionEvent.ACTION_MOVE:
-                    movedPosY = event.getY();
-                    movedPosX = event.getX();
-                    v.setY(v.getY() + movedPosY - downPosY);
-                    v.setX(v.getX() + movedPosX - downPosX);
-                    break;
-                case MotionEvent.ACTION_UP:
-                    if (v.getY() > -500 && v.getX() < 300 && v.getX() > -200) {
-                        v.setY(oldLocation[1]);
-                        v.setX(oldLocation[0]);
-                    } else if (v.getX() > 300) {
-                        generateAnimation(v, "translationX", 1000f, 300, mainController, 1);
-                    } else if (v.getX() < -200) {
-                        generateAnimation(v, "translationX", -1000f, 300, mainController, 2);
-                    } else {
-                        generateAnimation(v, "translationY", -1800f, 400, mainController, 0);
-                    }
-                    break;
+            if(!swipeStates.contains(SWIPE_DISABLE)){
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        downPosY = event.getY();
+                        downPosX = event.getX();
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        movedPosY = event.getY();
+                        movedPosX = event.getX();
+                        if(swipeStates.contains(SWIPE_ALL_DIRECTION) || swipeStates.contains(SWIPE_Y_AXIS)){
+                            v.setY(v.getY() + movedPosY - downPosY);
+                        } else if (swipeStates.contains(SWIPE_UP)) {
+                            v.setY(v.getY() + Math.min(downPosY, movedPosY) - downPosY);
+                        } else if (swipeStates.contains(SWIPE_DOWN)) {
+                            v.setY(v.getY() + Math.max(downPosY, movedPosY) - downPosY);
+                        }
+                        if(swipeStates.contains(SWIPE_ALL_DIRECTION) || swipeStates.contains(SWIPE_X_AXIS)){
+                            v.setX(v.getX() + movedPosX - downPosX);
+                        }
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        if (v.getY() > -500 && v.getX() < 300 && v.getX() > -200) {
+                            v.setY(oldLocation[1]);
+                            v.setX(oldLocation[0]);
+                        } else if (v.getX() > 300) {
+                            generateAnimation(v, "translationX", 1000f, 300, 1);
+                        } else if (v.getX() < -200) {
+                            generateAnimation(v, "translationX", -1000f, 300, 2);
+                        } else {
+                            generateAnimation(v, "translationY", -1800f, 400, 0);
+                        }
+                        break;
+                }
             }
             return false;
         });
     }
 
-    private void generateAnimation(View v, String translation, float value, int duration, MainController finalMainController, int prevOrNext) {
+    public void setSwipeGestures(int... states){
+        swipeStates.clear();
+        for(Integer state : states){
+            swipeStates.add(state);
+        }
+    }
+
+    private void generateAnimation(View v, String translation, float value, int duration, int direction) {
         ObjectAnimator animation = ObjectAnimator.ofFloat(v, translation, value);
         animation.setDuration(duration);
         animation.addListener(new AnimatorListenerAdapter() {
@@ -127,13 +160,21 @@ public class FullSizeCard extends ConstraintLayout {
                 ((ViewManager) v.getParent().getParent().getParent()).removeView(((View) v.getParent().getParent()));
                 v.setX(oldLocation[0]);
                 v.setY(oldLocation[1]);
-                switch (prevOrNext) {
-                    case 1:
-                        finalMainController.showPreviousViewFromList();
-                        break;
-                    case 2:
-                        finalMainController.showNextViewFromList();
-                        break;
+                if(swipeResultListener != null){
+                    switch (direction) {
+                        case 0:
+                            swipeResultListener.onSwipeUp();
+                            break;
+                        case 1:
+                            swipeResultListener.onSwipeRight();
+                            break;
+                        case 2:
+                            swipeResultListener.onSwipeLeft();
+                            break;
+                        case 3:
+                            swipeResultListener.onSwipeDown();
+                            break;
+                    }
                 }
                 switchedCard = true;
             }

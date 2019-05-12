@@ -6,23 +6,31 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.afms.cahgame.R;
+import com.afms.cahgame.game.Card;
+import com.afms.cahgame.game.Colour;
+import com.afms.cahgame.gui.components.FullSizeCard;
+import com.afms.cahgame.gui.components.SwipeResultListener;
 
 public class Main extends AppCompatActivity {
 
     // ui elements
+    private FrameLayout contentView;
     private Button btn_create_lobby;
     private Button btn_search_lobby;
     private Button btn_explore_decks;
     private ImageButton btn_settings;
 
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        contentView = findViewById(R.id.layout_main);
         hideUI();
         initializeUIElements();
         initializeUIEvents();
@@ -53,6 +61,30 @@ public class Main extends AppCompatActivity {
         });
         btn_settings.setOnClickListener(event -> {
             Toast.makeText(this, "clicked " + btn_settings.toString(), Toast.LENGTH_SHORT).show();
+            FullSizeCard fullSizeCard = new FullSizeCard(this, new Card(Colour.WHITE, "Test"));
+            fullSizeCard.setSwipeGestures(FullSizeCard.SWIPE_UP);
+            fullSizeCard.setSwipeResultListener(new SwipeResultListener() {
+                @Override
+                public void onSwipeLeft() {
+                    Toast.makeText(getApplicationContext(), "left", Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onSwipeRight() {
+                    Toast.makeText(getApplicationContext(), "right", Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onSwipeUp() {
+                    Toast.makeText(getApplicationContext(), "up", Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onSwipeDown() {
+                    Toast.makeText(getApplicationContext(), "down", Toast.LENGTH_SHORT).show();
+                }
+            });
+            contentView.addView(fullSizeCard);
         });
     }
 

@@ -162,14 +162,6 @@ public class CreateLobby extends AppCompatActivity {
         input_handcard_count.setOnClickListener(event -> value_selector_handcard_count.show(getSupportFragmentManager(), "value_selector_handcard_count"));
     }
 
-    public void setValue_player_count(int value_player_count) {
-        this.value_player_count.setValue(value_player_count);
-    }
-
-    public void setValue_handcard_count(int value_handcard_count) {
-        this.value_handcard_count.setValue(value_handcard_count);
-    }
-
     private void createLobby() {
         Intent intent = new Intent(this, GameScreen.class);
         intent.putExtra("game", new Game(createSampleDeck(), createSamplePlayers(), Integer.parseInt(input_handcard_count.getText().toString())));

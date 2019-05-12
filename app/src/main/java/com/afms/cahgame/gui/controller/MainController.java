@@ -61,12 +61,13 @@ public class MainController {
             selectedListViewPosition = position;
             Toast.makeText(mainActivity, String.valueOf(selectedListViewPosition), Toast.LENGTH_SHORT).show();
             Card card = (Card) parent.getItemAtPosition(selectedListViewPosition);
-            mainFrame.addView(getFullSizeCardInstance(card));
+            //mainFrame.addView(getFullSizeCardInstance(card));
         });
     }
 
     // get instances
 
+/*
     public FullSizeCard getFullSizeCardInstance(Card card) {
         Log.d("Test", "Test");
         if (fullSizeCardList.stream().anyMatch(f -> f.getCard().equals(card))) {
@@ -77,12 +78,13 @@ public class MainController {
             return returnValue;
         }
     }
+*/
 
     public void showNextViewFromList() {
         int nextPos = (selectedListViewPosition + 1) % userSelectionListView.getCount();
         selectedListViewPosition = nextPos;
         Toast.makeText(mainActivity, String.valueOf(nextPos), Toast.LENGTH_SHORT).show();
-        mainFrame.addView(getFullSizeCardInstance((Card) userSelectionListView.getItemAtPosition(nextPos)));
+        //mainFrame.addView(getFullSizeCardInstance((Card) userSelectionListView.getItemAtPosition(nextPos)));
     }
 
 
@@ -93,7 +95,7 @@ public class MainController {
         }
         selectedListViewPosition = nextPos;
         Toast.makeText(mainActivity, String.valueOf(nextPos), Toast.LENGTH_SHORT).show();
-        mainFrame.addView(getFullSizeCardInstance((Card) userSelectionListView.getItemAtPosition(nextPos)));
+        //mainFrame.addView(getFullSizeCardInstance((Card) userSelectionListView.getItemAtPosition(nextPos)));
     }
 
 }
