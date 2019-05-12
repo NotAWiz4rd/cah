@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#EEEEEE"
-    tools:context=".gui.activitys.create_lobby">
+    tools:context=".gui.activities.CreateLobby">
 
     <ImageButton
         android:id="@+id/btn_create_lobby_back"
@@ -48,6 +48,26 @@
         app:layout_constraintTop_toBottomOf="@id/component_create_lobby_logo" />
 
 
+    <EditText
+        android:id="@+id/input_create_lobby_password"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/input_background_black"
+        android:fontFamily="@font/helveticaneuelight"
+        android:hint="@string/no_password"
+        android:padding="10dp"
+        android:inputType="textPassword"
+        android:singleLine="true"
+        android:textColor="@color/inputTextColorBlack"
+        android:textSize="22sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/input_create_lobby_name" />
+
+
     <TextView
         android:id="@+id/label_create_lobby_handcard_count"
         android:layout_width="wrap_content"
@@ -55,12 +75,12 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginStart="28dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:fontFamily="@font/helveticaneuelight"
         android:text="@string/label_handcardcount"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/input_create_lobby_name" />
+        app:layout_constraintTop_toTopOf="@+id/input_create_lobby_handcard_count" />
 
     <EditText
         android:id="@+id/input_create_lobby_handcard_count"
@@ -70,18 +90,18 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:background="@drawable/input_background_black"
-        android:fontFamily="@font/helveticaneuelight"
-        android:gravity="center"
-        android:textColor="@color/inputTextColorBlack"
-        android:padding="10dp"
         android:clickable="true"
         android:cursorVisible="false"
         android:focusable="false"
         android:focusableInTouchMode="false"
+        android:fontFamily="@font/helveticaneuelight"
+        android:gravity="center"
+        android:padding="10dp"
+        android:textColor="@color/inputTextColorBlack"
         android:textSize="22sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/label_create_lobby_handcard_count"
-        app:layout_constraintTop_toBottomOf="@+id/input_create_lobby_name" />
+        app:layout_constraintTop_toBottomOf="@+id/input_create_lobby_password" />
 
     <TextView
         android:id="@+id/label_create_lobby_player_count"
