@@ -1,7 +1,6 @@
-package com.afms.cahgame.gui.activitys;
+package com.afms.cahgame.gui.activities;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -12,7 +11,7 @@ import android.widget.Toast;
 
 import com.afms.cahgame.R;
 
-public class main extends AppCompatActivity {
+public class Main extends AppCompatActivity {
 
     // ui elements
     private Button btn_create_lobby;
@@ -39,7 +38,7 @@ public class main extends AppCompatActivity {
     private void initializeUIEvents(){
         btn_create_lobby.setOnClickListener(event -> {
             Toast.makeText(this, "clicked " + btn_create_lobby.toString(), Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(this, create_lobby.class));
+            startActivity(new Intent(this, CreateLobby.class));
         });
         btn_search_lobby.setOnClickListener(event -> {
             Toast.makeText(this, "clicked " + btn_search_lobby.toString(), Toast.LENGTH_SHORT).show();

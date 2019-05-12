@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#8D000000"
-    tools:context=".gui.activitys.game_screen">
+    tools:context=".gui.activities.GameScreen">
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/layout_game_screen_playedBlackCard"
