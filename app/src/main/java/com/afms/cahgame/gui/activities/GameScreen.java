@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 
 import com.afms.cahgame.R;
@@ -16,8 +17,11 @@ import com.afms.cahgame.game.Game;
 import com.afms.cahgame.game.Gamestate;
 import com.afms.cahgame.game.Lobby;
 import com.afms.cahgame.game.Player;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 
 import java.io.BufferedReader;
@@ -62,6 +66,27 @@ public class GameScreen extends AppCompatActivity {
         String hostName = (String) getIntent().getSerializableExtra("host");
 
         saveInfo();
+
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("message");
+
+        myRef.setValue("Hello, World!");
+
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // This method is called once with the initial value and again
+                // whenever data at this location is updated.
+                String value = dataSnapshot.getValue(String.class);
+                Log.d("BLUB", "Value is: " + value);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.w("BLUB", "Failed to read value.", error.toException());
+            }
+        });
 
         if (hostName != null && hostName.equals(playerName)) {
             Deck deck = (Deck) getIntent().getSerializableExtra("deck");
