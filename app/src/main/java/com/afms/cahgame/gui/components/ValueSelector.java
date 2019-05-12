@@ -15,7 +15,6 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.afms.cahgame.R;
 
@@ -61,7 +60,6 @@ public class ValueSelector extends DialogFragment {
             btn.setLayoutParams(params);
             btn.setText(value);
             btn.setOnClickListener(event -> {
-                Toast.makeText(flowLayout.getContext(), "clicked " + btn.toString() + value, Toast.LENGTH_SHORT).show();
                 resultListener.onItemClick(String.valueOf(btn.getText()));
                 getDialog().dismiss();
             });
