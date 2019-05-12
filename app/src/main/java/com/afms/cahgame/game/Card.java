@@ -10,6 +10,9 @@ public class Card extends ViewModel implements Serializable {
     private String text;
     private Player owner;
 
+    public Card() {
+    }
+
     public Card(Colour colour, String text) {
         this.colour = colour;
         this.text = text;

@@ -66,7 +66,7 @@ public class Game {
             throw new MissingOwnerException();
         }
 
-        playedCards.add(card);
+        playedCards.add(card); // todo this needs to be in the lobby as well (?)
     }
 
     public void submitWinningCard(Card card) {

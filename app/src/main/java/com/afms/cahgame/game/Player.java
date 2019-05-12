@@ -10,6 +10,9 @@ public class Player implements Serializable {
     private int score;
     private boolean isReady;
 
+    public Player() {
+    }
+
     public Player(String name, ArrayList<Card> hand) {
         this.name = name;
         this.hand = hand;

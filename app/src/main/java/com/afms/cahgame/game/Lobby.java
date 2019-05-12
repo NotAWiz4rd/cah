@@ -10,6 +10,10 @@ public class Lobby implements Serializable {
     private String password;
     private Gamestate gamestate;
 
+    public Lobby() {
+
+    }
+
     public Lobby(String id, List<Player> players, String name, String password, Gamestate state) {
         this._id = id;
         this.players = players;

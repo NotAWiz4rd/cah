@@ -119,6 +119,7 @@ public class CreateLobby extends AppCompatActivity {
         intent.putExtra("deck", createSampleDeck());
         intent.putExtra("handcardcount", 6);
         intent.putExtra("name", "Player1");
+        intent.putExtra("host", "Player1");
         startActivity(intent);
     }
 

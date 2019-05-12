@@ -2,8 +2,8 @@ package com.afms.cahgame.gui.activities;
 
 import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.OnLifecycleEvent;
+import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -22,32 +22,20 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.gson.Gson;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
 public class GameScreen extends AppCompatActivity {
-    private static final String BACKEND_URL_GAMES = "https://api.mlab.com/api/1/databases/cah/collections/games?apiKey=06Yem6JpYP8TSlm48U-Ze0Tb49Gnu0NA";
     private Game game;
     private Player player;
     private Lobby lobby;
-    private Gamestate gamestate = Gamestate.START;
+
+    private FirebaseDatabase database;
+    private DatabaseReference lobbyReference;
 
     private SharedPreferences settings;
 
@@ -67,24 +55,24 @@ public class GameScreen extends AppCompatActivity {
 
         saveInfo();
 
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("message");
+        database = FirebaseDatabase.getInstance();
+        lobbyReference = database.getReference(lobby.getId());
 
-        myRef.setValue("Hello, World!");
-
-        myRef.addValueEventListener(new ValueEventListener() {
+        lobbyReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated.
-                String value = dataSnapshot.getValue(String.class);
-                Log.d("BLUB", "Value is: " + value);
+                lobby = dataSnapshot.getValue(Lobby.class);
+                Log.d("CHECK", "Value is: " + lobby);
+                updatePlayer();
+                gameStateLoop();
             }
 
             @Override
             public void onCancelled(DatabaseError error) {
                 // Failed to read value
-                Log.w("BLUB", "Failed to read value.", error.toException());
+                Log.w("ERROR", "Failed to read value.", error.toException());
             }
         });
 
@@ -92,38 +80,6 @@ public class GameScreen extends AppCompatActivity {
             Deck deck = (Deck) getIntent().getSerializableExtra("deck");
             int handCardCount = (int) getIntent().getSerializableExtra("handcardcount");
             startGame(deck, handCardCount);
-        } else {
-            gameStartClient();
-        }
-    }
-
-    private void gameStartClient() {
-        updateLobby(lobby.getId());
-    }
-
-    /**
-     * Gets lobby from server if current gamestate is the same as the lobbyGamestate,
-     * updates Player, then waits half a second before calling itself again.
-     * Calls gamestateLoop if lobby has a different gamestate than the current one.
-     *
-     * @param lobbyId Current lobbyId
-     */
-    private void updateLobby(String lobbyId) {
-        if (lobby.getGamestate() == gamestate) {
-            try {
-                lobby = new GetCurrentLobby().execute(lobbyId).get();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } finally {
-                updatePlayer();
-                Handler handler = new Handler();
-                handler.postDelayed(() -> updateLobby(lobbyId), 500);
-            }
-        } else {
-            gamestate = lobby.getGamestate();
-            gameStateLoop();
         }
     }
 
@@ -136,6 +92,13 @@ public class GameScreen extends AppCompatActivity {
      * Executes things based on the current gamestate of the lobby
      */
     private void gameStateLoop() {
+        if (lobby == null) {
+            try {
+                throw new Exception("Something went terribly wrong...");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         switch (lobby.getGamestate()) {
             case START:
                 onStartGamestate();
@@ -162,8 +125,6 @@ public class GameScreen extends AppCompatActivity {
         if (currentPlayerIsCardSzar()) {
             updatePlayer();
             onRoundStartGamestate();
-        } else {
-            updateLobby(lobby.getId());
         }
     }
 
@@ -243,19 +204,11 @@ public class GameScreen extends AppCompatActivity {
      * if not: waits 1000ms, then calls itself again
      */
     private boolean waitForPlayers() {
-        try {
-            lobby = new GetCurrentLobby().execute(lobby.getId()).get();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } finally {
-            if (!lobby.allPlayersReady()) {
-                Handler handler = new Handler();
-                handler.postDelayed(this::waitForPlayers, 1000);
-            } else {
-                return true;
-            }
+        if (!lobby.allPlayersReady()) {
+            Handler handler = new Handler();
+            handler.postDelayed(this::waitForPlayers, 500);
+        } else {
+            return true;
         }
         return false;
     }
@@ -310,18 +263,12 @@ public class GameScreen extends AppCompatActivity {
         super.onResume();
 
         player = new Player(settings.getString("player", ""));
-        try {
-            lobby = new GetCurrentLobby().execute(settings.getString("lobbyId", "")).get();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } finally {
-            if (lobby == null) {
-                // todo throw player into lobby browser with message that lobby couldnt be found
-            } else {
-                gameStateLoop();
-            }
+        if (lobby == null) {
+            Intent intent = new Intent(this, Main.class);
+            intent.putExtra("message", "Your lobby couldn't be found.");
+            startActivity(intent);
+        } else {
+            gameStateLoop();
         }
     }
 
@@ -331,6 +278,10 @@ public class GameScreen extends AppCompatActivity {
         editor.putString("lobbyId", lobby.getId());
 
         editor.apply();
+    }
+
+    private void submitLobby() {
+        lobbyReference.setValue(lobby);
     }
 
     /**
@@ -343,98 +294,6 @@ public class GameScreen extends AppCompatActivity {
                 submitLobby();
                 return;
             }
-        }
-    }
-
-    private void submitLobby() {
-        new SubmitGameToServer().execute(convertToJson(lobby));
-    }
-
-    private String convertToJson(Lobby lobby) {
-        Gson gson = new Gson();
-        return gson.toJson(lobby);
-    }
-
-    /**
-     * Input lobby as String (?)
-     */
-    static class SubmitGameToServer extends AsyncTask<String, Void, Void> {
-        @Override
-        protected Void doInBackground(String... strings) {
-            HttpURLConnection con = null;
-            try {
-                URL url = new URL(BACKEND_URL_GAMES);
-                con = (HttpURLConnection) url.openConnection();
-                con.setRequestMethod("POST");
-                con.setRequestProperty("Content-Type", "application/json");
-                con.setConnectTimeout(5000);
-                con.setReadTimeout(5000);
-                con.setDoOutput(true);
-
-                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(con.getOutputStream(), StandardCharsets.UTF_8));
-                writer.write(strings[0]);
-                writer.flush();
-                writer.close();
-
-                con.connect();
-
-                con.getResponseMessage();
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (ProtocolException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                if (con != null) {
-                    con.disconnect();
-                }
-            }
-            return null;
-        }
-    }
-
-    /**
-     * Input lobbyId into doInBackground()
-     */
-    static class GetCurrentLobby extends AsyncTask<String, Void, Lobby> {
-        @Override
-        protected Lobby doInBackground(String... strings) {
-            StringBuilder content = new StringBuilder();
-            HttpURLConnection con = null;
-            try {
-                URL url = new URL(BACKEND_URL_GAMES);
-                con = (HttpURLConnection) url.openConnection();
-                con.setRequestMethod("GET");
-                con.setRequestProperty("Content-Type", "application/json");
-                con.setConnectTimeout(5000);
-                con.setReadTimeout(5000);
-
-                BufferedReader in = new BufferedReader(
-                        new InputStreamReader(con.getInputStream()));
-                String inputLine;
-                while ((inputLine = in.readLine()) != null) {
-                    content.append(inputLine);
-                }
-                in.close();
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                if (con != null) {
-                    con.disconnect();
-                }
-            }
-
-            return buildLobbyFromString(content.toString(), strings[0]);
-        }
-
-        private Lobby buildLobbyFromString(String lobbyJson, String lobbyId) {
-            Gson gson = new Gson();
-            Lobby[] lobbies = gson.fromJson(lobbyJson, Lobby[].class);
-            Optional<Lobby> lobby = Arrays.stream(lobbies).filter(internalLobby -> internalLobby.getId().equals(lobbyId)).findFirst();
-            return lobby.orElse(null);
         }
     }
 
