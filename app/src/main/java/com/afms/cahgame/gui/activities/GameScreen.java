@@ -34,8 +34,8 @@ public class GameScreen extends AppCompatActivity {
     private Player player;
     private Lobby lobby;
 
-    private FirebaseDatabase database;
     private DatabaseReference lobbyReference;
+    private DatabaseReference gameReference;
 
     private SharedPreferences settings;
 
@@ -55,8 +55,9 @@ public class GameScreen extends AppCompatActivity {
 
         saveInfo();
 
-        database = FirebaseDatabase.getInstance();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
         lobbyReference = database.getReference(lobby.getId());
+        gameReference = database.getReference(lobby.getId() + "-game");
 
         lobbyReference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -64,9 +65,21 @@ public class GameScreen extends AppCompatActivity {
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated.
                 lobby = dataSnapshot.getValue(Lobby.class);
-                Log.d("CHECK", "Value is: " + lobby);
                 updatePlayer();
                 gameStateLoop();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.w("ERROR", "Failed to read value.", error.toException());
+            }
+        });
+
+        gameReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                game = dataSnapshot.getValue(Game.class);
             }
 
             @Override
@@ -123,8 +136,9 @@ public class GameScreen extends AppCompatActivity {
 
     private void onStartGamestate() {
         if (currentPlayerIsCardSzar()) {
-            updatePlayer();
             onRoundStartGamestate();
+            advanceGamestate();
+            submitLobby();
         }
     }
 
@@ -138,13 +152,6 @@ public class GameScreen extends AppCompatActivity {
             this.player.setReady(true);
             submitLobbyPlayer();
         }
-    }
-
-    private boolean currentPlayerIsCardSzar() {
-        if (game == null || game.getCardCzar() == null) {
-            return false;
-        }
-        return game.getCardCzar().getName().equals(player.getName());
     }
 
     private void onSubmitGamestate() {
@@ -177,7 +184,14 @@ public class GameScreen extends AppCompatActivity {
     }
 
     private void onGamestateError() {
-        // todo What should happen here? Display error and quit lobby?
+        quitGame("Something went horribly wrong...");
+    }
+
+    private boolean currentPlayerIsCardSzar() {
+        if (game == null || game.getCardCzar() == null) {
+            return false;
+        }
+        return game.getCardCzar().getName().equals(player.getName());
     }
 
     /**
@@ -248,6 +262,7 @@ public class GameScreen extends AppCompatActivity {
                     lobby.setGamestate(Gamestate.ROUNDSTART);
                     break;
             }
+            submitLobby();
         }
     }
 
@@ -264,12 +279,16 @@ public class GameScreen extends AppCompatActivity {
 
         player = new Player(settings.getString("player", ""));
         if (lobby == null) {
-            Intent intent = new Intent(this, Main.class);
-            intent.putExtra("message", "Your lobby couldn't be found.");
-            startActivity(intent);
+            quitGame("Lobby couldn't be found.");
         } else {
             gameStateLoop();
         }
+    }
+
+    private void quitGame(String message) {
+        Intent intent = new Intent(this, Main.class);
+        intent.putExtra("message", message.length() > 0 ? message : "Your lobby couldn't be found.");
+        startActivity(intent);
     }
 
     private void saveInfo() {
