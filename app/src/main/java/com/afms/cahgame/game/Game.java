@@ -4,7 +4,6 @@ package com.afms.cahgame.game;
 import com.afms.cahgame.exceptions.MissingOwnerException;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Game {
@@ -19,15 +18,23 @@ public class Game {
     private Card currentBlackCard;
     private List<Card> playedCards;
 
+    public Game() {
+        this.players = new ArrayList<>();
+        this.discardPile = new ArrayList<>();
+        this.newCardsPile = new ArrayList<>();
+        this.blackCardsPile = new ArrayList<>();
+        this.playedCards = new ArrayList<>();
+    }
+
     public Game(Deck deck, List<Player> players, int handCardCount) {
         this.deck = deck;
         this.players = removeDuplicates(players);
         this.cardCzar = players.get(0);
         this.discardPile = new ArrayList<>();
         this.newCardsPile = new ArrayList<>();
-        newCardsPile.addAll(Arrays.asList(deck.getWhiteCards()));
+        newCardsPile.addAll(deck.getWhiteCards());
         this.blackCardsPile = new ArrayList<>();
-        blackCardsPile.addAll(Arrays.asList(deck.getBlackCards()));
+        blackCardsPile.addAll(deck.getBlackCards());
         this.playedCards = new ArrayList<>();
         this.handCardCount = handCardCount;
 
@@ -57,6 +64,10 @@ public class Game {
     public void startNewRound() {
         discardPile.addAll(playedCards);
         playedCards = new ArrayList<>();
+
+        if (blackCardsPile.size() == 0) {
+            blackCardsPile = deck.getBlackCards();
+        }
         currentBlackCard = blackCardsPile.remove(blackCardsPile.size() - 1);
         drawCards();
     }
@@ -66,7 +77,7 @@ public class Game {
             throw new MissingOwnerException();
         }
 
-        playedCards.add(card); // todo this needs to be in the lobby as well (?)
+        playedCards.add(card);
     }
 
     public void submitWinningCard(Card card) {
@@ -172,5 +183,13 @@ public class Game {
 
     public void setPlayedCards(List<Card> playedCards) {
         this.playedCards = playedCards;
+    }
+
+    public List<Player> getPlayers() {
+        return players;
+    }
+
+    public void setPlayers(List<Player> players) {
+        this.players = players;
     }
 }

@@ -34,6 +34,8 @@ public class GameScreen extends AppCompatActivity {
     private Player player;
     private Lobby lobby;
 
+    private Gamestate lastGamestate;
+
     private DatabaseReference lobbyReference;
     private DatabaseReference gameReference;
 
@@ -65,8 +67,14 @@ public class GameScreen extends AppCompatActivity {
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated.
                 lobby = dataSnapshot.getValue(Lobby.class);
-                updatePlayer();
-                gameStateLoop();
+                if (lobby != null) {
+                    game.players = lobby.players;
+                    updatePlayer();
+                    if (lobby.getGamestate() != lastGamestate) {
+                        lastGamestate = lobby.getGamestate();
+                        gameStateLoop();
+                    }
+                }
             }
 
             @Override
@@ -80,6 +88,10 @@ public class GameScreen extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 game = dataSnapshot.getValue(Game.class);
+                if (game != null) {
+                    lobby.players = game.players;
+                    updatePlayer();
+                }
             }
 
             @Override
@@ -106,11 +118,7 @@ public class GameScreen extends AppCompatActivity {
      */
     private void gameStateLoop() {
         if (lobby == null) {
-            try {
-                throw new Exception("Something went terribly wrong...");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            quitGame("Something went terribly wrong...");
         }
         switch (lobby.getGamestate()) {
             case START:
@@ -138,30 +146,29 @@ public class GameScreen extends AppCompatActivity {
         if (currentPlayerIsCardSzar()) {
             onRoundStartGamestate();
             advanceGamestate();
-            submitLobby();
         }
     }
 
     private void onRoundStartGamestate() {
         if (currentPlayerIsCardSzar()) {
             game.startNewRound();
-            this.player.setReady(true);
-            submitLobbyPlayer();
+            submitGame();
             advanceGamestate();
-        } else {
-            this.player.setReady(true);
-            submitLobbyPlayer();
         }
+        setPlayerReady();
     }
 
     private void onSubmitGamestate() {
         // todo show new cards and black card
 
         // todo enable user to submit a card from his hand
-        this.player.setReady(true);
 
         if (!currentPlayerIsCardSzar()) {
             submitCard(player.getHand().remove(0)); // todo for testing only
+            setPlayerReady();
+        } else {
+            setPlayerReady();
+            advanceGamestate();
         }
 
         // then wait for input -> do nothing here
@@ -170,17 +177,23 @@ public class GameScreen extends AppCompatActivity {
 
     private void onWaitingGamestate() {
         // todo display "waiting for cardszar to choose winning card"
-        this.player.setReady(true);
-        submitLobbyPlayer();
+        if (currentPlayerIsCardSzar()) {
+            game.submitWinningCard(game.getPlayedCards().get(0)); // todo cardszar chooses winning card from played Cards
+            submitGame();
+            advanceGamestate();
+        }
+
+        setPlayerReady();
     }
 
     private void onRoundEndGamestate() {
         if (currentPlayerIsCardSzar()) {
             game.nextCardSzar();
+            submitGame();
+            advanceGamestate();
         }
         // todo notify player of winning card (only if player is not cardszar), show updated scores
-        this.player.setReady(true);
-        submitLobbyPlayer();
+        setPlayerReady();
     }
 
     private void onGamestateError() {
@@ -208,39 +221,24 @@ public class GameScreen extends AppCompatActivity {
         lobby.players = game.players;
         lobby.setGamestate(Gamestate.START);
 
+        submitGame();
         submitLobby();
+        updatePlayer();
         gameStateLoop();
     }
 
-    /**
-     * Updates lobby, then checks if all players are ready.
-     * If players ready: Executes Gamestateloop
-     * if not: waits 1000ms, then calls itself again
-     */
-    private boolean waitForPlayers() {
-        if (!lobby.allPlayersReady()) {
-            Handler handler = new Handler();
-            handler.postDelayed(this::waitForPlayers, 500);
-        } else {
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Submits a card.
-     *
-     * @param card Card to sumbit.
-     */
-    private void submitCard(Card card) {
-        card.setOwner(player);
-        game.submitCard(card);
+    private void setPlayerReady() {
+        this.player.setReady(true);
         submitLobbyPlayer();
     }
 
+    /**
+     * Advances Gamestate if all players in lobby are ready, submits lobby after advancing.
+     */
     private void advanceGamestate() {
-        if (!waitForPlayers()) {
-            advanceGamestate();
+        if (!lobby.allPlayersReady()) {
+            Handler handler = new Handler();
+            handler.postDelayed(this::advanceGamestate, 500);
         } else {
             switch (lobby.getGamestate()) {
                 case START:
@@ -297,6 +295,22 @@ public class GameScreen extends AppCompatActivity {
         editor.putString("lobbyId", lobby.getId());
 
         editor.apply();
+    }
+
+    /**
+     * Submits a card.
+     *
+     * @param card Card to sumbit.
+     */
+    private void submitCard(Card card) {
+        card.setOwner(player);
+        game.submitCard(card);
+        submitGame();
+        submitLobbyPlayer();
+    }
+
+    private void submitGame() {
+        gameReference.setValue(game);
     }
 
     private void submitLobby() {

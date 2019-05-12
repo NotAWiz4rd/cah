@@ -20,6 +20,7 @@ import com.afms.cahgame.game.Player;
 import com.afms.cahgame.gui.components.ValueSelector;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class CreateLobby extends AppCompatActivity {
@@ -127,8 +128,8 @@ public class CreateLobby extends AppCompatActivity {
         return new Deck("testdeck", getSampleWhiteCards(), getSampleBlackCards());
     }
 
-    private Card[] getSampleBlackCards() {
-        return new Card[]{
+    private List<Card> getSampleBlackCards() {
+        return Arrays.asList(
                 new Card(Colour.BLACK, "Black Lorem Ipsum0"),
                 new Card(Colour.BLACK, "Black Lorem Ipsum1"),
                 new Card(Colour.BLACK, "Black Lorem Ipsum2"),
@@ -137,12 +138,11 @@ public class CreateLobby extends AppCompatActivity {
                 new Card(Colour.BLACK, "Black Lorem Ipsum5"),
                 new Card(Colour.BLACK, "Black Lorem Ipsum6"),
                 new Card(Colour.BLACK, "Black Lorem Ipsum7"),
-                new Card(Colour.BLACK, "Black Lorem Ipsum8")
-        };
+                new Card(Colour.BLACK, "Black Lorem Ipsum8"));
     }
 
-    private Card[] getSampleWhiteCards() {
-        return new Card[]{
+    private List<Card> getSampleWhiteCards() {
+        return Arrays.asList(
                 new Card(Colour.WHITE, "White Lorem Ipsum0"),
                 new Card(Colour.WHITE, "White Lorem Ipsum1"),
                 new Card(Colour.WHITE, "White Lorem Ipsum2"),
@@ -172,8 +172,7 @@ public class CreateLobby extends AppCompatActivity {
                 new Card(Colour.WHITE, "White Lorem Ipsum27"),
                 new Card(Colour.WHITE, "White Lorem Ipsum28"),
                 new Card(Colour.WHITE, "White Lorem Ipsum29"),
-                new Card(Colour.WHITE, "White Lorem Ipsum30")
-        };
+                new Card(Colour.WHITE, "White Lorem Ipsum30"));
     }
 
     private List<Player> createSamplePlayers() {
