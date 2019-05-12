@@ -16,6 +16,8 @@ import com.afms.cahgame.game.Game;
 import com.afms.cahgame.game.Gamestate;
 import com.afms.cahgame.game.Lobby;
 import com.afms.cahgame.game.Player;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
 
 import java.io.BufferedReader;
@@ -53,7 +55,6 @@ public class GameScreen extends AppCompatActivity {
 
         setContentView(R.layout.activity_game_screen);
         hideUI();
-
 
         lobby = (Lobby) getIntent().getSerializableExtra("lobby");
         String playerName = (String) getIntent().getSerializableExtra("name");
