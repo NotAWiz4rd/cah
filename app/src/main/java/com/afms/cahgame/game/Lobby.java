@@ -5,29 +5,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Lobby implements Serializable {
-    private String _id;
+    private String id;
     private String host;
     private List<String> players;
+    private int handcardCount;
+    private int maxPlayers;
     private String password;
 
 
     public Lobby() {
     }
 
-    public Lobby(String id, String host, String password) {
-        this._id = id;
+    public Lobby(String id, String host, String password, int handcardCount, int maxPlayers) {
+        this.id = id;
         this.host = host;
         this.players = new ArrayList<>();
         addPlayer(host);
+        this.handcardCount = handcardCount;
+        this.maxPlayers = maxPlayers;
         this.password = password;
     }
 
     public String getId() {
-        return _id;
+        return id;
     }
 
     public void setId(String id) {
-        this._id = id;
+        this.id = id;
     }
 
     public String getPassword() {
@@ -47,7 +51,9 @@ public class Lobby implements Serializable {
     }
 
     public void addPlayer(String player) {
-        this.players.add(player);
+        if (this.players.size() < maxPlayers) {
+            this.players.add(player);
+        }
     }
 
     public String getHost() {
@@ -56,5 +62,21 @@ public class Lobby implements Serializable {
 
     public void setHost(String host) {
         this.host = host;
+    }
+
+    public int getHandcardCount() {
+        return handcardCount;
+    }
+
+    public void setHandcardCount(int handcardCount) {
+        this.handcardCount = handcardCount;
+    }
+
+    public int getMaxPlayers() {
+        return maxPlayers;
+    }
+
+    public void setMaxPlayers(int maxPlayers) {
+        this.maxPlayers = maxPlayers;
     }
 }

@@ -145,7 +145,12 @@ public class CreateLobby extends AppCompatActivity {
             }
 
             playerName = "Player1"; // todo for testing purposes only
-            lobbies.put(lobbyId, new Lobby(lobbyId, playerName, "")); // todo add password
+            lobbies.put(lobbyId, new Lobby(
+                    lobbyId,
+                    playerName,
+                    "", // todo add password
+                    Integer.parseInt(input_handcard_count.getText().toString()),
+                    Integer.parseInt(input_player_count.getText().toString())));
             lobbiesReference.setValue(lobbies);
         });
         btn_select_deck.setOnClickListener(event -> Toast.makeText(this, "clicked " + btn_select_deck.toString(), Toast.LENGTH_SHORT).show());
@@ -167,7 +172,7 @@ public class CreateLobby extends AppCompatActivity {
 
     private void createLobby() {
         Intent intent = new Intent(this, GameScreen.class);
-        intent.putExtra("game", new Game(createSampleDeck(), createSamplePlayers(), 6));
+        intent.putExtra("game", new Game(createSampleDeck(), createSamplePlayers(), Integer.parseInt(input_handcard_count.getText().toString())));
         intent.putExtra("lobbyId", "01");
         // todo make current playername configurable to improve testing
         intent.putExtra("name", "Player1");
