@@ -235,6 +235,8 @@ public class GameScreen extends AppCompatActivity {
                         lastGamestate = game.getGamestate();
                         gameStateLoop();
                     }
+                } else {
+                    quitGame("Your lobby couldn't be found.");
                 }
             }
 

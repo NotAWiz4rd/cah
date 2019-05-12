@@ -116,6 +116,7 @@ public class CreateLobby extends AppCompatActivity {
         Intent intent = new Intent(this, GameScreen.class);
         intent.putExtra("game", new Game(createSampleDeck(), createSamplePlayers(), 6));
         intent.putExtra("lobbyId", "01");
+        // todo make current playername configurable to improve testing
         intent.putExtra("name", "Player1");
         intent.putExtra("host", "Player1");
         startActivity(intent);
