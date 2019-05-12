@@ -1,12 +1,9 @@
-package com.afms.cahgame.gui;
+package com.afms.cahgame.gui.activitys;
 
-import android.arch.lifecycle.Lifecycle;
-import android.arch.lifecycle.OnLifecycleEvent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 
 import com.afms.cahgame.R;
 import com.afms.cahgame.game.Card;
@@ -17,17 +14,17 @@ import com.afms.cahgame.game.Lobby;
 import com.afms.cahgame.game.Player;
 import com.google.gson.Gson;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
@@ -35,51 +32,39 @@ import java.util.concurrent.ExecutionException;
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
-public class GameScreen extends AppCompatActivity {
+public class game_screen extends AppCompatActivity {
     private static final String BACKEND_URL_GAMES = "https://api.mlab.com/api/1/databases/cah/collections/games?apiKey=06Yem6JpYP8TSlm48U-Ze0Tb49Gnu0NA";
-
     private Game game;
     private Player player;
     private Lobby lobby;
     private Gamestate gamestate = Gamestate.START;
 
-    private SharedPreferences settings;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        settings = getSharedPreferences("Preferences", MODE_PRIVATE);
-
         setContentView(R.layout.activity_game_screen);
+        hideUI();
+
 
         lobby = (Lobby) getIntent().getSerializableExtra("lobby");
         String playerName = (String) getIntent().getSerializableExtra("name");
         player = new Player(playerName);
-        String hostName = (String) getIntent().getSerializableExtra("host");
 
-        saveInfo();
-
-        if (hostName.equals(playerName)) {
+        if (currentPlayerIsCardSzar()) {
             Deck deck = (Deck) getIntent().getSerializableExtra("deck");
             int handCardCount = (int) getIntent().getSerializableExtra("handcardcount");
             startGame(deck, handCardCount);
         } else {
             gameStartClient();
         }
+
     }
 
     private void gameStartClient() {
         updateLobby(lobby.getId());
+        gameStateLoop();
     }
 
-    /**
-     * Gets lobby from server if current gamestate is the same as the lobbyGamestate,
-     * updates Player, then waits half a second before calling itself again.
-     * Calls gamestateLoop if lobby has a different gamestate than the current one.
-     *
-     * @param lobbyId Current lobbyId
-     */
     private void updateLobby(String lobbyId) {
         if (lobby.getGamestate() == gamestate) {
             try {
@@ -90,8 +75,7 @@ public class GameScreen extends AppCompatActivity {
                 e.printStackTrace();
             } finally {
                 updatePlayer();
-                Handler handler = new Handler();
-                handler.postDelayed(() -> updateLobby(lobbyId), 500);
+                updateLobby(lobbyId);
             }
         } else {
             gamestate = lobby.getGamestate();
@@ -100,7 +84,7 @@ public class GameScreen extends AppCompatActivity {
     }
 
     private void updatePlayer() {
-        Optional<Player> playerOptional = lobby.players.stream().filter(player1 -> player1.getName().equals(player.getName())).findFirst();
+        Optional<Player> playerOptional = lobby.getPlayers().stream().filter(player1 -> player1.getName().equals(player.getName())).findFirst();
         playerOptional.ifPresent(player1 -> player = player1);
     }
 
@@ -131,23 +115,16 @@ public class GameScreen extends AppCompatActivity {
     }
 
     private void onStartGamestate() {
-        if (currentPlayerIsCardSzar()) {
-            updatePlayer();
-            onRoundStartGamestate();
-        } else {
-            updateLobby(lobby.getId());
-        }
+        updateLobby(lobby.getId());
     }
 
     private void onRoundStartGamestate() {
         if (currentPlayerIsCardSzar()) {
-            game.startNewRound();
-            this.player.setReady(true);
-            submitLobbyPlayer();
-            advanceGamestate();
+            game.drawCards();
+            // todo change gamestate
         }
         this.player.setReady(true);
-        submitLobbyPlayer();
+        updateLobbyPlayer();
     }
 
     private boolean currentPlayerIsCardSzar() {
@@ -165,13 +142,13 @@ public class GameScreen extends AppCompatActivity {
         }
 
         // then wait for input -> do nothing here
-        // todo start gamestateLoop again after submitting card
+        updateLobby(lobby.getId());
     }
 
     private void onWaitingGamestate() {
-        // todo display "waiting for cardszar to choose winning card"
+        // todo display "waiting for other players"
         this.player.setReady(true);
-        submitLobbyPlayer();
+        updateLobbyPlayer();
     }
 
     private void onRoundEndGamestate() {
@@ -180,7 +157,7 @@ public class GameScreen extends AppCompatActivity {
         }
         // todo notify player of winning card (only if player is not cardszar), show updated scores
         this.player.setReady(true);
-        submitLobbyPlayer();
+        updateLobbyPlayer();
     }
 
     private void onGamestateError() {
@@ -195,37 +172,16 @@ public class GameScreen extends AppCompatActivity {
      * @param handCardCount Amount of initial handcards.
      */
     private void startGame(Deck deck, int handCardCount) {
-        game = new Game(deck, lobby.players, handCardCount);
+        game = new Game(deck, lobby.getPlayers(), handCardCount);
         game.startNewRound();
 
-        lobby.players = game.players;
+        lobby.setPlayers(game.getPlayers());
         lobby.setGamestate(Gamestate.START);
+        Gson gson = new Gson();
+        String lobbyJson = gson.toJson(lobby);
 
-        submitLobby();
+        new SubmitGameToServer().execute(lobbyJson);
         gameStateLoop();
-    }
-
-    /**
-     * Updates lobby, then checks if all players are ready.
-     * If players ready: Executes Gamestateloop
-     * if not: waits 1000ms, then calls itself again
-     */
-    private boolean waitForPlayers() {
-        try {
-            lobby = new GetCurrentLobby().execute(lobby.getId()).get();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } finally {
-            if (!lobby.allPlayersReady()) {
-                Handler handler = new Handler();
-                handler.postDelayed(this::waitForPlayers, 1000);
-            } else {
-                return true;
-            }
-        }
-        return false;
     }
 
     /**
@@ -236,92 +192,29 @@ public class GameScreen extends AppCompatActivity {
     private void submitCard(Card card) {
         card.setOwner(player);
         game.submitCard(card);
-        submitLobbyPlayer();
-    }
-
-    private void advanceGamestate() {
-        if (!waitForPlayers()) {
-            advanceGamestate();
-        } else {
-            switch (lobby.getGamestate()) {
-                case START:
-                    lobby.setGamestate(Gamestate.ROUNDSTART);
-                    break;
-                case ROUNDSTART:
-                    lobby.setGamestate(Gamestate.SUBMIT);
-                    break;
-                case SUBMIT:
-                    lobby.setGamestate(Gamestate.WAITING);
-                    break;
-                case WAITING:
-                    lobby.setGamestate(Gamestate.ROUNDEND);
-                    break;
-                case ROUNDEND:
-                    lobby.setGamestate(Gamestate.ROUNDSTART);
-                    break;
-                default:
-                    lobby.setGamestate(Gamestate.ROUNDSTART);
-                    break;
-            }
-        }
-
+        updateLobbyPlayer();
     }
 
     /**
      * Submits the updated game/player to the server.
      */
-    private void submitLobbyPlayer() {
-        for (int i = 0; i < lobby.players.size(); i++) {
-            if (lobby.players.get(i).getName().equals(player.getName())) {
-                lobby.players.set(i, player);
-                submitLobby();
-                return;
-            }
+    private void updateLobbyPlayer() {
+        List<Player> lobbyPlayers = lobby.getPlayers();
+        Player lobbyPlayer = null;
+        Optional<Player> lobbyPlayerOptional = lobbyPlayers.stream().filter(player1 -> player1.getName().equals(player.getName())).findFirst();
+        if (lobbyPlayerOptional.isPresent()) {
+            lobbyPlayer = lobbyPlayerOptional.get();
         }
-    }
 
-    private void submitLobby() {
-        new SubmitGameToServer().execute(convertToJson(lobby));
+        // todo test if this changes the lobby's player
+        if (lobbyPlayer != null) {
+            new SubmitGameToServer().execute(convertToJson(lobby));
+        }
     }
 
     private String convertToJson(Lobby lobby) {
         Gson gson = new Gson();
         return gson.toJson(lobby);
-    }
-
-    private void saveInfo() {
-        SharedPreferences.Editor editor = settings.edit();
-        editor.putString("player", player.getName());
-        editor.putString("lobbyId", lobby.getId());
-
-        editor.apply();
-    }
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
-    protected void onPause() {
-        super.onPause();
-
-        saveInfo();
-    }
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
-    protected void onResume() {
-        super.onResume();
-
-        player = new Player(settings.getString("player", ""));
-        try {
-            lobby = new GetCurrentLobby().execute(settings.getString("lobbyId", "")).get();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } finally {
-            if (lobby == null) {
-                // todo throw player into lobby browser with message that lobby couldnt be found
-            } else {
-                gameStateLoop();
-            }
-        }
     }
 
     /**
@@ -340,14 +233,11 @@ public class GameScreen extends AppCompatActivity {
                 con.setReadTimeout(5000);
                 con.setDoOutput(true);
 
-                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(con.getOutputStream(), StandardCharsets.UTF_8));
-                writer.write(strings[0]);
-                writer.flush();
-                writer.close();
-
-                con.connect();
-
-                con.getResponseMessage();
+                // todo this somehow doesnt work correctly...
+                OutputStream outputPost = new BufferedOutputStream(con.getOutputStream());
+                outputPost.write(strings[0].getBytes());
+                outputPost.flush();
+                outputPost.close();
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             } catch (ProtocolException e) {
@@ -405,5 +295,29 @@ public class GameScreen extends AppCompatActivity {
             Optional<Lobby> lobby = Arrays.stream(lobbies).filter(internalLobby -> internalLobby.getId().equals(lobbyId)).findFirst();
             return lobby.orElse(null);
         }
+    }
+
+    private void hideUI(){
+        final int flags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+
+        // This work only for android 4.4+
+
+        getWindow().getDecorView().setSystemUiVisibility(flags);
+
+        // Code below is to handle presses of Volume up or Volume down.
+        // Without this, after pressing volume buttons, the navigation bar will
+        // show up and won't hide
+        final View decorView = getWindow().getDecorView();
+        decorView
+                .setOnSystemUiVisibilityChangeListener(visibility -> {
+                    if ((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0) {
+                        decorView.setSystemUiVisibility(flags);
+                    }
+                });
     }
 }
