@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class MainController {
-    // main
+    // Main
     private Activity mainActivity;
     private FrameLayout mainFrame;
 
@@ -68,7 +68,7 @@ public class MainController {
     // get instances
 
     public FullSizeCard getFullSizeCardInstance(Card card) {
-        Log.d("test", "test");
+        Log.d("Test", "Test");
         if (fullSizeCardList.stream().anyMatch(f -> f.getCard().equals(card))) {
             return fullSizeCardList.stream().filter(f -> f.getCard().equals(card)).findFirst().get();
         } else {

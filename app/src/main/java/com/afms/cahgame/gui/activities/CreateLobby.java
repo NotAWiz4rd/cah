@@ -1,4 +1,4 @@
-package com.afms.cahgame.gui.activitys;
+package com.afms.cahgame.gui.activities;
 
 import android.arch.lifecycle.MutableLiveData;
 import android.content.Intent;
@@ -22,7 +22,7 @@ import com.afms.cahgame.gui.components.ValueSelector;
 import java.util.ArrayList;
 import java.util.List;
 
-public class create_lobby extends AppCompatActivity {
+public class CreateLobby extends AppCompatActivity {
 
     // statics
     private final static int DEFAULT_HANDCARD_COUNT = 5;
@@ -124,7 +124,7 @@ public class create_lobby extends AppCompatActivity {
     }
 
     private void createLobby() {
-        Intent intent = new Intent(this, game_screen.class);
+        Intent intent = new Intent(this, GameScreen.class);
         intent.putExtra("lobby", new Lobby("012", createSamplePlayers(), "Testlobby", "", Gamestate.START));
         intent.putExtra("deck", createSampleDeck());
         intent.putExtra("handcardcount", 6);

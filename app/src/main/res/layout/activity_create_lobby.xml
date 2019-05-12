@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#EEEEEE"
-    tools:context=".gui.activitys.create_lobby">
+    tools:context=".gui.activities.CreateLobby">
 
     <ImageButton
         android:id="@+id/btn_create_lobby_back"

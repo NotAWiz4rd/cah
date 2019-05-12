@@ -1,4 +1,4 @@
-package com.afms.cahgame.gui.activitys;
+package com.afms.cahgame.gui.activities;
 
 import android.annotation.SuppressLint;
 import android.os.Build;
@@ -10,7 +10,7 @@ import android.widget.Toast;
 import com.afms.cahgame.R;
 import com.afms.cahgame.gui.controller.MainController;
 
-public class test extends AppCompatActivity {
+public class Test extends AppCompatActivity {
     private View mContentView;
     private MainController guiController;
     private int currentApiVersion;

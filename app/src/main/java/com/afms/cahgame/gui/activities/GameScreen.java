@@ -1,4 +1,4 @@
-package com.afms.cahgame.gui.activitys;
+package com.afms.cahgame.gui.activities;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -32,7 +32,7 @@ import java.util.concurrent.ExecutionException;
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
-public class game_screen extends AppCompatActivity {
+public class GameScreen extends AppCompatActivity {
     private static final String BACKEND_URL_GAMES = "https://api.mlab.com/api/1/databases/cah/collections/games?apiKey=06Yem6JpYP8TSlm48U-Ze0Tb49Gnu0NA";
     private Game game;
     private Player player;
@@ -84,7 +84,7 @@ public class game_screen extends AppCompatActivity {
     }
 
     private void updatePlayer() {
-        Optional<Player> playerOptional = lobby.getPlayers().stream().filter(player1 -> player1.getName().equals(player.getName())).findFirst();
+        Optional<Player> playerOptional = lobby.players.stream().filter(player1 -> player1.getName().equals(player.getName())).findFirst();
         playerOptional.ifPresent(player1 -> player = player1);
     }
 
@@ -120,7 +120,7 @@ public class game_screen extends AppCompatActivity {
 
     private void onRoundStartGamestate() {
         if (currentPlayerIsCardSzar()) {
-            game.drawCards();
+            game.startNewRound();
             // todo change gamestate
         }
         this.player.setReady(true);
@@ -172,10 +172,10 @@ public class game_screen extends AppCompatActivity {
      * @param handCardCount Amount of initial handcards.
      */
     private void startGame(Deck deck, int handCardCount) {
-        game = new Game(deck, lobby.getPlayers(), handCardCount);
+        game = new Game(deck, lobby.players, handCardCount);
         game.startNewRound();
 
-        lobby.setPlayers(game.getPlayers());
+        lobby.players = game.players;
         lobby.setGamestate(Gamestate.START);
         Gson gson = new Gson();
         String lobbyJson = gson.toJson(lobby);
@@ -199,14 +199,14 @@ public class game_screen extends AppCompatActivity {
      * Submits the updated game/player to the server.
      */
     private void updateLobbyPlayer() {
-        List<Player> lobbyPlayers = lobby.getPlayers();
+        List<Player> lobbyPlayers = lobby.players;
         Player lobbyPlayer = null;
         Optional<Player> lobbyPlayerOptional = lobbyPlayers.stream().filter(player1 -> player1.getName().equals(player.getName())).findFirst();
         if (lobbyPlayerOptional.isPresent()) {
             lobbyPlayer = lobbyPlayerOptional.get();
         }
 
-        // todo test if this changes the lobby's player
+        // todo Test if this changes the lobby's player
         if (lobbyPlayer != null) {
             new SubmitGameToServer().execute(convertToJson(lobby));
         }
@@ -297,7 +297,7 @@ public class game_screen extends AppCompatActivity {
         }
     }
 
-    private void hideUI(){
+    private void hideUI() {
         final int flags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
