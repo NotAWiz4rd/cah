@@ -236,7 +236,7 @@ public class GameScreen extends AppCompatActivity {
                         gameStateLoop();
                     }
                 } else {
-                    quitGame("Your lobby couldn't be found.");
+                    quitGame("");
                 }
             }
 
@@ -252,7 +252,7 @@ public class GameScreen extends AppCompatActivity {
         }
 
         if (game == null) {
-            quitGame("Game couldn't be found.");
+            quitGame("");
         }
     }
 
