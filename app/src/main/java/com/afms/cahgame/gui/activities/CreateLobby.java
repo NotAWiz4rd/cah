@@ -4,6 +4,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -15,11 +16,20 @@ import com.afms.cahgame.game.Card;
 import com.afms.cahgame.game.Colour;
 import com.afms.cahgame.game.Deck;
 import com.afms.cahgame.game.Game;
+import com.afms.cahgame.game.Lobby;
 import com.afms.cahgame.gui.components.ValueSelector;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CreateLobby extends AppCompatActivity {
 
@@ -49,14 +59,42 @@ public class CreateLobby extends AppCompatActivity {
     private MutableLiveData<Integer> value_player_count = new MutableLiveData<>();
     private MutableLiveData<Integer> value_handcard_count = new MutableLiveData<>();
 
+    private Map<String, Lobby> lobbies = new HashMap<>();
+    private String playerName;
+    private DatabaseReference lobbiesReference;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_lobby);
         hideUI();
+        initializeDatabaseConnection();
         initializeUIElements();
         initializeUIEvents();
         initializeVariables();
+    }
+
+    private void initializeDatabaseConnection() {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        lobbiesReference = database.getReference("lobbies");
+
+        lobbiesReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // this interesting construct is here to suffice Firebases need for type safety
+                GenericTypeIndicator<Map<String, Lobby>> genericTypeIndicator = new GenericTypeIndicator<Map<String, Lobby>>() {
+                };
+                lobbies = dataSnapshot.getValue(genericTypeIndicator);
+                if (lobbies == null) {
+                    lobbies = new HashMap<>();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                Log.w("ERROR", "Failed to get lobbies from server.", error.toException());
+            }
+        });
     }
 
     private void initializeVariables() {
@@ -94,7 +132,22 @@ public class CreateLobby extends AppCompatActivity {
 
     private void initializeUIEvents() {
         btn_start_game_test.setOnClickListener(event -> createLobby());
-        btn_create_lobby.setOnClickListener(event -> Toast.makeText(this, "clicked " + btn_create_lobby.toString(), Toast.LENGTH_SHORT).show());
+        btn_create_lobby.setOnClickListener(event -> {
+            String lobbyId = input_lobby_name.getText().toString();
+
+            if (lobbies.containsKey(lobbyId)) {
+                Toast.makeText(this, "A lobby with this name already exists", Toast.LENGTH_LONG).show();
+                return;
+            }
+            if (lobbyId.isEmpty()) {
+                Toast.makeText(this, "Please enter a lobbyname to proceed.", Toast.LENGTH_LONG).show();
+                return;
+            }
+
+            playerName = "Player1"; // todo for testing purposes only
+            lobbies.put(lobbyId, new Lobby(lobbyId, playerName, "")); // todo add password
+            lobbiesReference.setValue(lobbies);
+        });
         btn_select_deck.setOnClickListener(event -> Toast.makeText(this, "clicked " + btn_select_deck.toString(), Toast.LENGTH_SHORT).show());
         btn_back.setOnClickListener(event -> {
             Toast.makeText(this, "clicked " + btn_back.toString(), Toast.LENGTH_SHORT).show();

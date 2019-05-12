@@ -1,22 +1,24 @@
 package com.afms.cahgame.game;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Lobby implements Serializable {
     private String _id;
+    private String host;
     private List<String> players;
-    private String name;
     private String password;
 
 
     public Lobby() {
     }
 
-    public Lobby(String id, List<String> players, String name, String password) {
+    public Lobby(String id, String host, String password) {
         this._id = id;
-        this.players = players;
-        this.name = name;
+        this.host = host;
+        this.players = new ArrayList<>();
+        addPlayer(host);
         this.password = password;
     }
 
@@ -26,14 +28,6 @@ public class Lobby implements Serializable {
 
     public void setId(String id) {
         this._id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getPassword() {
@@ -50,5 +44,17 @@ public class Lobby implements Serializable {
 
     public void setPlayers(List<String> players) {
         this.players = players;
+    }
+
+    public void addPlayer(String player) {
+        this.players.add(player);
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
     }
 }
