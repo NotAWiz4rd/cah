@@ -14,9 +14,7 @@ import com.afms.cahgame.R;
 import com.afms.cahgame.game.Card;
 import com.afms.cahgame.game.Colour;
 import com.afms.cahgame.game.Deck;
-import com.afms.cahgame.game.Gamestate;
-import com.afms.cahgame.game.Lobby;
-import com.afms.cahgame.game.Player;
+import com.afms.cahgame.game.Game;
 import com.afms.cahgame.gui.components.ValueSelector;
 
 import java.util.ArrayList;
@@ -116,9 +114,8 @@ public class CreateLobby extends AppCompatActivity {
 
     private void createLobby() {
         Intent intent = new Intent(this, GameScreen.class);
-        intent.putExtra("lobby", new Lobby("012", createSamplePlayers(), "Testlobby", "", Gamestate.START));
-        intent.putExtra("deck", createSampleDeck());
-        intent.putExtra("handcardcount", 6);
+        intent.putExtra("game", new Game(createSampleDeck(), createSamplePlayers(), 6));
+        intent.putExtra("lobbyId", "01");
         intent.putExtra("name", "Player1");
         intent.putExtra("host", "Player1");
         startActivity(intent);
@@ -175,12 +172,11 @@ public class CreateLobby extends AppCompatActivity {
                 new Card(Colour.WHITE, "White Lorem Ipsum30"));
     }
 
-    private List<Player> createSamplePlayers() {
-        List<Player> players = new ArrayList<>();
-        players.add(new Player("Player1"));
-        players.add(new Player("Player2"));
-        players.add(new Player("Player3"));
-        players.add(new Player("Player4"));
+    private List<String> createSamplePlayers() {
+        List<String> players = new ArrayList<>();
+        players.add("Player1");
+        players.add("Player2");
+        players.add("Player3");
         return players;
     }
 

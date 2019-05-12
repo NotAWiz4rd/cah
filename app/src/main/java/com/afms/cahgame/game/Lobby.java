@@ -5,28 +5,19 @@ import java.util.List;
 
 public class Lobby implements Serializable {
     private String _id;
-    public List<Player> players;
+    private List<String> players;
     private String name;
     private String password;
-    private Gamestate gamestate;
+
 
     public Lobby() {
-
     }
 
-    public Lobby(String id, List<Player> players, String name, String password, Gamestate state) {
+    public Lobby(String id, List<String> players, String name, String password) {
         this._id = id;
         this.players = players;
         this.name = name;
         this.password = password;
-        this.gamestate = state;
-    }
-
-    public boolean allPlayersReady() {
-        for (Player player : players) {
-            if (!player.isReady()) return false;
-        }
-        return true;
     }
 
     public String getId() {
@@ -53,11 +44,11 @@ public class Lobby implements Serializable {
         this.password = password;
     }
 
-    public Gamestate getGamestate() {
-        return gamestate;
+    public List<String> getPlayers() {
+        return players;
     }
 
-    public void setGamestate(Gamestate gamestate) {
-        this.gamestate = gamestate;
+    public void setPlayers(List<String> players) {
+        this.players = players;
     }
 }

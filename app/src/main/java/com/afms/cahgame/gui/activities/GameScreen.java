@@ -12,10 +12,8 @@ import android.view.View;
 
 import com.afms.cahgame.R;
 import com.afms.cahgame.game.Card;
-import com.afms.cahgame.game.Deck;
 import com.afms.cahgame.game.Game;
 import com.afms.cahgame.game.Gamestate;
-import com.afms.cahgame.game.Lobby;
 import com.afms.cahgame.game.Player;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -32,11 +30,10 @@ import java.util.Optional;
 public class GameScreen extends AppCompatActivity {
     private Game game;
     private Player player;
-    private Lobby lobby;
 
     private Gamestate lastGamestate;
 
-    private DatabaseReference lobbyReference;
+    private String lobbyId;
     private DatabaseReference gameReference;
 
     private SharedPreferences settings;
@@ -50,66 +47,16 @@ public class GameScreen extends AppCompatActivity {
         setContentView(R.layout.activity_game_screen);
         hideUI();
 
-        lobby = (Lobby) getIntent().getSerializableExtra("lobby");
+        lobbyId = (String) getIntent().getSerializableExtra("lobbyId");
+        game = (Game) getIntent().getSerializableExtra("game");
         String playerName = (String) getIntent().getSerializableExtra("name");
         player = new Player(playerName);
-        String hostName = (String) getIntent().getSerializableExtra("host");
 
         saveInfo();
-
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        lobbyReference = database.getReference(lobby.getId());
-        gameReference = database.getReference(lobby.getId() + "-game");
-
-        lobbyReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
-                lobby = dataSnapshot.getValue(Lobby.class);
-                if (lobby != null) {
-                    game.players = lobby.players;
-                    updatePlayer();
-                    if (lobby.getGamestate() != lastGamestate) {
-                        lastGamestate = lobby.getGamestate();
-                        gameStateLoop();
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                Log.w("ERROR", "Failed to read value.", error.toException());
-            }
-        });
-
-        gameReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                game = dataSnapshot.getValue(Game.class);
-                if (game != null) {
-                    lobby.players = game.players;
-                    updatePlayer();
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                Log.w("ERROR", "Failed to read value.", error.toException());
-            }
-        });
-
-        if (hostName != null && hostName.equals(playerName)) {
-            Deck deck = (Deck) getIntent().getSerializableExtra("deck");
-            int handCardCount = (int) getIntent().getSerializableExtra("handcardcount");
-            startGame(deck, handCardCount);
-        }
     }
 
     private void updatePlayer() {
-        Optional<Player> playerOptional = lobby.players.stream().filter(player1 -> player1.getName().equals(player.getName())).findFirst();
+        Optional<Player> playerOptional = game.players.stream().filter(player1 -> player1.getName().equals(player.getName())).findFirst();
         playerOptional.ifPresent(player1 -> player = player1);
     }
 
@@ -117,10 +64,10 @@ public class GameScreen extends AppCompatActivity {
      * Executes things based on the current gamestate of the lobby
      */
     private void gameStateLoop() {
-        if (lobby == null) {
+        if (game == null) {
             quitGame("Something went terribly wrong...");
         }
-        switch (lobby.getGamestate()) {
+        switch (game.getGamestate()) {
             case START:
                 onStartGamestate();
                 break;
@@ -147,6 +94,7 @@ public class GameScreen extends AppCompatActivity {
             onRoundStartGamestate();
             advanceGamestate();
         }
+        setPlayerReady();
     }
 
     private void onRoundStartGamestate() {
@@ -172,18 +120,18 @@ public class GameScreen extends AppCompatActivity {
         }
 
         // then wait for input -> do nothing here
-        // todo start gamestateLoop again after submitting card
     }
 
     private void onWaitingGamestate() {
         // todo display "waiting for cardszar to choose winning card"
+        setPlayerReady();
+
         if (currentPlayerIsCardSzar()) {
+            // todo somehow at some point there are no playedCards...
             game.submitWinningCard(game.getPlayedCards().get(0)); // todo cardszar chooses winning card from played Cards
             submitGame();
             advanceGamestate();
         }
-
-        setPlayerReady();
     }
 
     private void onRoundEndGamestate() {
@@ -204,25 +152,19 @@ public class GameScreen extends AppCompatActivity {
         if (game == null || game.getCardCzar() == null) {
             return false;
         }
-        return game.getCardCzar().getName().equals(player.getName());
+        return game.getCardCzar().equals(player.getName());
     }
 
     /**
      * For host only!
      * Initializes lobby and pushes it to server.
-     *
-     * @param deck          The deck to be used.
-     * @param handCardCount Amount of initial handcards.
      */
-    private void startGame(Deck deck, int handCardCount) {
-        game = new Game(deck, lobby.players, handCardCount);
+    private void startGame() {
         game.startNewRound();
 
-        lobby.players = game.players;
-        lobby.setGamestate(Gamestate.START);
+        game.setGamestate(Gamestate.START);
 
         submitGame();
-        submitLobby();
         updatePlayer();
         gameStateLoop();
     }
@@ -236,31 +178,31 @@ public class GameScreen extends AppCompatActivity {
      * Advances Gamestate if all players in lobby are ready, submits lobby after advancing.
      */
     private void advanceGamestate() {
-        if (!lobby.allPlayersReady()) {
+        if (!game.allPlayersReady()) {
             Handler handler = new Handler();
             handler.postDelayed(this::advanceGamestate, 500);
         } else {
-            switch (lobby.getGamestate()) {
+            switch (game.getGamestate()) {
                 case START:
-                    lobby.setGamestate(Gamestate.ROUNDSTART);
+                    game.setGamestate(Gamestate.ROUNDSTART);
                     break;
                 case ROUNDSTART:
-                    lobby.setGamestate(Gamestate.SUBMIT);
+                    game.setGamestate(Gamestate.SUBMIT);
                     break;
                 case SUBMIT:
-                    lobby.setGamestate(Gamestate.WAITING);
+                    game.setGamestate(Gamestate.WAITING);
                     break;
                 case WAITING:
-                    lobby.setGamestate(Gamestate.ROUNDEND);
+                    game.setGamestate(Gamestate.ROUNDEND);
                     break;
                 case ROUNDEND:
-                    lobby.setGamestate(Gamestate.ROUNDSTART);
+                    game.setGamestate(Gamestate.ROUNDSTART);
                     break;
                 default:
-                    lobby.setGamestate(Gamestate.ROUNDSTART);
+                    game.setGamestate(Gamestate.ROUNDSTART);
                     break;
             }
-            submitLobby();
+            submitGame();
         }
     }
 
@@ -275,11 +217,40 @@ public class GameScreen extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
+        String hostName = (String) getIntent().getSerializableExtra("host");
+
         player = new Player(settings.getString("player", ""));
-        if (lobby == null) {
-            quitGame("Lobby couldn't be found.");
-        } else {
-            gameStateLoop();
+        lobbyId = settings.getString("lobbyId", "");
+
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        gameReference = database.getReference(lobbyId + "-game");
+
+        gameReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                game = dataSnapshot.getValue(Game.class);
+                if (game != null) {
+                    updatePlayer();
+                    if (game.getGamestate() != lastGamestate) {
+                        lastGamestate = game.getGamestate();
+                        gameStateLoop();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.w("ERROR", "Failed to read value.", error.toException());
+            }
+        });
+
+        if (hostName != null && hostName.equals(player.getName())) {
+            startGame();
+        }
+
+        if (game == null) {
+            quitGame("Game couldn't be found.");
         }
     }
 
@@ -292,7 +263,7 @@ public class GameScreen extends AppCompatActivity {
     private void saveInfo() {
         SharedPreferences.Editor editor = settings.edit();
         editor.putString("player", player.getName());
-        editor.putString("lobbyId", lobby.getId());
+        editor.putString("lobbyId", lobbyId);
 
         editor.apply();
     }
@@ -306,25 +277,20 @@ public class GameScreen extends AppCompatActivity {
         card.setOwner(player);
         game.submitCard(card);
         submitGame();
-        submitLobbyPlayer();
     }
 
     private void submitGame() {
         gameReference.setValue(game);
     }
 
-    private void submitLobby() {
-        lobbyReference.setValue(lobby);
-    }
-
     /**
      * Submits the updated game/player to the server.
      */
     private void submitLobbyPlayer() {
-        for (int i = 0; i < lobby.players.size(); i++) {
-            if (lobby.players.get(i).getName().equals(player.getName())) {
-                lobby.players.set(i, player);
-                submitLobby();
+        for (int i = 0; i < game.players.size(); i++) {
+            if (game.players.get(i).getName().equals(player.getName())) {
+                game.players.set(i, player);
+                submitGame();
                 return;
             }
         }

@@ -3,18 +3,22 @@ package com.afms.cahgame.game;
 
 import com.afms.cahgame.exceptions.MissingOwnerException;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-public class Game {
+public class Game implements Serializable {
     public List<Player> players;
     private Deck deck;
     private int handCardCount;
 
+    private Gamestate gamestate;
+
     private List<Card> blackCardsPile;
     private List<Card> discardPile;
     private List<Card> newCardsPile;
-    private Player cardCzar;
+    private String cardCzar;
     private Card currentBlackCard;
     private List<Card> playedCards;
 
@@ -26,10 +30,11 @@ public class Game {
         this.playedCards = new ArrayList<>();
     }
 
-    public Game(Deck deck, List<Player> players, int handCardCount) {
+    public Game(Deck deck, List<String> playerNames, int handCardCount) {
+        this.gamestate = Gamestate.START;
         this.deck = deck;
-        this.players = removeDuplicates(players);
-        this.cardCzar = players.get(0);
+        createPlayers(playerNames);
+        this.cardCzar = players.get(0).getName();
         this.discardPile = new ArrayList<>();
         this.newCardsPile = new ArrayList<>();
         newCardsPile.addAll(deck.getWhiteCards());
@@ -39,6 +44,14 @@ public class Game {
         this.handCardCount = handCardCount;
 
         drawInitialCards();
+    }
+
+    private void createPlayers(List<String> playerNames) {
+        this.players = new ArrayList<>();
+        for (String playerName : playerNames) {
+            this.players.add(new Player(playerName));
+        }
+        this.players = removeDuplicates(players);
     }
 
     private List<Player> removeDuplicates(List<Player> players) {
@@ -72,6 +85,13 @@ public class Game {
         drawCards();
     }
 
+    public boolean allPlayersReady() {
+        for (Player player : players) {
+            if (!player.isReady()) return false;
+        }
+        return true;
+    }
+
     public void submitCard(Card card) {
         if (card.getOwner() == null) {
             throw new MissingOwnerException();
@@ -89,7 +109,7 @@ public class Game {
      */
     private void drawCards() {
         for (Player player : players) {
-            if (!player.equals(cardCzar) && player.getHand().size() < handCardCount) {
+            if (!player.getName().equals(cardCzar) && player.getHand().size() < handCardCount) {
                 if (newCardsPile.size() == 0) {
                     reshuffleCards();
                 }
@@ -112,13 +132,23 @@ public class Game {
     }
 
     public void nextCardSzar() {
-        int cardCzarIndex = this.players.indexOf(cardCzar);
+        int cardCzarIndex = players.indexOf(getCardCzarPlayer());
 
         if (cardCzarIndex + 1 < players.size() - 1) {
-            cardCzar = players.get(cardCzarIndex + 1);
+            cardCzar = players.get(cardCzarIndex + 1).getName();
         } else {
-            cardCzar = players.get(0);
+            cardCzar = players.get(0).getName();
         }
+    }
+
+    /**
+     * Gets the current cardCzar, or otherwise the first player.
+     *
+     * @return If existent the cardCzar, otherwise the first player.
+     */
+    private Player getCardCzarPlayer() {
+        Optional<Player> playerOptional = players.stream().filter(player -> player.getName().equals(cardCzar)).findFirst();
+        return playerOptional.orElse(players.get(0));
     }
 
     public Deck getDeck() {
@@ -161,11 +191,11 @@ public class Game {
         this.newCardsPile = newCardsPile;
     }
 
-    public Player getCardCzar() {
+    public String getCardCzar() {
         return cardCzar;
     }
 
-    public void setCardCzar(Player cardCzar) {
+    public void setCardCzar(String cardCzar) {
         this.cardCzar = cardCzar;
     }
 
@@ -191,5 +221,13 @@ public class Game {
 
     public void setPlayers(List<Player> players) {
         this.players = players;
+    }
+
+    public Gamestate getGamestate() {
+        return gamestate;
+    }
+
+    public void setGamestate(Gamestate gamestate) {
+        this.gamestate = gamestate;
     }
 }
