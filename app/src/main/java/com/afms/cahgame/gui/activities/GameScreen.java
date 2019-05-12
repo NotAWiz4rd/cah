@@ -1,7 +1,11 @@
 package com.afms.cahgame.gui.activities;
 
+import android.arch.lifecycle.Lifecycle;
+import android.arch.lifecycle.OnLifecycleEvent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
@@ -14,17 +18,17 @@ import com.afms.cahgame.game.Lobby;
 import com.afms.cahgame.game.Player;
 import com.google.gson.Gson;
 
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
@@ -39,9 +43,14 @@ public class GameScreen extends AppCompatActivity {
     private Lobby lobby;
     private Gamestate gamestate = Gamestate.START;
 
+    private SharedPreferences settings;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        settings = getSharedPreferences("Preferences", MODE_PRIVATE);
+
         setContentView(R.layout.activity_game_screen);
         hideUI();
 
@@ -49,22 +58,30 @@ public class GameScreen extends AppCompatActivity {
         lobby = (Lobby) getIntent().getSerializableExtra("lobby");
         String playerName = (String) getIntent().getSerializableExtra("name");
         player = new Player(playerName);
+        String hostName = (String) getIntent().getSerializableExtra("host");
 
-        if (currentPlayerIsCardSzar()) {
+        saveInfo();
+
+        if (hostName != null && hostName.equals(playerName)) {
             Deck deck = (Deck) getIntent().getSerializableExtra("deck");
             int handCardCount = (int) getIntent().getSerializableExtra("handcardcount");
             startGame(deck, handCardCount);
         } else {
             gameStartClient();
         }
-
     }
 
     private void gameStartClient() {
         updateLobby(lobby.getId());
-        gameStateLoop();
     }
 
+    /**
+     * Gets lobby from server if current gamestate is the same as the lobbyGamestate,
+     * updates Player, then waits half a second before calling itself again.
+     * Calls gamestateLoop if lobby has a different gamestate than the current one.
+     *
+     * @param lobbyId Current lobbyId
+     */
     private void updateLobby(String lobbyId) {
         if (lobby.getGamestate() == gamestate) {
             try {
@@ -75,7 +92,8 @@ public class GameScreen extends AppCompatActivity {
                 e.printStackTrace();
             } finally {
                 updatePlayer();
-                updateLobby(lobbyId);
+                Handler handler = new Handler();
+                handler.postDelayed(() -> updateLobby(lobbyId), 500);
             }
         } else {
             gamestate = lobby.getGamestate();
@@ -115,19 +133,30 @@ public class GameScreen extends AppCompatActivity {
     }
 
     private void onStartGamestate() {
-        updateLobby(lobby.getId());
+        if (currentPlayerIsCardSzar()) {
+            updatePlayer();
+            onRoundStartGamestate();
+        } else {
+            updateLobby(lobby.getId());
+        }
     }
 
     private void onRoundStartGamestate() {
         if (currentPlayerIsCardSzar()) {
             game.startNewRound();
-            // todo change gamestate
+            this.player.setReady(true);
+            submitLobbyPlayer();
+            advanceGamestate();
+        } else {
+            this.player.setReady(true);
+            submitLobbyPlayer();
         }
-        this.player.setReady(true);
-        updateLobbyPlayer();
     }
 
     private boolean currentPlayerIsCardSzar() {
+        if (game == null || game.getCardCzar() == null) {
+            return false;
+        }
         return game.getCardCzar().getName().equals(player.getName());
     }
 
@@ -142,13 +171,13 @@ public class GameScreen extends AppCompatActivity {
         }
 
         // then wait for input -> do nothing here
-        updateLobby(lobby.getId());
+        // todo start gamestateLoop again after submitting card
     }
 
     private void onWaitingGamestate() {
-        // todo display "waiting for other players"
+        // todo display "waiting for cardszar to choose winning card"
         this.player.setReady(true);
-        updateLobbyPlayer();
+        submitLobbyPlayer();
     }
 
     private void onRoundEndGamestate() {
@@ -157,7 +186,7 @@ public class GameScreen extends AppCompatActivity {
         }
         // todo notify player of winning card (only if player is not cardszar), show updated scores
         this.player.setReady(true);
-        updateLobbyPlayer();
+        submitLobbyPlayer();
     }
 
     private void onGamestateError() {
@@ -177,11 +206,32 @@ public class GameScreen extends AppCompatActivity {
 
         lobby.players = game.players;
         lobby.setGamestate(Gamestate.START);
-        Gson gson = new Gson();
-        String lobbyJson = gson.toJson(lobby);
 
-        new SubmitGameToServer().execute(lobbyJson);
+        submitLobby();
         gameStateLoop();
+    }
+
+    /**
+     * Updates lobby, then checks if all players are ready.
+     * If players ready: Executes Gamestateloop
+     * if not: waits 1000ms, then calls itself again
+     */
+    private boolean waitForPlayers() {
+        try {
+            lobby = new GetCurrentLobby().execute(lobby.getId()).get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            if (!lobby.allPlayersReady()) {
+                Handler handler = new Handler();
+                handler.postDelayed(this::waitForPlayers, 1000);
+            } else {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -192,24 +242,86 @@ public class GameScreen extends AppCompatActivity {
     private void submitCard(Card card) {
         card.setOwner(player);
         game.submitCard(card);
-        updateLobbyPlayer();
+        submitLobbyPlayer();
+    }
+
+    private void advanceGamestate() {
+        if (!waitForPlayers()) {
+            advanceGamestate();
+        } else {
+            switch (lobby.getGamestate()) {
+                case START:
+                    lobby.setGamestate(Gamestate.ROUNDSTART);
+                    break;
+                case ROUNDSTART:
+                    lobby.setGamestate(Gamestate.SUBMIT);
+                    break;
+                case SUBMIT:
+                    lobby.setGamestate(Gamestate.WAITING);
+                    break;
+                case WAITING:
+                    lobby.setGamestate(Gamestate.ROUNDEND);
+                    break;
+                case ROUNDEND:
+                    lobby.setGamestate(Gamestate.ROUNDSTART);
+                    break;
+                default:
+                    lobby.setGamestate(Gamestate.ROUNDSTART);
+                    break;
+            }
+        }
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+    protected void onPause() {
+        super.onPause();
+
+        saveInfo();
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+    protected void onResume() {
+        super.onResume();
+
+        player = new Player(settings.getString("player", ""));
+        try {
+            lobby = new GetCurrentLobby().execute(settings.getString("lobbyId", "")).get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            if (lobby == null) {
+                // todo throw player into lobby browser with message that lobby couldnt be found
+            } else {
+                gameStateLoop();
+            }
+        }
+    }
+
+    private void saveInfo() {
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putString("player", player.getName());
+        editor.putString("lobbyId", lobby.getId());
+
+        editor.apply();
     }
 
     /**
      * Submits the updated game/player to the server.
      */
-    private void updateLobbyPlayer() {
-        List<Player> lobbyPlayers = lobby.players;
-        Player lobbyPlayer = null;
-        Optional<Player> lobbyPlayerOptional = lobbyPlayers.stream().filter(player1 -> player1.getName().equals(player.getName())).findFirst();
-        if (lobbyPlayerOptional.isPresent()) {
-            lobbyPlayer = lobbyPlayerOptional.get();
+    private void submitLobbyPlayer() {
+        for (int i = 0; i < lobby.players.size(); i++) {
+            if (lobby.players.get(i).getName().equals(player.getName())) {
+                lobby.players.set(i, player);
+                submitLobby();
+                return;
+            }
         }
+    }
 
-        // todo Test if this changes the lobby's player
-        if (lobbyPlayer != null) {
-            new SubmitGameToServer().execute(convertToJson(lobby));
-        }
+    private void submitLobby() {
+        new SubmitGameToServer().execute(convertToJson(lobby));
     }
 
     private String convertToJson(Lobby lobby) {
@@ -233,11 +345,14 @@ public class GameScreen extends AppCompatActivity {
                 con.setReadTimeout(5000);
                 con.setDoOutput(true);
 
-                // todo this somehow doesnt work correctly...
-                OutputStream outputPost = new BufferedOutputStream(con.getOutputStream());
-                outputPost.write(strings[0].getBytes());
-                outputPost.flush();
-                outputPost.close();
+                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(con.getOutputStream(), StandardCharsets.UTF_8));
+                writer.write(strings[0]);
+                writer.flush();
+                writer.close();
+
+                con.connect();
+
+                con.getResponseMessage();
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             } catch (ProtocolException e) {

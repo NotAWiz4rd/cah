@@ -34,6 +34,7 @@ public class CreateLobby extends AppCompatActivity {
 
     // ui elements
     private Button btn_create_lobby;
+    private Button btn_start_game_test;
     private Button btn_select_deck;
     private ImageButton btn_back;
 
@@ -49,7 +50,6 @@ public class CreateLobby extends AppCompatActivity {
     private MutableLiveData<Integer> value_player_count = new MutableLiveData<>();
     private MutableLiveData<Integer> value_handcard_count = new MutableLiveData<>();
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,16 +62,13 @@ public class CreateLobby extends AppCompatActivity {
 
     private void initializeVariables() {
         value_handcard_count.setValue(DEFAULT_HANDCARD_COUNT);
-        value_handcard_count.observe(this, integer -> {
-            input_handcard_count.setText(String.valueOf(integer));
-        });
+        value_handcard_count.observe(this, integer -> input_handcard_count.setText(String.valueOf(integer)));
         value_player_count.setValue(DEFAULT_PLAYER_COUNT);
-        value_player_count.observe(this, integer -> {
-            input_player_count.setText(String.valueOf(integer));
-        });
+        value_player_count.observe(this, integer -> input_player_count.setText(String.valueOf(integer)));
     }
 
     private void initializeUIElements() {
+        btn_start_game_test = findViewById(R.id.btn_create_lobby_start_game_test);
         btn_create_lobby = findViewById(R.id.btn_create_lobby_create_lobby);
         btn_select_deck = findViewById(R.id.btn_create_lobby_select_deck);
         btn_back = findViewById(R.id.btn_create_lobby_back);
@@ -97,22 +94,15 @@ public class CreateLobby extends AppCompatActivity {
     }
 
     private void initializeUIEvents() {
-        btn_create_lobby.setOnClickListener(event -> {
-            Toast.makeText(this, "clicked " + btn_create_lobby.toString(), Toast.LENGTH_SHORT).show();
-        });
-        btn_select_deck.setOnClickListener(event -> {
-            Toast.makeText(this, "clicked " + btn_select_deck.toString(), Toast.LENGTH_SHORT).show();
-        });
+        btn_start_game_test.setOnClickListener(event -> createLobby());
+        btn_create_lobby.setOnClickListener(event -> Toast.makeText(this, "clicked " + btn_create_lobby.toString(), Toast.LENGTH_SHORT).show());
+        btn_select_deck.setOnClickListener(event -> Toast.makeText(this, "clicked " + btn_select_deck.toString(), Toast.LENGTH_SHORT).show());
         btn_back.setOnClickListener(event -> {
             Toast.makeText(this, "clicked " + btn_back.toString(), Toast.LENGTH_SHORT).show();
             finish();
         });
-        input_player_count.setOnClickListener(event -> {
-            value_selector_player_count.show(getSupportFragmentManager(), "value_selector_player_count");
-        });
-        input_handcard_count.setOnClickListener(event -> {
-            value_selector_handcard_count.show(getSupportFragmentManager(), "value_selector_handcard_count");
-        });
+        input_player_count.setOnClickListener(event -> value_selector_player_count.show(getSupportFragmentManager(), "value_selector_player_count"));
+        input_handcard_count.setOnClickListener(event -> value_selector_handcard_count.show(getSupportFragmentManager(), "value_selector_handcard_count"));
     }
 
     public void setValue_player_count(int value_player_count) {
@@ -194,9 +184,7 @@ public class CreateLobby extends AppCompatActivity {
         return players;
     }
 
-
-
-    private void hideUI(){
+    private void hideUI() {
         final int flags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
