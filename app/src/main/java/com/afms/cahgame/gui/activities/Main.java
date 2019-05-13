@@ -63,8 +63,9 @@ public class Main extends AppCompatActivity {
         });
         btn_settings.setOnClickListener(event -> {
             Toast.makeText(this, "clicked " + btn_settings.toString(), Toast.LENGTH_SHORT).show();
+
             FullSizeCard fullSizeCard = new FullSizeCard(this, new Card(Colour.WHITE, "Test"));
-            fullSizeCard.setSwipeGestures(FullSizeCard.SWIPE_UP);
+            fullSizeCard.setSwipeGestures(FullSizeCard.SWIPE_ALL_DIRECTION);
             fullSizeCard.setSwipeResultListener(new SwipeResultListener() {
                 @Override
                 public void onSwipeLeft() {
@@ -86,6 +87,20 @@ public class Main extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "down", Toast.LENGTH_SHORT).show();
                 }
             });
+
+            fullSizeCard.setButtonResultListener(label -> {
+                switch (label) {
+                    case "Close":
+                        contentView.removeView(fullSizeCard);
+                        break;
+                    case "Test":
+                        Toast.makeText(getApplicationContext(), "TEST", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            fullSizeCard.addOptionButton("Close");
+            fullSizeCard.addOptionButton("Test");
+            fullSizeCard.setDimBackground(true);
             contentView.addView(fullSizeCard);
         });
     }
