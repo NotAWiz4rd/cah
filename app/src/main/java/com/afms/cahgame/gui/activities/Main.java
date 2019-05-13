@@ -13,6 +13,7 @@ import android.widget.Toast;
 import com.afms.cahgame.R;
 import com.afms.cahgame.game.Card;
 import com.afms.cahgame.game.Colour;
+import com.afms.cahgame.gui.components.ButtonResultListener;
 import com.afms.cahgame.gui.components.FullSizeCard;
 import com.afms.cahgame.gui.components.SwipeResultListener;
 
@@ -36,14 +37,14 @@ public class Main extends AppCompatActivity {
         initializeUIEvents();
     }
 
-    private void initializeUIElements(){
+    private void initializeUIElements() {
         btn_create_lobby = findViewById(R.id.btn_main_createLobby);
         btn_search_lobby = findViewById(R.id.btn_main_searchLobby);
         btn_explore_decks = findViewById(R.id.btn_main_exploreDecks);
         btn_settings = findViewById(R.id.btn_main_settings);
     }
 
-    private void initializeUIEvents(){
+    private void initializeUIEvents() {
         btn_create_lobby.setOnClickListener(event -> {
             Toast.makeText(this, "clicked " + btn_create_lobby.toString(), Toast.LENGTH_SHORT).show();
             startActivity(new Intent(this, CreateLobby.class));
@@ -56,6 +57,7 @@ public class Main extends AppCompatActivity {
         });
         btn_settings.setOnClickListener(event -> {
             Toast.makeText(this, "clicked " + btn_settings.toString(), Toast.LENGTH_SHORT).show();
+
             FullSizeCard fullSizeCard = new FullSizeCard(this, new Card(Colour.WHITE, "Test"));
             fullSizeCard.setSwipeGestures(FullSizeCard.SWIPE_ALL_DIRECTION);
             fullSizeCard.setSwipeResultListener(new SwipeResultListener() {
@@ -79,6 +81,20 @@ public class Main extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "down", Toast.LENGTH_SHORT).show();
                 }
             });
+
+            fullSizeCard.setButtonResultListener(label -> {
+                switch (label) {
+                    case "Close":
+                        contentView.removeView(fullSizeCard);
+                        break;
+                    case "Test":
+                        Toast.makeText(getApplicationContext(), "TEST", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            fullSizeCard.addOptionButton("Close");
+            fullSizeCard.addOptionButton("Test");
+            fullSizeCard.setDimBackground(true);
             contentView.addView(fullSizeCard);
         });
     }
