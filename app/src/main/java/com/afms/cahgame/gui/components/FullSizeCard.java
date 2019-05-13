@@ -5,7 +5,6 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.constraint.ConstraintLayout;
@@ -18,6 +17,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.afms.cahgame.R;
 import com.afms.cahgame.game.Card;
@@ -25,6 +25,10 @@ import com.afms.cahgame.game.Colour;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+import static java.lang.Math.round;
 
 public class FullSizeCard extends ConstraintLayout {
 
@@ -48,6 +52,8 @@ public class FullSizeCard extends ConstraintLayout {
     private float downPosX;
     private float movedPosY;
     private float movedPosX;
+    private float viewPosDownX;
+    private float viewPosDownY;
     private int[] oldLocation = new int[2];
     private boolean switchedCard = true;
     private SwipeResultListener swipeResultListener;
@@ -104,37 +110,48 @@ public class FullSizeCard extends ConstraintLayout {
         editTextMode(fullSizeCardText, false);
 
         fullSizeCardLayout.setOnTouchListener((v, event) -> {
-            switchedCard = false;
-            if(!swipeStates.contains(SWIPE_DISABLE)){
+            if (!swipeStates.contains(SWIPE_DISABLE)) {
+                switchedCard = false;
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         downPosY = event.getY();
                         downPosX = event.getX();
+                        viewPosDownX = v.getX();
+                        viewPosDownY = v.getY();
                         break;
                     case MotionEvent.ACTION_MOVE:
                         movedPosY = event.getY();
                         movedPosX = event.getX();
-                        if(swipeStates.contains(SWIPE_ALL_DIRECTION) || swipeStates.contains(SWIPE_Y_AXIS)){
+                        if (swipeStates.contains(SWIPE_ALL_DIRECTION) || swipeStates.contains(SWIPE_Y_AXIS)) {
                             v.setY(v.getY() + movedPosY - downPosY);
                         } else if (swipeStates.contains(SWIPE_UP)) {
-                            v.setY(v.getY() + Math.min(downPosY, movedPosY) - downPosY);
+                            v.setY(min(viewPosDownY, v.getY() + movedPosY - downPosY));
                         } else if (swipeStates.contains(SWIPE_DOWN)) {
-                            v.setY(v.getY() + Math.max(downPosY, movedPosY) - downPosY);
+                            v.setY(max(viewPosDownY, v.getY() + movedPosY - downPosY));
                         }
-                        if(swipeStates.contains(SWIPE_ALL_DIRECTION) || swipeStates.contains(SWIPE_X_AXIS)){
+                        if (swipeStates.contains(SWIPE_ALL_DIRECTION) || swipeStates.contains(SWIPE_X_AXIS)) {
                             v.setX(v.getX() + movedPosX - downPosX);
+                        } else if (swipeStates.contains(SWIPE_LEFT)) {
+                            v.setX(min(viewPosDownX, v.getX() + movedPosX - downPosX));
+                        } else if (swipeStates.contains(SWIPE_RIGHT)) {
+                            v.setX(max(viewPosDownX, v.getX() + movedPosX - downPosX));
                         }
                         break;
                     case MotionEvent.ACTION_UP:
-                        if (v.getY() > -500 && v.getX() < 300 && v.getX() > -200) {
-                            v.setY(oldLocation[1]);
-                            v.setX(oldLocation[0]);
-                        } else if (v.getX() > 300) {
-                            generateAnimation(v, "translationX", 1000f, 300, 1);
-                        } else if (v.getX() < -200) {
-                            generateAnimation(v, "translationX", -1000f, 300, 2);
-                        } else {
-                            generateAnimation(v, "translationY", -1800f, 400, 0);
+                        if (v.getY() > (viewPosDownY - (v.getHeight() * 0.25)) &&
+                                v.getY() < (viewPosDownY + (v.getHeight() * 0.25)) &&
+                                v.getX() > (viewPosDownX - (v.getWidth() * 0.3)) &&
+                                v.getX() < (viewPosDownX + (v.getWidth() * 0.3))) {
+                            v.setY(viewPosDownY);
+                            v.setX(viewPosDownX);
+                        } else if (v.getY() < (viewPosDownY - (v.getHeight() * 0.25))){
+                            generateAnimation(v, "translationY", -v.getHeight(), (int)(v.getHeight() * 0.25), 0);
+                        } else if (v.getY() > (viewPosDownY + (v.getHeight() * 0.25))){
+                            generateAnimation(v, "translationY", v.getHeight(), (int)(v.getHeight() * 0.25), 1);
+                        } else if (v.getX() < (viewPosDownX - (v.getWidth() * 0.3))){
+                            generateAnimation(v, "translationX", -v.getWidth(), (int)(v.getWidth() * 0.3), 2);
+                        } else if (v.getX() > (viewPosDownX + (v.getWidth() * 0.3))){
+                            generateAnimation(v, "translationX", v.getWidth(), (int)(v.getWidth() * 0.3), 3);
                         }
                         break;
                 }
@@ -143,9 +160,9 @@ public class FullSizeCard extends ConstraintLayout {
         });
     }
 
-    public void setSwipeGestures(int... states){
+    public void setSwipeGestures(int... states) {
         swipeStates.clear();
-        for(Integer state : states){
+        for (Integer state : states) {
             swipeStates.add(state);
         }
     }
@@ -160,19 +177,19 @@ public class FullSizeCard extends ConstraintLayout {
                 ((ViewManager) v.getParent().getParent().getParent()).removeView(((View) v.getParent().getParent()));
                 v.setX(oldLocation[0]);
                 v.setY(oldLocation[1]);
-                if(swipeResultListener != null){
+                if (swipeResultListener != null) {
                     switch (direction) {
                         case 0:
                             swipeResultListener.onSwipeUp();
                             break;
                         case 1:
-                            swipeResultListener.onSwipeRight();
+                            swipeResultListener.onSwipeDown();
                             break;
                         case 2:
                             swipeResultListener.onSwipeLeft();
                             break;
                         case 3:
-                            swipeResultListener.onSwipeDown();
+                            swipeResultListener.onSwipeRight();
                             break;
                     }
                 }

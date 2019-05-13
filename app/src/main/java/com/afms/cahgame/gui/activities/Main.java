@@ -57,7 +57,7 @@ public class Main extends AppCompatActivity {
         btn_settings.setOnClickListener(event -> {
             Toast.makeText(this, "clicked " + btn_settings.toString(), Toast.LENGTH_SHORT).show();
             FullSizeCard fullSizeCard = new FullSizeCard(this, new Card(Colour.WHITE, "Test"));
-            fullSizeCard.setSwipeGestures(FullSizeCard.SWIPE_UP);
+            fullSizeCard.setSwipeGestures(FullSizeCard.SWIPE_ALL_DIRECTION);
             fullSizeCard.setSwipeResultListener(new SwipeResultListener() {
                 @Override
                 public void onSwipeLeft() {
