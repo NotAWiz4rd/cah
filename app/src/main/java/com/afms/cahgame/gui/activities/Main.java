@@ -88,18 +88,13 @@ public class Main extends AppCompatActivity {
                 }
             });
 
-            fullSizeCard.setButtonResultListener(label -> {
-                switch (label) {
-                    case "Close":
-                        contentView.removeView(fullSizeCard);
-                        break;
-                    case "Test":
-                        Toast.makeText(getApplicationContext(), "TEST", Toast.LENGTH_SHORT).show();
-                }
+            fullSizeCard.addOptionButton("Close", v -> {
+                contentView.removeView(fullSizeCard);
+            });
+            fullSizeCard.addOptionButton("Test", v -> {
+                Toast.makeText(getApplicationContext(), "TEST", Toast.LENGTH_SHORT).show();
             });
 
-            fullSizeCard.addOptionButton("Close");
-            fullSizeCard.addOptionButton("Test");
             fullSizeCard.setDimBackground(true);
             contentView.addView(fullSizeCard);
         });

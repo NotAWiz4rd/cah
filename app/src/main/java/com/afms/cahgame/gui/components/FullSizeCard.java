@@ -59,14 +59,9 @@ public class FullSizeCard extends ConstraintLayout {
     private double xAxisWidthFactor = 0.3;
     private SwipeResultListener swipeResultListener;
     private List<Integer> swipeStates;
-    private ButtonResultListener buttonResultListener;
 
     public void setSwipeResultListener(SwipeResultListener swipeResultListener) {
         this.swipeResultListener = swipeResultListener;
-    }
-
-    public void setButtonResultListener(ButtonResultListener buttonResultListener) {
-        this.buttonResultListener = buttonResultListener;
     }
 
     public void setDimBackground(boolean value){
@@ -77,14 +72,14 @@ public class FullSizeCard extends ConstraintLayout {
         }
     }
 
-    public void addOptionButton(String label) {
+    public void addOptionButton(String label, OnClickListener onClickListener) {
         Button btn = (Button) LayoutInflater.from(getContext()).inflate(R.layout.component_dialog_selector_button, null);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         params.setMargins(6, 6, 6, 6);
         btn.setLayoutParams(params);
         btn.setText(label);
         btn.setOnClickListener(event -> {
-            buttonResultListener.onClickedButton(String.valueOf(btn.getText()));
+            onClickListener.onClick(btn);
         });
         fullSizeCardOptionLayout.addView(btn);
 
