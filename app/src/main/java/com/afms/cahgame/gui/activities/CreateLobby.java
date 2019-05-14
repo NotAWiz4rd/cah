@@ -34,9 +34,9 @@ import java.util.Map;
 public class CreateLobby extends AppCompatActivity {
 
     // statics
-    private final static int DEFAULT_HANDCARD_COUNT = 5;
-    private final static int DEFAULT_PLAYER_COUNT = 3;
-    private final static int MIN_PLAYER_COUNT = 2;
+    private final static int DEFAULT_HANDCARD_COUNT = 7;
+    private final static int DEFAULT_PLAYER_COUNT = 5;
+    private final static int MIN_PLAYER_COUNT = 3;
     private final static int MAX_PLAYER_COUNT = 8;
     private final static int MIN_HANDCARD_COUNT = 3;
     private final static int MAX_HANDCARD_COUNT = 10;
