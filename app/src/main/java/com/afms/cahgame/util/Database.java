@@ -140,7 +140,7 @@ public class Database {
      * @param deckName Name of the deck.
      */
     public static void addCardToDeck(Integer cardId, String deckName) {
-        Deck deck = Util.getDataDeckFromName(deckName, Database.getDecks());
+        Deck deck = Util.getDataDeckFromName(deckName);
         if (deck != null) {
             int deckIndex = Database.getDecks().indexOf(deck);
             decks.get(deckIndex).addCard(cardId);
@@ -228,7 +228,7 @@ public class Database {
      * @param cardId   CardId of the card which is to be removed.
      */
     public static void removeCardFromDeck(String deckName, Integer cardId) {
-        Deck deck = Util.getDataDeckFromName(deckName, decks);
+        Deck deck = Util.getDataDeckFromName(deckName);
         if (deck != null) {
             int deckIndex = decks.indexOf(deck);
             decks.get(deckIndex).removeCard(cardId);
@@ -263,7 +263,7 @@ public class Database {
      * @return GameDeck of the given deckname.
      */
     public static com.afms.cahgame.game.Deck getDeck(String deckname) {
-        return Util.convertDataDeckToPlayDeck(Util.getDataDeckFromName(deckname, decks));
+        return Util.convertDataDeckToPlayDeck(Util.getDataDeckFromName(deckname));
     }
 
     //....................................Getters and Setters......................................

@@ -9,6 +9,12 @@ import java.util.List;
 import java.util.Optional;
 
 public class Util {
+    /**
+     * Converts a dataDeck to a GameDeck by getting all the card data from the database.
+     *
+     * @param dataDeck The dataDeck.
+     * @return The newly created GameDeck.
+     */
     public static Deck convertDataDeckToPlayDeck(com.afms.cahgame.data.Deck dataDeck) {
         Deck gameDeck = new Deck();
         gameDeck.setName(dataDeck.getName());
@@ -32,13 +38,25 @@ public class Util {
         return gameDeck;
     }
 
+    /**
+     * Gets a DataCard from an id.
+     *
+     * @param cardId The cardId.
+     * @return The corresponding DataCard.
+     */
     public static Card getDataCardFromId(int cardId) {
         Optional<Card> cardOptional = Database.getCards().stream().filter(card -> card.getId() == cardId).findFirst();
         return cardOptional.orElse(null);
     }
 
-    public static com.afms.cahgame.data.Deck getDataDeckFromName(String deckName, List<com.afms.cahgame.data.Deck> decks) {
-        Optional<com.afms.cahgame.data.Deck> deckOptional = decks.stream().filter(deck -> deck.getName().equals(deckName)).findFirst();
+    /**
+     * Gets a DataDeck from a deckName.
+     *
+     * @param deckName The deckName.
+     * @return The corresponding DataDeck.
+     */
+    public static com.afms.cahgame.data.Deck getDataDeckFromName(String deckName) {
+        Optional<com.afms.cahgame.data.Deck> deckOptional = Database.getDecks().stream().filter(deck -> deck.getName().equals(deckName)).findFirst();
         return deckOptional.orElse(null);
     }
 }
