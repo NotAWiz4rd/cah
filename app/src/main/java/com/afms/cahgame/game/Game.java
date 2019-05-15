@@ -124,6 +124,7 @@ public class Game implements Serializable {
     }
 
     private void drawInitialCards() {
+        // todo check that deck has enough cards for all players
         for (int i = 0; i < handCardCount; i++) {
             for (Player player : players) {
                 player.addCard(newCardsPile.remove(newCardsPile.size() - 1));

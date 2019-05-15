@@ -4,7 +4,6 @@ import android.arch.lifecycle.MutableLiveData;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -12,24 +11,14 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.afms.cahgame.R;
-import com.afms.cahgame.game.Card;
 import com.afms.cahgame.data.Colour;
-import com.afms.cahgame.game.Deck;
 import com.afms.cahgame.game.Game;
 import com.afms.cahgame.game.Lobby;
 import com.afms.cahgame.gui.components.ValueSelector;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.GenericTypeIndicator;
-import com.google.firebase.database.ValueEventListener;
+import com.afms.cahgame.util.Database;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class CreateLobby extends AppCompatActivity {
 
@@ -59,42 +48,18 @@ public class CreateLobby extends AppCompatActivity {
     private MutableLiveData<Integer> value_player_count = new MutableLiveData<>();
     private MutableLiveData<Integer> value_handcard_count = new MutableLiveData<>();
 
-    private Map<String, Lobby> lobbies = new HashMap<>();
     private String playerName;
-    private DatabaseReference lobbiesReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_lobby);
         hideUI();
-        initializeDatabaseConnection();
+        createCards();
+        createSampleDeck();
         initializeUIElements();
         initializeUIEvents();
         initializeVariables();
-    }
-
-    private void initializeDatabaseConnection() {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        lobbiesReference = database.getReference("lobbies");
-
-        lobbiesReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // this interesting construct is here to suffice Firebases need for type safety
-                GenericTypeIndicator<Map<String, Lobby>> genericTypeIndicator = new GenericTypeIndicator<Map<String, Lobby>>() {
-                };
-                lobbies = dataSnapshot.getValue(genericTypeIndicator);
-                if (lobbies == null) {
-                    lobbies = new HashMap<>();
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                Log.w("ERROR", "Failed to get lobbies from server.", error.toException());
-            }
-        });
     }
 
     private void initializeVariables() {
@@ -135,7 +100,7 @@ public class CreateLobby extends AppCompatActivity {
         btn_create_lobby.setOnClickListener(event -> {
             String lobbyId = input_lobby_name.getText().toString();
 
-            if (lobbies.containsKey(lobbyId)) {
+            if (Database.getLobbies().containsKey(lobbyId)) {
                 Toast.makeText(this, "A lobby with this name already exists", Toast.LENGTH_LONG).show();
                 return;
             }
@@ -145,13 +110,12 @@ public class CreateLobby extends AppCompatActivity {
             }
 
             playerName = "Player1"; // todo for testing purposes only
-            lobbies.put(lobbyId, new Lobby(
+            Database.addLobby(lobbyId, new Lobby(
                     lobbyId,
                     playerName,
                     "", // todo add password
                     Integer.parseInt(input_handcard_count.getText().toString()),
                     Integer.parseInt(input_player_count.getText().toString())));
-            lobbiesReference.setValue(lobbies);
         });
         btn_select_deck.setOnClickListener(event -> Toast.makeText(this, "clicked " + btn_select_deck.toString(), Toast.LENGTH_SHORT).show());
         btn_back.setOnClickListener(event -> {
@@ -163,8 +127,9 @@ public class CreateLobby extends AppCompatActivity {
     }
 
     private void createLobby() {
+        // todo check that deck has enough cards for all players
         Intent intent = new Intent(this, GameScreen.class);
-        intent.putExtra("game", new Game(createSampleDeck(), createSamplePlayers(), Integer.parseInt(input_handcard_count.getText().toString())));
+        intent.putExtra("game", new Game(Database.getDeck("testdeck"), createSamplePlayers(), Integer.parseInt(input_handcard_count.getText().toString())));
         intent.putExtra("lobbyId", "01");
         // todo make current playername configurable to improve testing
         intent.putExtra("name", "Player1");
@@ -172,55 +137,74 @@ public class CreateLobby extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private Deck createSampleDeck() {
-        return new Deck("testdeck", getSampleWhiteCards(), getSampleBlackCards());
+    private void createSampleDeck() {
+        com.afms.cahgame.data.Deck deck = new com.afms.cahgame.data.Deck("testdeck");
+        deck.addCard(1);
+        deck.addCard(2);
+        deck.addCard(3);
+        deck.addCard(4);
+        deck.addCard(5);
+        deck.addCard(6);
+        deck.addCard(7);
+        deck.addCard(0);
+        deck.addCard(8);
+        deck.addCard(9);
+        deck.addCard(10);
+        deck.addCard(11);
+        deck.addCard(12);
+        deck.addCard(13);
+        deck.addCard(14);
+        deck.addCard(15);
+        deck.addCard(16);
+        deck.addCard(17);
+        deck.addCard(18);
+        deck.addCard(19);
+        deck.addCard(20);
+        deck.addCard(21);
+        deck.addCard(22);
+        deck.addCard(23);
+        deck.addCard(24);
+        deck.addCard(25);
+        deck.addCard(26);
+        deck.addCard(27);
+        deck.addCard(28);
+        deck.addCard(29);
+        deck.addCard(30);
+        Database.addDeck(deck);
     }
 
-    private List<Card> getSampleBlackCards() {
-        return Arrays.asList(
-                new Card(Colour.BLACK, "Black Lorem Ipsum0"),
-                new Card(Colour.BLACK, "Black Lorem Ipsum1"),
-                new Card(Colour.BLACK, "Black Lorem Ipsum2"),
-                new Card(Colour.BLACK, "Black Lorem Ipsum3"),
-                new Card(Colour.BLACK, "Black Lorem Ipsum4"),
-                new Card(Colour.BLACK, "Black Lorem Ipsum5"),
-                new Card(Colour.BLACK, "Black Lorem Ipsum6"),
-                new Card(Colour.BLACK, "Black Lorem Ipsum7"),
-                new Card(Colour.BLACK, "Black Lorem Ipsum8"));
-    }
-
-    private List<Card> getSampleWhiteCards() {
-        return Arrays.asList(
-                new Card(Colour.WHITE, "White Lorem Ipsum0"),
-                new Card(Colour.WHITE, "White Lorem Ipsum1"),
-                new Card(Colour.WHITE, "White Lorem Ipsum2"),
-                new Card(Colour.WHITE, "White Lorem Ipsum3"),
-                new Card(Colour.WHITE, "White Lorem Ipsum4"),
-                new Card(Colour.WHITE, "White Lorem Ipsum5"),
-                new Card(Colour.WHITE, "White Lorem Ipsum6"),
-                new Card(Colour.WHITE, "White Lorem Ipsum7"),
-                new Card(Colour.WHITE, "White Lorem Ipsum8"),
-                new Card(Colour.WHITE, "White Lorem Ipsum9"),
-                new Card(Colour.WHITE, "White Lorem Ipsum10"),
-                new Card(Colour.WHITE, "White Lorem Ipsum11"),
-                new Card(Colour.WHITE, "White Lorem Ipsum12"),
-                new Card(Colour.WHITE, "White Lorem Ipsum13"),
-                new Card(Colour.WHITE, "White Lorem Ipsum14"),
-                new Card(Colour.WHITE, "White Lorem Ipsum15"),
-                new Card(Colour.WHITE, "White Lorem Ipsum16"),
-                new Card(Colour.WHITE, "White Lorem Ipsum18"),
-                new Card(Colour.WHITE, "White Lorem Ipsum19"),
-                new Card(Colour.WHITE, "White Lorem Ipsum20"),
-                new Card(Colour.WHITE, "White Lorem Ipsum21"),
-                new Card(Colour.WHITE, "White Lorem Ipsum22"),
-                new Card(Colour.WHITE, "White Lorem Ipsum23"),
-                new Card(Colour.WHITE, "White Lorem Ipsum24"),
-                new Card(Colour.WHITE, "White Lorem Ipsum25"),
-                new Card(Colour.WHITE, "White Lorem Ipsum26"),
-                new Card(Colour.WHITE, "White Lorem Ipsum27"),
-                new Card(Colour.WHITE, "White Lorem Ipsum28"),
-                new Card(Colour.WHITE, "White Lorem Ipsum29"),
-                new Card(Colour.WHITE, "White Lorem Ipsum30"));
+    private void createCards() {
+        Database.createNewCard("Black Card 1", Colour.BLACK);
+        Database.createNewCard("Black Card 2", Colour.BLACK);
+        Database.createNewCard("Black Card 3", Colour.BLACK);
+        Database.createNewCard("Black Card 4", Colour.BLACK);
+        Database.createNewCard("Black Card 5", Colour.BLACK);
+        Database.createNewCard("Black Card 6", Colour.BLACK);
+        Database.createNewCard("White Card 1", Colour.WHITE);
+        Database.createNewCard("White Card 2", Colour.WHITE);
+        Database.createNewCard("White Card 3", Colour.WHITE);
+        Database.createNewCard("White Card 4", Colour.WHITE);
+        Database.createNewCard("White Card 5", Colour.WHITE);
+        Database.createNewCard("White Card 6", Colour.WHITE);
+        Database.createNewCard("White Card 7", Colour.WHITE);
+        Database.createNewCard("White Card 8", Colour.WHITE);
+        Database.createNewCard("White Card 9", Colour.WHITE);
+        Database.createNewCard("White Card 10", Colour.WHITE);
+        Database.createNewCard("White Card 11", Colour.WHITE);
+        Database.createNewCard("White Card 12", Colour.WHITE);
+        Database.createNewCard("White Card 13", Colour.WHITE);
+        Database.createNewCard("White Card 14", Colour.WHITE);
+        Database.createNewCard("White Card 15", Colour.WHITE);
+        Database.createNewCard("White Card 16", Colour.WHITE);
+        Database.createNewCard("White Card 17", Colour.WHITE);
+        Database.createNewCard("White Card 18", Colour.WHITE);
+        Database.createNewCard("White Card 19", Colour.WHITE);
+        Database.createNewCard("White Card 20", Colour.WHITE);
+        Database.createNewCard("White Card 21", Colour.WHITE);
+        Database.createNewCard("White Card 22", Colour.WHITE);
+        Database.createNewCard("White Card 23", Colour.WHITE);
+        Database.createNewCard("White Card 24", Colour.WHITE);
+        Database.createNewCard("White Card 25", Colour.WHITE);
     }
 
     private List<String> createSamplePlayers() {
