@@ -165,8 +165,6 @@ public class GameScreen extends AppCompatActivity {
         game.setGamestate(Gamestate.START);
 
         submitGame();
-        updatePlayer();
-        gameStateLoop();
     }
 
     private void setPlayerReady() {
