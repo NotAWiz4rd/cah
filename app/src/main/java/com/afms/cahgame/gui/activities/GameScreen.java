@@ -9,11 +9,9 @@ import android.os.Handler;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -33,10 +31,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -47,6 +43,8 @@ public class GameScreen extends AppCompatActivity {
     private Player player;
 
     private Gamestate lastGamestate;
+    private boolean showPlayedCardsAllowed;
+    private boolean allowCardSubmitting;
 
     private String lobbyId;
     private DatabaseReference gameReference;
@@ -76,7 +74,6 @@ public class GameScreen extends AppCompatActivity {
         hideUI();
         initializeUIElements();
         initializeUIEvents();
-        showHandCardList();
 
         lobbyId = (String) getIntent().getSerializableExtra("lobbyId");
         game = (Game) getIntent().getSerializableExtra("game");
@@ -85,7 +82,8 @@ public class GameScreen extends AppCompatActivity {
 
         saveInfo();
     }
-//<------ GUI LOGIC --------------------------------------------------------------------------------------------------------------->
+
+    //<------ GUI LOGIC --------------------------------------------------------------------------------------------------------------->
     private void initializeUIElements() {
         playerOverview = findViewById(R.id.player_overview);
         gameScreenLayout = findViewById(R.id.game_screen_layout);
@@ -106,35 +104,40 @@ public class GameScreen extends AppCompatActivity {
         });
         //for testing
         playedBlackCard.setOnClickListener(event -> {
-            showPlayedCards();
+            if (showPlayedCardsAllowed) {
+                showPlayedCards();
+            }
         });
     }
 
-    private void deleteAllViewsFromLowerFrameLayout(){
+    private void deleteAllViewsFromLowerFrameLayout() {
         lowerFrameLayout.removeAllViews();
     }
 
-    private void showHandCardList(){
-        deleteAllViewsFromLowerFrameLayout();
-        lowerFrameLayout.addView(userSelectionLayout);
-        userSelectionListAdapter = new CardListAdapter(this, new ArrayList<Card>());
-        userSelectionListView.setAdapter(userSelectionListAdapter);
+    private void showHandCardList() {
+        if (player != null) {
+            deleteAllViewsFromLowerFrameLayout();
+            lowerFrameLayout.addView(userSelectionLayout);
+            userSelectionListAdapter = new CardListAdapter(this, new ArrayList<Card>());
+            userSelectionListView.setAdapter(userSelectionListAdapter);
 
-        userSelectionListAdapter.addAll(getHandCards());
+            userSelectionListAdapter.addAll(player.getHand());
 
-        userSelectionListView.setOnItemClickListener((parent, view, position, id) -> {
-            Toast.makeText(this, String.valueOf(position), Toast.LENGTH_SHORT).show();
-            Card card = (Card) parent.getItemAtPosition(position);
-            completeFrameLayout.addView(getFullSizeCardInstance(card, position));
-        });
+            userSelectionListView.setOnItemClickListener((parent, view, position, id) -> {
+                Toast.makeText(this, String.valueOf(position), Toast.LENGTH_SHORT).show();
+                Card card = (Card) parent.getItemAtPosition(position);
+                completeFrameLayout.addView(getFullSizeCardInstance(card, position));
+            });
+        }
     }
 
-    private void showPlayedCards(){
+    private void showPlayedCards() {
         deleteAllViewsFromLowerFrameLayout();
         playedWhiteCardList = getPlayedCards();
-        playedWhiteCard = playedWhiteCardList.get(0);
-        lowerFrameLayout.addView(playedWhiteCard);
-
+        if (playedWhiteCardList.size() > 0) {
+            playedWhiteCard = playedWhiteCardList.get(0);
+            lowerFrameLayout.addView(playedWhiteCard);
+        }
     }
 
     public FullSizeCard getFullSizeCardInstance(Card card, int selectedPosition) {
@@ -157,7 +160,7 @@ public class GameScreen extends AppCompatActivity {
                 @Override
                 public void onSwipeRight() {
                     int nextPos = selectedPosition - 1;
-                    if(nextPos < 0){
+                    if (nextPos < 0) {
                         nextPos = userSelectionListView.getCount() - 1;
                     }
                     Toast.makeText(getApplicationContext(), String.valueOf(nextPos), Toast.LENGTH_SHORT).show();
@@ -166,12 +169,20 @@ public class GameScreen extends AppCompatActivity {
 
                 @Override
                 public void onSwipeUp() {
-                    //TODO logic for playing this card
+                    if (!currentPlayerIsCardSzar()) {
+                        if (allowCardSubmitting) {
+                            submitCard(card);
+                        }
+                    } else {
+                        if (lastGamestate.equals(Gamestate.WAITING)) {
+                            // todo let cardczar submit one white card
+                        }
+                    }
                 }
 
                 @Override
                 public void onSwipeDown() {
-
+                    // do nothing
                 }
             });
             fullCard.setSwipeGestures(FullSizeCard.SWIPE_X_AXIS, FullSizeCard.SWIPE_UP);
@@ -201,33 +212,10 @@ public class GameScreen extends AppCompatActivity {
     }
     //<--------------------------------------------------------------------------------------------------------------------------->
 
-    private List<Card> getHandCards(){
-        //TODO here we need to get the cards from the player
-        List<Card> cards = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
-            cards.add(new Card(
-                    Colour.values()[(int) (Math.random() * Colour.values().length)],
-                    Arrays.stream(getResources().getStringArray(R.array.sample_card_texts))
-                            .sorted((o1, o2) -> ThreadLocalRandom.current().nextInt(-1, 2))
-                            .findAny()
-                            .get()));
-        }
-        return cards;
-    }
-
-    private List<FullSizeCard> getPlayedCards(){
-        //TODO here we need to get the played cards
-        List<Card> cards = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
-            cards.add(new Card(
-                    Colour.WHITE,
-                    Arrays.stream(getResources().getStringArray(R.array.sample_card_texts))
-                            .sorted((o1, o2) -> ThreadLocalRandom.current().nextInt(-1, 2))
-                            .findAny()
-                            .get()));
-        }
+    private List<FullSizeCard> getPlayedCards() {
         List<FullSizeCard> playedCards = new ArrayList<>();
-        for (Card card : cards) {
+
+        for (Card card : game.getPlayedCards()) {
             FullSizeCard fullCard = new FullSizeCard(this, card);
             fullCard.setSwipeResultListener(new SwipeResultListener() {
                 @Override
@@ -239,7 +227,7 @@ public class GameScreen extends AppCompatActivity {
                 @Override
                 public void onSwipeRight() {
                     int nextPos = playedWhiteCardList.indexOf(fullCard) - 1;
-                    if(nextPos < 0){
+                    if (nextPos < 0) {
                         nextPos = playedWhiteCardList.size() - 1;
                     }
                     lowerFrameLayout.addView(playedWhiteCardList.get(nextPos));
@@ -300,9 +288,12 @@ public class GameScreen extends AppCompatActivity {
             advanceGamestate();
         }
         setPlayerReady();
+        showHandCardList();
     }
 
     private void onRoundStartGamestate() {
+        showHandCardList();
+
         if (currentPlayerIsCardSzar()) {
             game.startNewRound();
             submitGame();
@@ -312,6 +303,8 @@ public class GameScreen extends AppCompatActivity {
     }
 
     private void onSubmitGamestate() {
+        allowCardSubmitting = true;
+        showHandCardList();
         // todo show new cards and black card
 
         // todo enable user to submit a card from his hand
@@ -324,10 +317,12 @@ public class GameScreen extends AppCompatActivity {
             advanceGamestate();
         }
 
+        showHandCardList();
         // then wait for input -> do nothing here
     }
 
     private void onWaitingGamestate() {
+        showPlayedCardsAllowed = true;
         // todo display "waiting for cardszar to choose winning card"
         setPlayerReady();
 
@@ -340,6 +335,7 @@ public class GameScreen extends AppCompatActivity {
     }
 
     private void onRoundEndGamestate() {
+        showPlayedCardsAllowed = false;
         if (currentPlayerIsCardSzar()) {
             game.nextCardSzar();
             submitGame();
