@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -52,6 +53,7 @@ public class GameScreen extends AppCompatActivity {
 
     private SharedPreferences settings;
 
+    private ImageButton playerOverview;
     private ConstraintLayout gameScreenLayout;
     private ConstraintLayout playedBlackCard;
     private FullSizeCard playedWhiteCard;
@@ -85,6 +87,7 @@ public class GameScreen extends AppCompatActivity {
     }
 //<------ GUI LOGIC --------------------------------------------------------------------------------------------------------------->
     private void initializeUIElements() {
+        playerOverview = findViewById(R.id.player_overview);
         gameScreenLayout = findViewById(R.id.game_screen_layout);
         playedBlackCard = findViewById(R.id.layout_game_screen_playedBlackCard);
         lowerFrameLayout = findViewById(R.id.layout_game_screen_lower);
@@ -97,6 +100,10 @@ public class GameScreen extends AppCompatActivity {
     }
 
     private void initializeUIEvents() {
+        playerOverview.setOnClickListener(event -> {
+            Toast.makeText(this, "clicked on players overview", Toast.LENGTH_SHORT).show();
+            //TODO show players and their score
+        });
         //for testing
         playedBlackCard.setOnClickListener(event -> {
             showPlayedCards();
