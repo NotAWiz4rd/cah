@@ -31,7 +31,7 @@ public class Game implements Serializable {
     }
 
     public Game(Deck deck, List<String> playerNames, int handCardCount) {
-        this.gamestate = Gamestate.START;
+        this.gamestate = Gamestate.ROUNDSTART;
         this.deck = deck;
         createPlayers(playerNames);
         this.cardCzar = players.get(0).getName();

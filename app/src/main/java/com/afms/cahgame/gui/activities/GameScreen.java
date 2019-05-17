@@ -173,6 +173,8 @@ public class GameScreen extends AppCompatActivity {
                         if (allowCardSubmitting) {
                             submitCard(card);
                             setPlayerReady();
+                            allowCardSubmitting = false;
+                            showHandCardList();
                         }
                     }
                 }
@@ -271,9 +273,6 @@ public class GameScreen extends AppCompatActivity {
             quitGame("Something went terribly wrong...");
         }
         switch (game.getGamestate()) {
-            case START:
-                onStartGamestate();
-                break;
             case ROUNDSTART:
                 onRoundStartGamestate();
                 break;
@@ -290,15 +289,6 @@ public class GameScreen extends AppCompatActivity {
                 onGamestateError();
                 break;
         }
-    }
-
-    private void onStartGamestate() {
-        if (currentPlayerIsCardSzar()) {
-            onRoundStartGamestate();
-            advanceGamestate();
-        }
-        setPlayerReady();
-        showHandCardList();
     }
 
     private void onRoundStartGamestate() {
@@ -364,9 +354,7 @@ public class GameScreen extends AppCompatActivity {
      * Initializes lobby and pushes it to server.
      */
     private void startGame() {
-        game.startNewRound();
-
-        game.setGamestate(Gamestate.START);
+        game.setGamestate(Gamestate.ROUNDSTART);
 
         submitGame();
     }
@@ -386,9 +374,6 @@ public class GameScreen extends AppCompatActivity {
         } else {
             game.setAllPlayersNotReady();
             switch (game.getGamestate()) {
-                case START:
-                    game.setGamestate(Gamestate.ROUNDSTART);
-                    break;
                 case ROUNDSTART:
                     game.setGamestate(Gamestate.SUBMIT);
                     break;
