@@ -5,13 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".gui.activities.GameScreen"
-    android:id="@+id/game_screen_frameLayout">
+    android:id="@+id/game_screen_frameLayout"
+    android:background="#eeeeee">
 
 <android.support.constraint.ConstraintLayout
     android:id="@+id/game_screen_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#8D000000">
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:id="@+id/layout_game_screen_playedBlackCard"
