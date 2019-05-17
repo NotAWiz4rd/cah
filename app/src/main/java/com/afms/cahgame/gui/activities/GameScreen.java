@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afms.cahgame.R;
@@ -50,6 +51,7 @@ public class GameScreen extends AppCompatActivity {
     private ImageButton playerOverview;
     private ConstraintLayout gameScreenLayout;
     private ConstraintLayout playedBlackCard;
+    private TextView playedBlackCardText;
     private FullSizeCard playedWhiteCard;
     private FrameLayout lowerFrameLayout;
     private FrameLayout completeFrameLayout;
@@ -84,8 +86,11 @@ public class GameScreen extends AppCompatActivity {
         playerOverview = findViewById(R.id.player_overview);
         gameScreenLayout = findViewById(R.id.game_screen_layout);
         playedBlackCard = findViewById(R.id.layout_game_screen_playedBlackCard);
+        playedBlackCardText = findViewById(R.id.blackCardText);
         lowerFrameLayout = findViewById(R.id.layout_game_screen_lower);
         completeFrameLayout = findViewById(R.id.game_screen_frameLayout);
+
+        playedBlackCardText.setText("");
 
         playedWhiteCard = new FullSizeCard(this, new Card(Colour.WHITE, "test"));
         userSelectionLayout = (ConstraintLayout) getLayoutInflater().inflate(R.layout.list_card_select, gameScreenLayout, false);
@@ -98,7 +103,7 @@ public class GameScreen extends AppCompatActivity {
             Toast.makeText(this, "clicked on players overview", Toast.LENGTH_SHORT).show();
             //TODO show players and their score
         });
-        //for testing
+
         playedBlackCard.setOnClickListener(event -> {
             if (showPlayedCardsAllowed) {
                 showPlayedCards(false);
@@ -297,7 +302,7 @@ public class GameScreen extends AppCompatActivity {
     }
 
     private void onSubmitGamestate() {
-        // todo show black card
+        changeBlackCardText(game.getCurrentBlackCard().getText());
 
         if (!currentPlayerIsCardSzar()) {
             allowCardSubmitting = true;
@@ -485,5 +490,9 @@ public class GameScreen extends AppCompatActivity {
                 return;
             }
         }
+    }
+
+    private void changeBlackCardText(String text) {
+        playedBlackCardText.setText(text);
     }
 }

@@ -19,7 +19,7 @@ public class Game implements Serializable {
     private List<Card> discardPile;
     private List<Card> newCardsPile;
     private String cardCzar;
-    private Card currentBlackCard;
+    private Card currentBlackCard = new Card();
     private Card winningCard;
     private List<Card> playedCards;
 
@@ -79,7 +79,9 @@ public class Game implements Serializable {
         discardPile.addAll(playedCards);
         playedCards = new ArrayList<>();
 
-        if (blackCardsPile != null && blackCardsPile.size() == 0) {
+        if (blackCardsPile != null && !(blackCardsPile.size() == 0)) {
+            currentBlackCard = blackCardsPile.remove(blackCardsPile.size() - 1);
+        } else if (blackCardsPile != null) {
             blackCardsPile = deck.getBlackCards();
             currentBlackCard = blackCardsPile.remove(blackCardsPile.size() - 1);
         }
