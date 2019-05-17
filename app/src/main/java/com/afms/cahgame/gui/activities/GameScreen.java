@@ -105,7 +105,7 @@ public class GameScreen extends AppCompatActivity {
         //for testing
         playedBlackCard.setOnClickListener(event -> {
             if (showPlayedCardsAllowed) {
-                showPlayedCards();
+                showPlayedCards(false);
             }
         });
     }
@@ -131,9 +131,9 @@ public class GameScreen extends AppCompatActivity {
         }
     }
 
-    private void showPlayedCards() {
+    private void showPlayedCards(boolean allowCardSzarSubmit) {
         deleteAllViewsFromLowerFrameLayout();
-        playedWhiteCardList = getPlayedCards();
+        playedWhiteCardList = getPlayedCards(allowCardSzarSubmit);
         if (playedWhiteCardList.size() > 0) {
             playedWhiteCard = playedWhiteCardList.get(0);
             lowerFrameLayout.addView(playedWhiteCard);
@@ -172,10 +172,7 @@ public class GameScreen extends AppCompatActivity {
                     if (!currentPlayerIsCardSzar()) {
                         if (allowCardSubmitting) {
                             submitCard(card);
-                        }
-                    } else {
-                        if (lastGamestate.equals(Gamestate.WAITING)) {
-                            // todo let cardczar submit one white card
+                            setPlayerReady();
                         }
                     }
                 }
@@ -185,7 +182,11 @@ public class GameScreen extends AppCompatActivity {
                     // do nothing
                 }
             });
-            fullCard.setSwipeGestures(FullSizeCard.SWIPE_X_AXIS, FullSizeCard.SWIPE_UP);
+            if (allowCardSubmitting) {
+                fullCard.setSwipeGestures(FullSizeCard.SWIPE_X_AXIS, FullSizeCard.SWIPE_UP);
+            } else {
+                fullCard.setSwipeGestures(FullSizeCard.SWIPE_X_AXIS);
+            }
             fullSizeCardList.add(fullCard);
             return fullCard;
         }
@@ -212,7 +213,7 @@ public class GameScreen extends AppCompatActivity {
     }
     //<--------------------------------------------------------------------------------------------------------------------------->
 
-    private List<FullSizeCard> getPlayedCards() {
+    private List<FullSizeCard> getPlayedCards(boolean allowCardSzarSubmit) {
         List<FullSizeCard> playedCards = new ArrayList<>();
 
         for (Card card : game.getPlayedCards()) {
@@ -235,13 +236,22 @@ public class GameScreen extends AppCompatActivity {
 
                 @Override
                 public void onSwipeUp() {
+                    if (lastGamestate.equals(Gamestate.WAITING)) {
+                        game.submitWinningCard(card);
+                        setPlayerReady();
+                        advanceGamestate();
+                    }
                 }
 
                 @Override
                 public void onSwipeDown() {
                 }
             });
-            fullCard.setSwipeGestures(FullSizeCard.SWIPE_X_AXIS);
+            if (allowCardSzarSubmit) {
+                fullCard.setSwipeGestures(FullSizeCard.SWIPE_X_AXIS, FullSizeCard.SWIPE_UP);
+            } else {
+                fullCard.setSwipeGestures(FullSizeCard.SWIPE_X_AXIS);
+            }
             playedCards.add(fullCard);
         }
 
@@ -303,15 +313,10 @@ public class GameScreen extends AppCompatActivity {
     }
 
     private void onSubmitGamestate() {
-        allowCardSubmitting = true;
-        showHandCardList();
-        // todo show new cards and black card
-
-        // todo enable user to submit a card from his hand
+        // todo show black card
 
         if (!currentPlayerIsCardSzar()) {
-            submitCard(player.getHand().remove(0)); // todo for testing only
-            setPlayerReady();
+            allowCardSubmitting = true;
         } else {
             setPlayerReady();
             advanceGamestate();
@@ -324,13 +329,11 @@ public class GameScreen extends AppCompatActivity {
     private void onWaitingGamestate() {
         showPlayedCardsAllowed = true;
         // todo display "waiting for cardszar to choose winning card"
-        setPlayerReady();
 
         if (currentPlayerIsCardSzar()) {
-            // todo somehow at some point there are no playedCards...
-            game.submitWinningCard(game.getPlayedCards().get(0)); // todo cardszar chooses winning card from played Cards
-            submitGame();
-            advanceGamestate();
+            showPlayedCards(true);
+        } else {
+            setPlayerReady();
         }
     }
 
