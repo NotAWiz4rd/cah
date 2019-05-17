@@ -80,13 +80,7 @@ public class Main extends AppCompatActivity {
             Toast.makeText(this, "clicked " + btn_search_lobby.toString(), Toast.LENGTH_SHORT).show();
         });
         btn_piatest.setOnClickListener(event -> {
-            //testing waiting screen
-            FrameLayout mainlayout = findViewById(R.id.layout_main);
-            ConstraintLayout waitingScreen = (ConstraintLayout) getLayoutInflater().inflate(R.layout.waiting_screen, mainlayout, false);
-            ImageView blackCard = waitingScreen.findViewById(R.id.waiting_screen_blackCard);
-            ImageView whiteCard = waitingScreen.findViewById(R.id.waiting_screen_whiteCard);
-            mainlayout.addView(waitingScreen);
-            testAnimation(whiteCard, blackCard);
+
         });
         btn_explore_decks.setOnClickListener(event -> {
             Toast.makeText(this, "clicked " + btn_explore_decks.toString(), Toast.LENGTH_SHORT).show();
@@ -111,65 +105,6 @@ public class Main extends AppCompatActivity {
             editor.putString("player", playerName);
             editor.apply();
         });
-    }
-
-    private void testAnimation(ImageView whiteCard, ImageView blackCard) {
-        ObjectAnimator transOutBlack = ObjectAnimator.ofFloat(blackCard, "translationX", -100f).setDuration(700);
-        ObjectAnimator transOutWhite = ObjectAnimator.ofFloat(whiteCard, "translationX", 100f).setDuration(700);
-        AnimatorSet transOut = new AnimatorSet();
-        transOut.play(transOutBlack).with(transOutWhite);
-        transOut.start();
-        transOut.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-                whiteCard.bringToFront();
-                ObjectAnimator scaleDownX = ObjectAnimator.ofFloat(blackCard, "scaleX", 0.5f).setDuration(700);
-                ObjectAnimator scaleDownY= ObjectAnimator.ofFloat(blackCard, "scaleY", 0.5f).setDuration(700);
-                ObjectAnimator scaleUpX = ObjectAnimator.ofFloat(whiteCard, "scaleX", 2f).setDuration(700);
-                ObjectAnimator scaleUpY = ObjectAnimator.ofFloat(whiteCard, "scaleY", 2f).setDuration(700);
-                ObjectAnimator transInBlack = ObjectAnimator.ofFloat(blackCard, "translationX", 0f).setDuration(700);
-                ObjectAnimator transInWhite = ObjectAnimator.ofFloat(whiteCard, "translationX", 0f).setDuration(700);
-                ObjectAnimator scaleBackX = ObjectAnimator.ofFloat(blackCard, "scaleX", 1f).setDuration(700);
-                ObjectAnimator scaleBackY= ObjectAnimator.ofFloat(blackCard, "scaleY", 1f).setDuration(700);
-                ObjectAnimator scaleBack2X = ObjectAnimator.ofFloat(whiteCard, "scaleX", 1f).setDuration(700);
-                ObjectAnimator scaleBack2Y = ObjectAnimator.ofFloat(whiteCard, "scaleY", 1f).setDuration(700);
-                AnimatorSet scale = new AnimatorSet();
-                AnimatorSet transIn = new AnimatorSet();
-                AnimatorSet scaleBack = new AnimatorSet();
-                scaleBack.play(scaleBackX).with(scaleBackY).with(scaleBack2X).with(scaleBack2Y);
-                transIn.play(transInBlack).with(transInWhite).before(scaleBack);
-                scale.play(scaleDownX).with(scaleDownY).with(scaleUpX).with(scaleUpY).before(transIn);
-                scale.start();
-                scale.addListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        super.onAnimationEnd(animation);
-                        testAnimation(blackCard, whiteCard);
-                    }
-                });
-            }
-        });
-        /*transOut.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-                ObjectAnimator scaleUpX = ObjectAnimator.ofFloat(rectangle, "scaleX", 1f).setDuration(100);
-                ObjectAnimator scaleUpY = ObjectAnimator.ofFloat(rectangle, "scaleY", 1f).setDuration(100);
-                ObjectAnimator dropCircle = ObjectAnimator.ofFloat(circle, "translationY", -300).setDuration(700);
-                AnimatorSet scaleUp = new AnimatorSet();
-                scaleUp.play(scaleUpX).with(scaleUpY).with(dropCircle);
-                rectangle.animate().rotationBy(180f).setDuration(600);
-                scaleUp.start();
-                scaleUp.addListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        super.onAnimationEnd(animation);
-                        testAnimation(circle, rectangle);
-                    }
-                });
-            }
-        });*/
     }
 
     private void hideUI() {
