@@ -49,13 +49,14 @@ public class LobbyListAdapter extends ArrayAdapter<Lobby> {
         Button btn_item_lobby_select_join = convertView.findViewById(R.id.btn_item_lobby_select_join);
 
         if(lobby.getPassword().equals("")){
-            item_lobby_select_lock.setBackground(null);
+            item_lobby_select_lock.setVisibility(View.INVISIBLE);
         }
 
         item_lobby_select_name.setText(lobby.getId());
         item_lobby_select_host.setText(lobby.getHost());
         item_lobby_select_count_handcard.setText(String.valueOf(lobby.getHandcardCount()));
-        item_lobby_select_count_maxplayer.setText(String.valueOf(lobby.getMaxPlayers()));
+        // TODO player count
+        item_lobby_select_count_maxplayer.setText(String.format("%s / %s", "0", String.valueOf(lobby.getMaxPlayers())));
 
         btn_item_lobby_select_join.setOnClickListener(e -> {
             Toast.makeText(getContext(), String.format("Join lobby with id: %s", lobby.getId()), Toast.LENGTH_SHORT).show();

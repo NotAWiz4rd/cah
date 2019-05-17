@@ -33,7 +33,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/helveticaneuebold"
             android:text="@string/label_name"
-            android:textSize="16sp" />
+            android:textSize="22sp" />
 
         <TextView
             android:id="@+id/item_lobby_select_host"
@@ -41,58 +41,59 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/helveticaneuelight"
             android:text="@string/host"
-            android:textSize="14sp"
+            android:textSize="18sp"
             android:layout_below="@+id/item_lobby_select_name"/>
 
         <TextView
             android:id="@+id/item_lobby_select_count_maxplayer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/helveticaneuelight"
-            android:text="0"
-            android:textSize="14sp"
             android:layout_marginEnd="3dp"
             android:layout_toStartOf="@+id/item_lobby_select_img_maxplayer"
+            android:fontFamily="@font/helveticaneuelight"
+            android:text="0"
+            android:textSize="18sp"
             tools:ignore="HardcodedText" />
 
         <ImageView
             android:id="@+id/item_lobby_select_img_maxplayer"
-            android:layout_width="13dp"
-            android:layout_height="13dp"
+            android:layout_width="14sp"
+            android:layout_height="14sp"
             android:layout_marginTop="4dp"
-            android:layout_marginEnd="6dp"
+            android:layout_marginEnd="5dp"
+            android:layout_toStartOf="@+id/btn_item_lobby_select_join"
             android:src="@drawable/ic_group_white_24dp"
-            android:tint="@android:color/black"
-            android:layout_toStartOf="@+id/btn_item_lobby_select_join"/>
+            android:tint="@android:color/black" />
 
         <TextView
             android:id="@+id/item_lobby_select_count_handcard"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/item_lobby_select_img_maxplayer"
+            android:layout_marginTop="6dp"
+            android:layout_marginEnd="2dp"
+            android:layout_toStartOf="@+id/item_lobby_select_img_handcard"
             android:fontFamily="@font/helveticaneuelight"
             android:text="0"
-            android:layout_marginEnd="3dp"
-            android:textSize="14sp"
-            android:layout_toStartOf="@+id/item_lobby_select_img_handcard"
-            android:layout_below="@+id/item_lobby_select_count_maxplayer"
+            android:textSize="18sp"
             tools:ignore="HardcodedText" />
 
         <ImageView
             android:id="@+id/item_lobby_select_img_handcard"
-            android:layout_width="13dp"
-            android:layout_height="13dp"
-            android:layout_marginTop="5dp"
+            android:layout_width="14sp"
+            android:layout_height="14sp"
+            android:layout_below="@+id/item_lobby_select_img_maxplayer"
+            android:layout_marginTop="9dp"
             android:layout_marginEnd="6dp"
-            android:src="@drawable/ic_filter_none_black_24dp"
             android:layout_toStartOf="@+id/btn_item_lobby_select_join"
-            android:layout_below="@+id/item_lobby_select_img_maxplayer"/>
+            android:src="@drawable/ic_filter_none_black_24dp" />
 
         <ImageView
             android:id="@+id/item_lobby_select_lock"
             android:layout_width="13dp"
             android:layout_height="13dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="7dp"
+            android:layout_marginTop="5dp"
             android:src="@drawable/ic_lock_black_24dp"
             android:layout_toEndOf="@+id/item_lobby_select_name"/>
 
