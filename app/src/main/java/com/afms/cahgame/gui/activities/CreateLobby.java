@@ -119,7 +119,6 @@ public class CreateLobby extends AppCompatActivity {
         });
         btn_select_deck.setOnClickListener(event -> Toast.makeText(this, "clicked " + btn_select_deck.toString(), Toast.LENGTH_SHORT).show());
         btn_back.setOnClickListener(event -> {
-            Toast.makeText(this, "clicked " + btn_back.toString(), Toast.LENGTH_SHORT).show();
             finish();
         });
         input_player_count.setOnClickListener(event -> value_selector_player_count.show(getSupportFragmentManager(), "value_selector_player_count"));
