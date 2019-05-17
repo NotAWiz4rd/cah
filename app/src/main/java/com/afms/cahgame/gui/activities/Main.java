@@ -77,7 +77,8 @@ public class Main extends AppCompatActivity {
             startActivity(intent);
         });
         btn_search_lobby.setOnClickListener(event -> {
-            Toast.makeText(this, "clicked " + btn_search_lobby.toString(), Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, SearchLobby.class);
+            startActivity(intent);
         });
         btn_piatest.setOnClickListener(event -> {
 
