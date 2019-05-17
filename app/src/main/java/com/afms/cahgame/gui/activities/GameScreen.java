@@ -75,7 +75,7 @@ public class GameScreen extends AppCompatActivity {
     private List<FullSizeCard> playedWhiteCardList;
     private List<FullSizeCard> fullSizeCardList = new ArrayList<>();
 
-    private Gamestate lastGamestate = Gamestate.ROUNDSTART;
+    private Gamestate lastGamestate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -472,7 +472,7 @@ public class GameScreen extends AppCompatActivity {
         super.onResume();
 
         String hostName = (String) getIntent().getSerializableExtra("host");
-        if (hostName.equals(settings.getString("player", ""))) {
+        if (hostName != null && hostName.equals(settings.getString("player", Util.getRandomName()))) {
             game.getPlayer(hostName);
         } else {
             player = new Player(settings.getString("player", Util.getRandomName()));
@@ -515,10 +515,10 @@ public class GameScreen extends AppCompatActivity {
                         submitGame();
                     }
 
-                    if (game.getGamestate().equals(lastGamestate) && currentPlayerIsCardSzar() && game.getPlayers().values().size() >= Game.MIN_PLAYERS) {
+                    if (((game.getGamestate().equals(lastGamestate) && currentPlayerIsCardSzar())
+                            || (!game.getGamestate().equals(lastGamestate) && !currentPlayerIsCardSzar()))
+                            && game.getPlayers().values().size() >= Game.MIN_PLAYERS) {
                         lastGamestate = game.getGamestate();
-                        gameStateLoop();
-                    } else if (!game.getGamestate().equals(lastGamestate) && !currentPlayerIsCardSzar() && game.getPlayers().values().size() >= Game.MIN_PLAYERS) {
                         gameStateLoop();
                     }
                 }
