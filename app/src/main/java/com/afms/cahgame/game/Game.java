@@ -5,6 +5,7 @@ import com.afms.cahgame.exceptions.MissingOwnerException;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,6 +44,8 @@ public class Game implements Serializable {
         blackCardsPile.addAll(deck.getBlackCards());
         this.playedCards = new ArrayList<>();
         this.handCardCount = handCardCount;
+
+        shuffleCards();
 
         drawInitialCards();
     }
@@ -134,8 +137,13 @@ public class Game implements Serializable {
         }
     }
 
+    private void shuffleCards() {
+        Collections.shuffle(newCardsPile);
+        Collections.shuffle(blackCardsPile);
+    }
+
     private void reshuffleCards() {
-        // todo shuffle discrd pile
+        Collections.shuffle(discardPile);
         newCardsPile = discardPile;
     }
 
