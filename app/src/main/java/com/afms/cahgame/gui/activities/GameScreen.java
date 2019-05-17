@@ -473,7 +473,7 @@ public class GameScreen extends AppCompatActivity {
 
         String hostName = (String) getIntent().getSerializableExtra("host");
         if (hostName.equals(settings.getString("player", ""))) {
-            game.getPlayer(hostName);
+            player = game.getPlayer(hostName);
         } else {
             player = new Player(settings.getString("player", Util.getRandomName()));
         }
