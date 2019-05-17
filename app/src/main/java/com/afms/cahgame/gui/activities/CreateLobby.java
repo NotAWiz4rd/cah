@@ -133,7 +133,6 @@ public class CreateLobby extends AppCompatActivity {
 
     private void joinLobby() {
         Intent intent = new Intent(this, GameScreen.class);
-        String playerName = settings.getString("player", Util.getRandomName());
         intent.putExtra("lobbyId", "01");
         startActivity(intent);
     }

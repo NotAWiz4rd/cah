@@ -472,8 +472,12 @@ public class GameScreen extends AppCompatActivity {
         super.onResume();
 
         String hostName = (String) getIntent().getSerializableExtra("host");
+        if (hostName.equals(settings.getString("player", ""))) {
+            game.getPlayer(hostName);
+        } else {
+            player = new Player(settings.getString("player", Util.getRandomName()));
+        }
 
-        player = new Player(settings.getString("player", Util.getRandomName()));
         lobbyId = settings.getString("lobbyId", "");
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
