@@ -316,23 +316,27 @@ public class GameScreen extends AppCompatActivity {
 
     private void onWaitingGamestate() {
         showPlayedCardsAllowed = true;
+        allowCardSubmitting = false;
         // todo display "waiting for cardszar to choose winning card"
 
         if (currentPlayerIsCardSzar()) {
             showPlayedCards(true);
         } else {
+            showHandCardList();
             setPlayerReady();
         }
     }
 
     private void onRoundEndGamestate() {
         showPlayedCardsAllowed = false;
+        setPlayerReady();
+        // todo notify player of winning card (only if player is not cardszar), show updated scores
+
         if (currentPlayerIsCardSzar()) {
             game.nextCardSzar();
+            submitGame();
             advanceGamestate();
         }
-        // todo notify player of winning card (only if player is not cardszar), show updated scores
-        setPlayerReady();
     }
 
     private void onGamestateError() {
