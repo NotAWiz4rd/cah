@@ -422,7 +422,7 @@ public class GameScreen extends AppCompatActivity {
     }
 
     private void setPlayerReady() {
-        if (game.getPlayer(player.getName()).isReady()) {
+        if (!game.getPlayer(player.getName()).isReady()) {
             this.player.setReady(true);
             submitLobbyPlayer();
         }
