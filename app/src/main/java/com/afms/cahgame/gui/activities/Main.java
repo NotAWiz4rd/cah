@@ -1,11 +1,21 @@
 package com.afms.cahgame.gui.activities;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.RotateAnimation;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -13,7 +23,11 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.afms.cahgame.R;
+import com.afms.cahgame.data.Colour;
+import com.afms.cahgame.game.Card;
+import com.afms.cahgame.gui.components.FullSizeCard;
 import com.afms.cahgame.gui.components.SettingsDialog;
+import com.afms.cahgame.gui.components.SwipeResultListener;
 import com.afms.cahgame.util.Database;
 import com.afms.cahgame.util.Util;
 
@@ -60,6 +74,7 @@ public class Main extends AppCompatActivity {
         btn_settings = findViewById(R.id.btn_main_settings);
         btn_piatest = findViewById(R.id.btn_main_piatest);
 
+
         settingsDialog = new SettingsDialog();
     }
 
@@ -73,7 +88,15 @@ public class Main extends AppCompatActivity {
             Toast.makeText(this, "clicked " + btn_search_lobby.toString(), Toast.LENGTH_SHORT).show();
         });
         btn_piatest.setOnClickListener(event -> {
-            Toast.makeText(this, "clicked " + btn_piatest.toString(), Toast.LENGTH_SHORT).show();
+            //testing waiting screen
+            FrameLayout mainlayout = findViewById(R.id.layout_main);
+            ConstraintLayout waitingScreen = (ConstraintLayout) getLayoutInflater().inflate(R.layout.waiting_screen, mainlayout, false);
+            View circle = waitingScreen.findViewById(R.id.circleView);
+            View rectangle = waitingScreen.findViewById(R.id.rectangleView);
+            mainlayout.addView(waitingScreen);
+            Animation aniRotateClk = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate_clockwise);
+            rectangle.startAnimation(aniRotateClk);
+            //testAnimation(circle, rectangle);
         });
         btn_explore_decks.setOnClickListener(event -> {
             Toast.makeText(this, "clicked " + btn_explore_decks.toString(), Toast.LENGTH_SHORT).show();
@@ -98,6 +121,43 @@ public class Main extends AppCompatActivity {
             editor.putString("player", playerName);
             editor.apply();
         });
+    }
+
+    private void testAnimation(View circle, View rectangle) {
+        ObjectAnimator scaleUpX = ObjectAnimator.ofFloat(rectangle, "scaleX", 2f);
+        ObjectAnimator scaleUpY = ObjectAnimator.ofFloat(rectangle, "scaleY", 0.5f);
+        ObjectAnimator dropCircle = ObjectAnimator.ofFloat(circle, "translationY", 300);
+        dropCircle.setDuration(700);
+        scaleUpX.setDuration(700);
+        scaleUpY.setDuration(700);
+        AnimatorSet scaleUp = new AnimatorSet();
+        scaleUp.play(scaleUpX).with(scaleUpY).with(dropCircle);
+        scaleUp.start();
+        scaleUp.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                ObjectAnimator scaleUpX = ObjectAnimator.ofFloat(rectangle, "scaleX", 1f).setDuration(100);
+                ObjectAnimator scaleUpY = ObjectAnimator.ofFloat(rectangle, "scaleY", 1f).setDuration(100);
+                ObjectAnimator dropCircle = ObjectAnimator.ofFloat(circle, "translationY", -300).setDuration(700);
+                //Animation aniRotateClk = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate_clockwise);
+               // rectangle.startAnimation(aniRotateClk);
+                AnimatorSet scaleUp = new AnimatorSet();
+                scaleUp.play(scaleUpX).with(scaleUpY).with(dropCircle);
+                scaleUp.start();
+                scaleUp.addListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+                        testAnimation(circle, rectangle);
+                    }
+                });
+            }
+        });
+        /*final Handler handler = new Handler();
+        handler.postDelayed(() -> {
+                testAnimation(circle, rectangle);
+        }, 700);*/
     }
 
     private void hideUI() {
