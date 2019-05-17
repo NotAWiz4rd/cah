@@ -51,7 +51,12 @@ public class Player implements Serializable {
     }
 
     public void removeCard(Card card) {
-        hand.remove(card);
+        for(Card handCard : hand){
+            if(handCard.getText().equals(card.getText())){
+                hand.remove(handCard);
+                return;
+            }
+        }
     }
 
     public boolean isReady() {

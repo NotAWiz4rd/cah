@@ -188,7 +188,6 @@ public class GameScreen extends AppCompatActivity {
                     if (!currentPlayerIsCardSzar()) {
                         if (allowCardSubmitting) {
                             submitCard(card);
-                            setPlayerReady();
                             allowCardSubmitting = false;
                             showHandCardList();
                         }
@@ -563,10 +562,11 @@ public class GameScreen extends AppCompatActivity {
      * @param card Card to sumbit.
      */
     private void submitCard(Card card) {
+        player.removeCard(card);
         card.setOwner(player);
-        player.getHand().remove(card);
         game.submitCard(card);
-        submitGame();
+        player.setReady(true);
+        submitLobbyPlayer();
     }
 
     private void submitGame() {
