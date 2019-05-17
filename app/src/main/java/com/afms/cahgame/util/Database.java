@@ -215,6 +215,10 @@ public class Database {
      */
     public static Card createNewCard(String text, Colour colour) {
         // todo only create card if none with the same info already exists
+        boolean cardExists = cards.stream().anyMatch(card -> card.getText().equals(text));
+        if (cardExists) {
+            return cards.stream().filter(card -> card.getText().equals(text)).findAny().get();
+        }
         int id = cards.size() == 0 ? 0 : cards.get(cards.size() - 1).getId() + 1;
         Card card = new Card(id, colour, text);
         cards.add(card);
