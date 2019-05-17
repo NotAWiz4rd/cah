@@ -109,7 +109,9 @@ public class Game implements Serializable {
     }
 
     public void submitWinningCard(Card card) {
-        int playerIndex = players.indexOf(card.getOwner());
+        Optional<Player> playerOptional = players.stream().filter(player -> player.getName().equals(card.getOwner().getName())).findFirst();
+        Player player = playerOptional.orElse(players.get(0));
+        int playerIndex = players.indexOf(player);
         if (playerIndex != -1) {
             players.get(playerIndex).setScore(players.get(playerIndex).getScore() + 1);
         }

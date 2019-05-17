@@ -287,13 +287,13 @@ public class GameScreen extends AppCompatActivity {
 
     private void onRoundStartGamestate() {
         showHandCardList();
+        setPlayerReady();
 
         if (currentPlayerIsCardSzar()) {
             game.startNewRound();
             submitGame();
             advanceGamestate();
         }
-        setPlayerReady();
     }
 
     private void onSubmitGamestate() {
