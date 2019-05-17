@@ -110,7 +110,9 @@ public class Game implements Serializable {
 
     public void submitWinningCard(Card card) {
         int playerIndex = players.indexOf(card.getOwner());
-        players.get(playerIndex).setScore(players.get(playerIndex).getScore() + 1);
+        if (playerIndex != -1) {
+            players.get(playerIndex).setScore(players.get(playerIndex).getScore() + 1);
+        }
         winningCard = card;
     }
 
