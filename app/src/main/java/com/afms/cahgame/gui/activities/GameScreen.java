@@ -334,7 +334,7 @@ public class GameScreen extends AppCompatActivity {
 
         if (currentPlayerIsCardSzar()) {
             game.nextCardSzar();
-            setPlayerReady();
+            submitGame();
             advanceGamestate();
         }
     }
