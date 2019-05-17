@@ -3,9 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/card_background_small_black"
-    android:id="@+id/component_black_card_layout"
-    android:layout_height="wrap_content">
-
+    android:layout_height="wrap_content"
+    android:layout_margin="16dp">
 
     <ImageView
         android:id="@+id/img_game_screen_cardIcon"
