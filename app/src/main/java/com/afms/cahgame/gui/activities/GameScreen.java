@@ -124,7 +124,6 @@ public class GameScreen extends AppCompatActivity {
             userSelectionListAdapter.addAll(player.getHand());
 
             userSelectionListView.setOnItemClickListener((parent, view, position, id) -> {
-                Toast.makeText(this, String.valueOf(position), Toast.LENGTH_SHORT).show();
                 Card card = (Card) parent.getItemAtPosition(position);
                 completeFrameLayout.addView(getFullSizeCardInstance(card, position));
             });
@@ -153,7 +152,6 @@ public class GameScreen extends AppCompatActivity {
                 @Override
                 public void onSwipeLeft() {
                     int nextPos = (selectedPosition + 1) % userSelectionListView.getCount();
-                    Toast.makeText(getApplicationContext(), String.valueOf(nextPos), Toast.LENGTH_SHORT).show();
                     completeFrameLayout.addView(getFullSizeCardInstance((Card) userSelectionListView.getItemAtPosition(nextPos), nextPos));
                 }
 
@@ -163,7 +161,6 @@ public class GameScreen extends AppCompatActivity {
                     if (nextPos < 0) {
                         nextPos = userSelectionListView.getCount() - 1;
                     }
-                    Toast.makeText(getApplicationContext(), String.valueOf(nextPos), Toast.LENGTH_SHORT).show();
                     completeFrameLayout.addView(getFullSizeCardInstance((Card) userSelectionListView.getItemAtPosition(nextPos), nextPos));
                 }
 

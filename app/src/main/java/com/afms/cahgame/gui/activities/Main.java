@@ -52,7 +52,6 @@ public class Main extends AppCompatActivity {
 
     private void initializeUIEvents() {
         btn_create_lobby.setOnClickListener(event -> {
-            Toast.makeText(this, "clicked " + btn_create_lobby.toString(), Toast.LENGTH_SHORT).show();
             startActivity(new Intent(this, CreateLobby.class));
         });
         btn_search_lobby.setOnClickListener(event -> {
