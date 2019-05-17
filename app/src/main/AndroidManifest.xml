@@ -41,6 +41,11 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_game_screen"
             android:theme="@style/cahLayout" />
+        <activity
+            android:name=".gui.activities.SearchLobby"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_game_screen"
+            android:theme="@style/cahLayout" />
     </application>
 
 </manifest>
