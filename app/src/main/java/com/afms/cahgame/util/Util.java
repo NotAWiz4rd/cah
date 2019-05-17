@@ -9,6 +9,37 @@ import java.util.List;
 import java.util.Optional;
 
 public class Util {
+    private static List<String> randomNames = new ArrayList<String>() {{
+        add("Giesela");
+        add("Hans-Werner");
+        add("TwilightSparkle");
+        add("FluffyUnicorn");
+        add("Ezio Auditore");
+        add("Geralt von Rivia");
+        add("Gordon Freeman");
+        add("Duke Nukem");
+        add("Zelda");
+        add("Link");
+        add("Lara Croft");
+        add("Max Payne");
+        add("Aiden Pearce");
+        add("Nico Bellic");
+        add("Solid Snake");
+        add("Kratos");
+        add("Nathan Drake");
+        add("Dante");
+        add("Commander Shepard");
+        add("Sephiroth");
+        add("Mario");
+        add("John Marston");
+        add("GLaDOS");
+        add("Agent 47");
+        add("Guybrush Threepwood");
+        add("Sora");
+        add("Sam Fisher");
+        add("Handsome Jack");
+    }};
+
     /**
      * Converts a dataDeck to a GameDeck by getting all the card data from the database.
      *
@@ -58,5 +89,9 @@ public class Util {
     public static com.afms.cahgame.data.Deck getDataDeckFromName(String deckName) {
         Optional<com.afms.cahgame.data.Deck> deckOptional = Database.getDecks().stream().filter(deck -> deck.getName().equals(deckName)).findFirst();
         return deckOptional.orElse(null);
+    }
+
+    public static String getRandomName() {
+        return randomNames.stream().skip((int) (randomNames.size() * Math.random())).findAny().get();
     }
 }

@@ -1,7 +1,7 @@
 package com.afms.cahgame.gui.components;
 
-import android.app.ActionBar;
 import android.app.Dialog;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -17,31 +17,33 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 
 import com.afms.cahgame.R;
+import com.afms.cahgame.util.Util;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Objects;
+
+import static android.content.Context.MODE_PRIVATE;
 
 public class SettingsDialog extends DialogFragment {
 
+    private SharedPreferences settings;
+    private EditText playerNameView;
     private View.OnClickListener onClickListener;
-    private List<String> randomNames = new ArrayList<String>() {{
-        add("Giesela");
-        add("Hans-Werner");
-        add("TwilightSparkle");
-        add("FluffyUnicorn");
-        add("Test");
-    }};
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        settings = Objects.requireNonNull(this.getActivity()).getSharedPreferences("Preferences", MODE_PRIVATE);
+
         ImageButton playerName_random = view.findViewById(R.id.btn_settings_randomname);
         Button btn_save = view.findViewById(R.id.btn_settings_save);
-        EditText playerName = view.findViewById(R.id.input_settings_playername);
+        playerNameView = view.findViewById(R.id.input_settings_playername);
+
+        String playerString = settings.getString("player", Util.getRandomName());
+        playerNameView.setText(playerString);
 
         playerName_random.setOnClickListener(v -> {
-            playerName.setText(randomNames.stream().skip((int) (randomNames.size() * Math.random())).findAny().get());
+            playerNameView.setText(Util.getRandomName());
         });
 
         btn_save.setOnClickListener(v -> {
@@ -50,7 +52,6 @@ public class SettingsDialog extends DialogFragment {
             }
             getDialog().dismiss();
         });
-
     }
 
     @NonNull
@@ -72,5 +73,9 @@ public class SettingsDialog extends DialogFragment {
 
     public void setOnClickListener(View.OnClickListener onClickListener) {
         this.onClickListener = onClickListener;
+    }
+
+    public EditText getPlayerNameView() {
+        return playerNameView;
     }
 }

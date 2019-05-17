@@ -294,6 +294,7 @@ public class GameScreen extends AppCompatActivity {
         showHandCardList();
         setPlayerReady();
 
+        // todo this doesnt get triggered on start of the second round
         if (currentPlayerIsCardSzar()) {
             game.startNewRound();
             submitGame();
@@ -349,16 +350,6 @@ public class GameScreen extends AppCompatActivity {
             return false;
         }
         return game.getCardCzar().equals(player.getName());
-    }
-
-    /**
-     * For host only!
-     * Initializes lobby and pushes it to server.
-     */
-    private void startGame() {
-        game.setGamestate(Gamestate.ROUNDSTART);
-
-        submitGame();
     }
 
     private void setPlayerReady() {
@@ -423,8 +414,11 @@ public class GameScreen extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 game = dataSnapshot.getValue(Game.class);
                 if (game != null) {
+                    possiblyAddPlayer();
+
                     updatePlayer();
-                    if (game.getGamestate() != lastGamestate || (!player.isReady() && !currentPlayerIsCardSzar())) {
+                    if ((game.getGamestate() != lastGamestate || (!player.isReady() && !currentPlayerIsCardSzar()))
+                            && game.getPlayers().size() >= Game.MIN_PLAYERS) {
                         lastGamestate = game.getGamestate();
                         gameStateLoop();
                     }
@@ -440,12 +434,17 @@ public class GameScreen extends AppCompatActivity {
             }
         });
 
-        if (hostName != null && hostName.equals(player.getName())) {
-            startGame();
+        // initial game submit by host
+        if (game != null && game.getGamestate().equals(Gamestate.ROUNDSTART) && hostName != null && hostName.equals(player.getName())) {
+            submitGame();
         }
+    }
 
-        if (game == null) {
-            quitGame("");
+    private void possiblyAddPlayer() {
+        // add player to game if he doesnt exist there
+        if (!game.containsPlayerWithName(player.getName())) {
+            game.addPlayer(player);
+            submitGame();
         }
     }
 
@@ -457,7 +456,6 @@ public class GameScreen extends AppCompatActivity {
 
     private void saveInfo() {
         SharedPreferences.Editor editor = settings.edit();
-        editor.putString("player", player.getName());
         editor.putString("lobbyId", lobbyId);
 
         editor.apply();

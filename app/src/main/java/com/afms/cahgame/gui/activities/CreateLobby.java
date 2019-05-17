@@ -2,6 +2,7 @@ package com.afms.cahgame.gui.activities;
 
 import android.arch.lifecycle.MutableLiveData;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -16,9 +17,10 @@ import com.afms.cahgame.game.Game;
 import com.afms.cahgame.game.Lobby;
 import com.afms.cahgame.gui.components.ValueSelector;
 import com.afms.cahgame.util.Database;
+import com.afms.cahgame.util.Util;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
 
 public class CreateLobby extends AppCompatActivity {
 
@@ -33,6 +35,7 @@ public class CreateLobby extends AppCompatActivity {
     // ui elements
     private Button btn_create_lobby;
     private Button btn_start_game_test;
+    private Button btn_join_game_test;
     private Button btn_select_deck;
     private ImageButton btn_back;
 
@@ -41,6 +44,8 @@ public class CreateLobby extends AppCompatActivity {
     private EditText input_player_count;
     private EditText input_select_deck;
 
+    private SharedPreferences settings;
+
     // variables
     private ValueSelector value_selector_player_count;
     private ValueSelector value_selector_handcard_count;
@@ -48,12 +53,11 @@ public class CreateLobby extends AppCompatActivity {
     private MutableLiveData<Integer> value_player_count = new MutableLiveData<>();
     private MutableLiveData<Integer> value_handcard_count = new MutableLiveData<>();
 
-    private String playerName;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_lobby);
+        settings = getSharedPreferences("Preferences", MODE_PRIVATE);
         hideUI();
         createCards();
         createSampleDeck();
@@ -71,6 +75,7 @@ public class CreateLobby extends AppCompatActivity {
 
     private void initializeUIElements() {
         btn_start_game_test = findViewById(R.id.btn_create_lobby_start_game_test);
+        btn_join_game_test = findViewById(R.id.btn_create_lobby_join_game_test);
         btn_create_lobby = findViewById(R.id.btn_create_lobby_create_lobby);
         btn_select_deck = findViewById(R.id.btn_create_lobby_select_deck);
         btn_back = findViewById(R.id.btn_create_lobby_back);
@@ -97,6 +102,7 @@ public class CreateLobby extends AppCompatActivity {
 
     private void initializeUIEvents() {
         btn_start_game_test.setOnClickListener(event -> createLobby());
+        btn_join_game_test.setOnClickListener(event -> joinLobby());
         btn_create_lobby.setOnClickListener(event -> {
             String lobbyId = input_lobby_name.getText().toString();
 
@@ -109,7 +115,7 @@ public class CreateLobby extends AppCompatActivity {
                 return;
             }
 
-            playerName = "Player1"; // todo for testing purposes only
+            String playerName = settings.getString("player", Util.getRandomName());
             Database.addLobby(lobbyId, new Lobby(
                     lobbyId,
                     playerName,
@@ -125,18 +131,29 @@ public class CreateLobby extends AppCompatActivity {
         input_handcard_count.setOnClickListener(event -> value_selector_handcard_count.show(getSupportFragmentManager(), "value_selector_handcard_count"));
     }
 
+    private void joinLobby() {
+        Intent intent = new Intent(this, GameScreen.class);
+        String playerName = settings.getString("player", Util.getRandomName());
+        intent.putExtra("lobbyId", "01");
+        intent.putExtra("name", playerName);
+        startActivity(intent);
+    }
+
     private void createLobby() {
         // todo check that deck has enough cards for all players
         Intent intent = new Intent(this, GameScreen.class);
-        intent.putExtra("game", new Game(Database.getDeck("testdeck"), createSamplePlayers(), Integer.parseInt(input_handcard_count.getText().toString())));
+        String playerName = settings.getString("player", Util.getRandomName());
+        intent.putExtra("game", new Game(Database.getDeck("testdeck"), Collections.singletonList(playerName), Integer.parseInt(input_handcard_count.getText().toString())));
         intent.putExtra("lobbyId", "01");
-        // todo make current playername configurable to improve testing
-        intent.putExtra("name", "Player1");
-        intent.putExtra("host", "Player1");
+        intent.putExtra("name", playerName);
+        intent.putExtra("host", playerName);
         startActivity(intent);
     }
 
     private void createSampleDeck() {
+        if (Util.getDataDeckFromName("testdeck") != null) {
+            return;
+        }
         com.afms.cahgame.data.Deck deck = new com.afms.cahgame.data.Deck("testdeck");
         deck.addCard(1);
         deck.addCard(2);
@@ -169,6 +186,16 @@ public class CreateLobby extends AppCompatActivity {
         deck.addCard(28);
         deck.addCard(29);
         deck.addCard(30);
+        deck.addCard(31);
+        deck.addCard(32);
+        deck.addCard(33);
+        deck.addCard(34);
+        deck.addCard(35);
+        deck.addCard(36);
+        deck.addCard(37);
+        deck.addCard(38);
+        deck.addCard(39);
+        deck.addCard(40);
         Database.addDeck(deck);
     }
 
@@ -204,14 +231,18 @@ public class CreateLobby extends AppCompatActivity {
         Database.createNewCard("White Card 23", Colour.WHITE);
         Database.createNewCard("White Card 24", Colour.WHITE);
         Database.createNewCard("White Card 25", Colour.WHITE);
-    }
-
-    private List<String> createSamplePlayers() {
-        List<String> players = new ArrayList<>();
-        players.add("Player1");
-        players.add("Player2");
-        players.add("Player3");
-        return players;
+        Database.createNewCard("White Card 26", Colour.WHITE);
+        Database.createNewCard("White Card 27", Colour.WHITE);
+        Database.createNewCard("White Card 28", Colour.WHITE);
+        Database.createNewCard("White Card 29", Colour.WHITE);
+        Database.createNewCard("White Card 30", Colour.WHITE);
+        Database.createNewCard("White Card 31", Colour.WHITE);
+        Database.createNewCard("White Card 32", Colour.WHITE);
+        Database.createNewCard("White Card 33", Colour.WHITE);
+        Database.createNewCard("White Card 34", Colour.WHITE);
+        Database.createNewCard("White Card 35", Colour.WHITE);
+        Database.createNewCard("White Card 36", Colour.WHITE);
+        Database.createNewCard("White Card 37", Colour.WHITE);
     }
 
     private void hideUI() {

@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Optional;
 
 public class Game implements Serializable {
+    public static final int MIN_PLAYERS = 2;
+
     public List<Player> players;
     private Deck deck;
     private int handCardCount;
@@ -156,14 +158,44 @@ public class Game implements Serializable {
         }
     }
 
+    private void drawInitialCards(Player player) {
+        // todo check that deck has enough cards for all players
+        for (int i = 0; i < handCardCount; i++) {
+            if (newCardsPile.size() > 0) {
+                player.addCard(newCardsPile.remove(newCardsPile.size() - 1));
+            } else {
+                reshuffleCards();
+            }
+        }
+    }
+
     public void nextCardSzar() {
         int cardCzarIndex = players.indexOf(getCardCzarPlayer());
 
-        if (cardCzarIndex + 1 < players.size() - 1) {
+        if (cardCzarIndex + 1 <= players.size() - 1) {
             cardCzar = players.get(cardCzarIndex + 1).getName();
         } else {
             cardCzar = players.get(0).getName();
         }
+    }
+
+    public void addPlayer(Player player) {
+        players.add(player);
+        drawInitialCards(player);
+    }
+
+    public void removePlayer(Player player) {
+        playedCards.addAll(player.getHand());
+        players.remove(player);
+    }
+
+    public boolean containsPlayerWithName(String name) {
+        for (Player player : players) {
+            if (player.getName().equals(name)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

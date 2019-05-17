@@ -214,6 +214,7 @@ public class Database {
      * @param colour Colour of the card.
      */
     public static Card createNewCard(String text, Colour colour) {
+        // todo only create card if none with the same info already exists
         int id = cards.size() == 0 ? 0 : cards.get(cards.size() - 1).getId() + 1;
         Card card = new Card(id, colour, text);
         cards.add(card);
