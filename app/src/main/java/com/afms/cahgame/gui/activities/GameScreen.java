@@ -422,8 +422,10 @@ public class GameScreen extends AppCompatActivity {
     }
 
     private void setPlayerReady() {
-        this.player.setReady(true);
-        submitLobbyPlayer();
+        if (!player.isReady()) {
+            this.player.setReady(true);
+            submitLobbyPlayer();
+        }
     }
 
     /**
@@ -474,6 +476,7 @@ public class GameScreen extends AppCompatActivity {
         String hostName = (String) getIntent().getSerializableExtra("host");
         if (hostName != null && hostName.equals(settings.getString("player", Util.getRandomName()))) {
             player = game.getPlayer(hostName);
+            lastGamestate = Gamestate.ROUNDSTART;
         } else {
             player = new Player(settings.getString("player", Util.getRandomName()));
         }
