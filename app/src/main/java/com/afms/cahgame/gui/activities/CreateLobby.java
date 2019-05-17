@@ -133,9 +133,7 @@ public class CreateLobby extends AppCompatActivity {
 
     private void joinLobby() {
         Intent intent = new Intent(this, GameScreen.class);
-        String playerName = settings.getString("player", Util.getRandomName());
         intent.putExtra("lobbyId", "01");
-        intent.putExtra("name", playerName);
         startActivity(intent);
     }
 
@@ -145,7 +143,6 @@ public class CreateLobby extends AppCompatActivity {
         String playerName = settings.getString("player", Util.getRandomName());
         intent.putExtra("game", new Game(Database.getDeck("testdeck"), Collections.singletonList(playerName), Integer.parseInt(input_handcard_count.getText().toString())));
         intent.putExtra("lobbyId", "01");
-        intent.putExtra("name", playerName);
         intent.putExtra("host", playerName);
         startActivity(intent);
     }
