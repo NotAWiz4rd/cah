@@ -20,6 +20,7 @@ public class Game implements Serializable {
     private List<Card> newCardsPile;
     private String cardCzar;
     private Card currentBlackCard;
+    private Card winningCard;
     private List<Card> playedCards;
 
     public Game() {
@@ -108,7 +109,9 @@ public class Game implements Serializable {
     }
 
     public void submitWinningCard(Card card) {
-        card.getOwner().setScore(card.getOwner().getScore() + 1);
+        int playerIndex = players.indexOf(card.getOwner());
+        players.get(playerIndex).setScore(players.get(playerIndex).getScore() + 1);
+        winningCard = card;
     }
 
     /**
@@ -237,5 +240,13 @@ public class Game implements Serializable {
 
     public void setGamestate(Gamestate gamestate) {
         this.gamestate = gamestate;
+    }
+
+    public Card getWinningCard() {
+        return winningCard;
+    }
+
+    public void setWinningCard(Card winningCard) {
+        this.winningCard = winningCard;
     }
 }
