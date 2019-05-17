@@ -34,10 +34,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * An example full-screen activity that shows and hides the system UI (i.e.
- * status bar and navigation/system bar) with user interaction.
- */
 public class GameScreen extends AppCompatActivity {
     private Game game;
     private Player player;
