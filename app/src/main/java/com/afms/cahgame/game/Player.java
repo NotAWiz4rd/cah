@@ -15,29 +15,26 @@ public class Player implements Serializable {
     }
 
     public Player(String name, ArrayList<Card> hand) {
-        this.name = checkForSameName(name);
+        this.name = checkForSameName(name, 1);
         this.hand = hand;
         this.score = 0;
         playerList.add(this);
     }
 
     public Player(String name) {
-        this.name = checkForSameName(name);
+        this.name = checkForSameName(name, 1);
         this.hand = new ArrayList<>();
         this.score = 0;
         playerList.add(this);
     }
 
-    private String checkForSameName(String name){
-        int countSames = 1;
+    private String checkForSameName(String name, int countSames){
         for (Player player : playerList) {
             if (name.equals(player.getName())){
                 countSames++;
-                player.setName(player.getName() + (countSames - 1));
-                if(countSames > 2){
-                    name = name.substring(0, name.length()-1);
-                }
+                player.setName(checkForSameName((player.getName() + (countSames - 1)), countSames));
                 name = name + countSames;
+                name = checkForSameName(name, countSames);
             }
         }
         return name;
