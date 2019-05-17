@@ -86,7 +86,7 @@ public class GameScreen extends AppCompatActivity {
         lobbyId = (String) getIntent().getSerializableExtra("lobbyId");
         game = (Game) getIntent().getSerializableExtra("game");
         String playerName = (String) getIntent().getSerializableExtra("name");
-        player = new Player(playerName); // todo implement namechange when when multiple players have the same name and game changes the name
+        player = new Player(playerName);
 
         saveInfo();
     }
