@@ -384,6 +384,7 @@ public class GameScreen extends AppCompatActivity {
             Handler handler = new Handler();
             handler.postDelayed(this::advanceGamestate, 500);
         } else {
+            game.setAllPlayersNotReady();
             switch (game.getGamestate()) {
                 case START:
                     game.setGamestate(Gamestate.ROUNDSTART);

@@ -86,6 +86,12 @@ public class Game implements Serializable {
         drawCards();
     }
 
+    public void setAllPlayersNotReady() {
+        for (Player player : players) {
+            player.setReady(false);
+        }
+    }
+
     public boolean allPlayersReady() {
         for (Player player : players) {
             if (!player.isReady()) return false;
