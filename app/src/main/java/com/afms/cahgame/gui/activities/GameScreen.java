@@ -244,6 +244,7 @@ public class GameScreen extends AppCompatActivity {
 
                 @Override
                 public void onSwipeDown() {
+                    // do nothing
                 }
             });
             if (allowCardSzarSubmit) {
@@ -364,6 +365,9 @@ public class GameScreen extends AppCompatActivity {
      * Advances Gamestate if all players in lobby are ready, submits lobby after advancing.
      */
     private void advanceGamestate() {
+        if (game == null) {
+            quitGame("Something went terribly wrong...");
+        }
         if (!game.allPlayersReady()) {
             Handler handler = new Handler();
             handler.postDelayed(this::advanceGamestate, 500);
@@ -415,7 +419,7 @@ public class GameScreen extends AppCompatActivity {
                 game = dataSnapshot.getValue(Game.class);
                 if (game != null) {
                     updatePlayer();
-                    if (game.getGamestate() != lastGamestate) {
+                    if (game.getGamestate() != lastGamestate || (!player.isReady() && !currentPlayerIsCardSzar())) {
                         lastGamestate = game.getGamestate();
                         gameStateLoop();
                     }
