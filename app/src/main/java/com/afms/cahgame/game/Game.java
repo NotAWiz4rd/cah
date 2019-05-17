@@ -78,10 +78,11 @@ public class Game implements Serializable {
         discardPile.addAll(playedCards);
         playedCards = new ArrayList<>();
 
-        if (blackCardsPile.size() == 0) {
+        if (blackCardsPile != null && blackCardsPile.size() == 0) {
             blackCardsPile = deck.getBlackCards();
+            currentBlackCard = blackCardsPile.remove(blackCardsPile.size() - 1);
         }
-        currentBlackCard = blackCardsPile.remove(blackCardsPile.size() - 1);
+
         drawCards();
     }
 
