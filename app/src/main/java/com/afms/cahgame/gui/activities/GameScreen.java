@@ -328,7 +328,6 @@ public class GameScreen extends AppCompatActivity {
         showPlayedCardsAllowed = false;
         if (currentPlayerIsCardSzar()) {
             game.nextCardSzar();
-            submitGame();
             advanceGamestate();
         }
         // todo notify player of winning card (only if player is not cardszar), show updated scores
@@ -462,6 +461,7 @@ public class GameScreen extends AppCompatActivity {
      */
     private void submitCard(Card card) {
         card.setOwner(player);
+        player.getHand().remove(card);
         game.submitCard(card);
         submitGame();
     }
