@@ -24,6 +24,7 @@ public class Main extends AppCompatActivity {
     private Button btn_create_lobby;
     private Button btn_search_lobby;
     private Button btn_explore_decks;
+    private Button btn_piatest;
     private ImageButton btn_settings;
 
     private SharedPreferences settings;
@@ -57,6 +58,7 @@ public class Main extends AppCompatActivity {
         btn_search_lobby = findViewById(R.id.btn_main_searchLobby);
         btn_explore_decks = findViewById(R.id.btn_main_exploreDecks);
         btn_settings = findViewById(R.id.btn_main_settings);
+        btn_piatest = findViewById(R.id.btn_main_piatest);
 
         settingsDialog = new SettingsDialog();
     }
@@ -69,6 +71,9 @@ public class Main extends AppCompatActivity {
         });
         btn_search_lobby.setOnClickListener(event -> {
             Toast.makeText(this, "clicked " + btn_search_lobby.toString(), Toast.LENGTH_SHORT).show();
+        });
+        btn_piatest.setOnClickListener(event -> {
+            Toast.makeText(this, "clicked " + btn_piatest.toString(), Toast.LENGTH_SHORT).show();
         });
         btn_explore_decks.setOnClickListener(event -> {
             Toast.makeText(this, "clicked " + btn_explore_decks.toString(), Toast.LENGTH_SHORT).show();
