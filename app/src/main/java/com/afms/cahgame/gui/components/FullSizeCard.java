@@ -82,7 +82,6 @@ public class FullSizeCard extends ConstraintLayout {
             onClickListener.onClick(btn);
         });
         fullSizeCardOptionLayout.addView(btn);
-
     }
 
     @SuppressLint("ClickableViewAccessibility")

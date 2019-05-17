@@ -11,10 +11,11 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.afms.cahgame.R;
-import com.afms.cahgame.game.Card;
 import com.afms.cahgame.data.Colour;
+import com.afms.cahgame.game.Card;
 import com.afms.cahgame.gui.components.FullSizeCard;
 import com.afms.cahgame.gui.components.SwipeResultListener;
+import com.afms.cahgame.util.Database;
 
 public class Main extends AppCompatActivity {
 
@@ -34,6 +35,7 @@ public class Main extends AppCompatActivity {
         hideUI();
         initializeUIElements();
         initializeUIEvents();
+        Database.initializeDatabaseConnections();
 
         String message = (String) getIntent().getSerializableExtra("message");
         if (message != null) {
@@ -92,9 +94,8 @@ public class Main extends AppCompatActivity {
                 contentView.removeView(fullSizeCard);
             });
             fullSizeCard.addOptionButton("Test", v -> {
-                Toast.makeText(getApplicationContext(), "TEST", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "test", Toast.LENGTH_SHORT).show();
             });
-
             fullSizeCard.setDimBackground(true);
             contentView.addView(fullSizeCard);
         });

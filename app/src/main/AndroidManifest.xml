@@ -31,11 +31,11 @@
             android:name=".gui.activities.Test"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_test"
-            android:theme="@style/cahLayout"></activity>
+            android:theme="@style/cahLayout" />
         <activity
             android:name=".gui.activities.CreateLobby"
             android:label="@string/title_activity_lobby"
-            android:theme="@style/cahLayout"></activity>
+            android:theme="@style/cahLayout" />
         <activity
             android:name=".gui.activities.GameScreen"
             android:configChanges="orientation|keyboardHidden|screenSize"
