@@ -239,7 +239,6 @@ public class GameScreen extends AppCompatActivity {
                     if (lastGamestate.equals(Gamestate.WAITING)) {
                         game.submitWinningCard(card);
                         setPlayerReady();
-                        submitGame();
                         advanceGamestate();
                     }
                 }
@@ -330,10 +329,11 @@ public class GameScreen extends AppCompatActivity {
     private void onWaitingGamestate() {
         showPlayedCardsAllowed = true;
         // todo display "waiting for cardszar to choose winning card"
-        setPlayerReady();
 
         if (currentPlayerIsCardSzar()) {
             showPlayedCards(true);
+        } else {
+            setPlayerReady();
         }
     }
 
