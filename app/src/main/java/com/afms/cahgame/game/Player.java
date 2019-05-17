@@ -28,9 +28,9 @@ public class Player implements Serializable {
         playerList.add(this);
     }
 
-    private String checkForSameName(String name, int countSames){
+    private String checkForSameName(String name, int countSames) {
         for (Player player : playerList) {
-            if (name.equals(player.getName())){
+            if (name.equals(player.getName())) {
                 countSames++;
                 player.setName(checkForSameName((player.getName() + (countSames - 1)), countSames));
                 name = name + countSames;
