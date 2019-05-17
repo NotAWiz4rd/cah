@@ -7,27 +7,19 @@ import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.view.animation.RotateAnimation;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.afms.cahgame.R;
-import com.afms.cahgame.data.Colour;
-import com.afms.cahgame.game.Card;
-import com.afms.cahgame.gui.components.FullSizeCard;
 import com.afms.cahgame.gui.components.SettingsDialog;
-import com.afms.cahgame.gui.components.SwipeResultListener;
 import com.afms.cahgame.util.Database;
 import com.afms.cahgame.util.Util;
 
@@ -91,12 +83,10 @@ public class Main extends AppCompatActivity {
             //testing waiting screen
             FrameLayout mainlayout = findViewById(R.id.layout_main);
             ConstraintLayout waitingScreen = (ConstraintLayout) getLayoutInflater().inflate(R.layout.waiting_screen, mainlayout, false);
-            View circle = waitingScreen.findViewById(R.id.circleView);
-            View rectangle = waitingScreen.findViewById(R.id.rectangleView);
+            ImageView blackCard = waitingScreen.findViewById(R.id.waiting_screen_blackCard);
+            ImageView whiteCard = waitingScreen.findViewById(R.id.waiting_screen_whiteCard);
             mainlayout.addView(waitingScreen);
-            Animation aniRotateClk = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate_clockwise);
-            rectangle.startAnimation(aniRotateClk);
-            //testAnimation(circle, rectangle);
+            testAnimation(whiteCard, blackCard);
         });
         btn_explore_decks.setOnClickListener(event -> {
             Toast.makeText(this, "clicked " + btn_explore_decks.toString(), Toast.LENGTH_SHORT).show();
@@ -123,27 +113,53 @@ public class Main extends AppCompatActivity {
         });
     }
 
-    private void testAnimation(View circle, View rectangle) {
-        ObjectAnimator scaleUpX = ObjectAnimator.ofFloat(rectangle, "scaleX", 2f);
-        ObjectAnimator scaleUpY = ObjectAnimator.ofFloat(rectangle, "scaleY", 0.5f);
-        ObjectAnimator dropCircle = ObjectAnimator.ofFloat(circle, "translationY", 300);
-        dropCircle.setDuration(700);
-        scaleUpX.setDuration(700);
-        scaleUpY.setDuration(700);
-        AnimatorSet scaleUp = new AnimatorSet();
-        scaleUp.play(scaleUpX).with(scaleUpY).with(dropCircle);
-        scaleUp.start();
-        scaleUp.addListener(new AnimatorListenerAdapter() {
+    private void testAnimation(ImageView whiteCard, ImageView blackCard) {
+        ObjectAnimator transOutBlack = ObjectAnimator.ofFloat(blackCard, "translationX", -100f).setDuration(700);
+        ObjectAnimator transOutWhite = ObjectAnimator.ofFloat(whiteCard, "translationX", 100f).setDuration(700);
+        AnimatorSet transOut = new AnimatorSet();
+        transOut.play(transOutBlack).with(transOutWhite);
+        transOut.start();
+        transOut.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                whiteCard.bringToFront();
+                ObjectAnimator scaleDownX = ObjectAnimator.ofFloat(blackCard, "scaleX", 0.5f).setDuration(700);
+                ObjectAnimator scaleDownY= ObjectAnimator.ofFloat(blackCard, "scaleY", 0.5f).setDuration(700);
+                ObjectAnimator scaleUpX = ObjectAnimator.ofFloat(whiteCard, "scaleX", 2f).setDuration(700);
+                ObjectAnimator scaleUpY = ObjectAnimator.ofFloat(whiteCard, "scaleY", 2f).setDuration(700);
+                ObjectAnimator transInBlack = ObjectAnimator.ofFloat(blackCard, "translationX", 0f).setDuration(700);
+                ObjectAnimator transInWhite = ObjectAnimator.ofFloat(whiteCard, "translationX", 0f).setDuration(700);
+                ObjectAnimator scaleBackX = ObjectAnimator.ofFloat(blackCard, "scaleX", 1f).setDuration(700);
+                ObjectAnimator scaleBackY= ObjectAnimator.ofFloat(blackCard, "scaleY", 1f).setDuration(700);
+                ObjectAnimator scaleBack2X = ObjectAnimator.ofFloat(whiteCard, "scaleX", 1f).setDuration(700);
+                ObjectAnimator scaleBack2Y = ObjectAnimator.ofFloat(whiteCard, "scaleY", 1f).setDuration(700);
+                AnimatorSet scale = new AnimatorSet();
+                AnimatorSet transIn = new AnimatorSet();
+                AnimatorSet scaleBack = new AnimatorSet();
+                scaleBack.play(scaleBackX).with(scaleBackY).with(scaleBack2X).with(scaleBack2Y);
+                transIn.play(transInBlack).with(transInWhite).before(scaleBack);
+                scale.play(scaleDownX).with(scaleDownY).with(scaleUpX).with(scaleUpY).before(transIn);
+                scale.start();
+                scale.addListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+                        testAnimation(blackCard, whiteCard);
+                    }
+                });
+            }
+        });
+        /*transOut.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
                 ObjectAnimator scaleUpX = ObjectAnimator.ofFloat(rectangle, "scaleX", 1f).setDuration(100);
                 ObjectAnimator scaleUpY = ObjectAnimator.ofFloat(rectangle, "scaleY", 1f).setDuration(100);
                 ObjectAnimator dropCircle = ObjectAnimator.ofFloat(circle, "translationY", -300).setDuration(700);
-                //Animation aniRotateClk = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate_clockwise);
-               // rectangle.startAnimation(aniRotateClk);
                 AnimatorSet scaleUp = new AnimatorSet();
                 scaleUp.play(scaleUpX).with(scaleUpY).with(dropCircle);
+                rectangle.animate().rotationBy(180f).setDuration(600);
                 scaleUp.start();
                 scaleUp.addListener(new AnimatorListenerAdapter() {
                     @Override
@@ -153,11 +169,7 @@ public class Main extends AppCompatActivity {
                     }
                 });
             }
-        });
-        /*final Handler handler = new Handler();
-        handler.postDelayed(() -> {
-                testAnimation(circle, rectangle);
-        }, 700);*/
+        });*/
     }
 
     private void hideUI() {
