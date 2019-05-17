@@ -14,6 +14,7 @@ import com.afms.cahgame.R;
 import com.afms.cahgame.data.Colour;
 import com.afms.cahgame.game.Card;
 import com.afms.cahgame.gui.components.FullSizeCard;
+import com.afms.cahgame.gui.components.SettingsDialog;
 import com.afms.cahgame.gui.components.SwipeResultListener;
 import com.afms.cahgame.util.Database;
 
@@ -25,6 +26,8 @@ public class Main extends AppCompatActivity {
     private Button btn_search_lobby;
     private Button btn_explore_decks;
     private ImageButton btn_settings;
+
+    private SettingsDialog settingsDialog;
 
 
     @Override
@@ -48,6 +51,8 @@ public class Main extends AppCompatActivity {
         btn_search_lobby = findViewById(R.id.btn_main_searchLobby);
         btn_explore_decks = findViewById(R.id.btn_main_exploreDecks);
         btn_settings = findViewById(R.id.btn_main_settings);
+
+        settingsDialog = new SettingsDialog();
     }
 
     private void initializeUIEvents() {
@@ -63,40 +68,7 @@ public class Main extends AppCompatActivity {
             startActivity(intent);
         });
         btn_settings.setOnClickListener(event -> {
-            Toast.makeText(this, "clicked " + btn_settings.toString(), Toast.LENGTH_SHORT).show();
-
-            FullSizeCard fullSizeCard = new FullSizeCard(this, new Card(Colour.WHITE, "Test"));
-            fullSizeCard.setSwipeGestures(FullSizeCard.SWIPE_ALL_DIRECTION);
-            fullSizeCard.setSwipeResultListener(new SwipeResultListener() {
-                @Override
-                public void onSwipeLeft() {
-                    Toast.makeText(getApplicationContext(), "left", Toast.LENGTH_SHORT).show();
-                }
-
-                @Override
-                public void onSwipeRight() {
-                    Toast.makeText(getApplicationContext(), "right", Toast.LENGTH_SHORT).show();
-                }
-
-                @Override
-                public void onSwipeUp() {
-                    Toast.makeText(getApplicationContext(), "up", Toast.LENGTH_SHORT).show();
-                }
-
-                @Override
-                public void onSwipeDown() {
-                    Toast.makeText(getApplicationContext(), "down", Toast.LENGTH_SHORT).show();
-                }
-            });
-
-            fullSizeCard.addOptionButton("Close", v -> {
-                contentView.removeView(fullSizeCard);
-            });
-            fullSizeCard.addOptionButton("Test", v -> {
-                Toast.makeText(getApplicationContext(), "test", Toast.LENGTH_SHORT).show();
-            });
-            fullSizeCard.setDimBackground(true);
-            contentView.addView(fullSizeCard);
+            settingsDialog.show(getSupportFragmentManager(), "settingsDialog");
         });
     }
 
