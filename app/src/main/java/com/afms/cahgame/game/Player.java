@@ -28,14 +28,14 @@ public class Player implements Serializable {
         playerList.add(this);
     }
 
-    private String checkForSameName(String name){
+    private String checkForSameName(String name) {
         int countSames = 1;
         for (Player player : playerList) {
-            if (name.equals(player.getName())){
+            if (name.equals(player.getName())) {
                 countSames++;
                 player.setName(player.getName() + (countSames - 1));
-                if(countSames > 2){
-                    name = name.substring(0, name.length()-1);
+                if (countSames > 2) {
+                    name = name.substring(0, name.length() - 1);
                 }
                 name = name + countSames;
             }

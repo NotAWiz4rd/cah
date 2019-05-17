@@ -31,6 +31,7 @@ import com.afms.cahgame.game.Player;
 import com.afms.cahgame.gui.components.CardListAdapter;
 import com.afms.cahgame.gui.components.FullSizeCard;
 import com.afms.cahgame.gui.components.SwipeResultListener;
+import com.afms.cahgame.util.Util;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -89,8 +90,6 @@ public class GameScreen extends AppCompatActivity {
 
         lobbyId = (String) getIntent().getSerializableExtra("lobbyId");
         game = (Game) getIntent().getSerializableExtra("game");
-        String playerName = (String) getIntent().getSerializableExtra("name");
-        player = new Player(playerName);
 
         saveInfo();
     }
@@ -474,7 +473,7 @@ public class GameScreen extends AppCompatActivity {
 
         String hostName = (String) getIntent().getSerializableExtra("host");
 
-        player = new Player(settings.getString("player", ""));
+        player = new Player(settings.getString("player", Util.getRandomName()));
         lobbyId = settings.getString("lobbyId", "");
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -515,7 +514,7 @@ public class GameScreen extends AppCompatActivity {
                     if (game.getGamestate().equals(lastGamestate) && currentPlayerIsCardSzar() && game.getPlayers().values().size() >= Game.MIN_PLAYERS) {
                         lastGamestate = game.getGamestate();
                         gameStateLoop();
-                    } else if (!currentPlayerIsCardSzar() && game.getPlayers().values().size() >= Game.MIN_PLAYERS) {
+                    } else if (!game.getGamestate().equals(lastGamestate) && !currentPlayerIsCardSzar() && game.getPlayers().values().size() >= Game.MIN_PLAYERS) {
                         gameStateLoop();
                     }
                 }
