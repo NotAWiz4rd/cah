@@ -4,7 +4,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/card_background_small_black"
     android:id="@+id/component_black_card_layout"
-    android:layout_margin="8dp"
     android:layout_height="wrap_content">
 
 
@@ -13,12 +12,9 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
         android:src="@drawable/cardblack"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@+id/blackCardText" />
 
     <TextView
         android:id="@+id/blackCardText"
