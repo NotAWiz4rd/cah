@@ -131,6 +131,10 @@ public class Database {
         lobbiesReference.setValue(lobbies);
     }
 
+    public static void removeLobby(String lobbyId) {
+        lobbies.remove(lobbyId);
+    }
+
     //............................Cards and Decks..................................................
 
     /**

@@ -31,6 +31,7 @@ import com.afms.cahgame.game.Player;
 import com.afms.cahgame.gui.components.CardListAdapter;
 import com.afms.cahgame.gui.components.FullSizeCard;
 import com.afms.cahgame.gui.components.SwipeResultListener;
+import com.afms.cahgame.util.Database;
 import com.afms.cahgame.util.Util;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -557,6 +558,15 @@ public class GameScreen extends AppCompatActivity {
         if (game != null && game.getGamestate().equals(Gamestate.ROUNDSTART) && hostName != null
                 && hostName.equals(player.getName())) {
             submitGame();
+        }
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    protected void onStop() {
+        super.onStop();
+        if (currentPlayerIsCardSzar()) {
+            gameReference.removeValue();
+            Database.removeLobby(lobbyId);
         }
     }
 
