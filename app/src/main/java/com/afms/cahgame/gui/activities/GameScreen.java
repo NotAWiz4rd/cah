@@ -376,6 +376,8 @@ public class GameScreen extends AppCompatActivity {
                 doneRoundStart = true;
             }
             advanceGamestate();
+        } else if (!currentPlayerIsCardSzar()) {
+            doneRoundStart = true;
         }
     }
 
@@ -417,6 +419,8 @@ public class GameScreen extends AppCompatActivity {
                 doneRoundEnd = true;
             }
             advanceGamestate();
+        } else if (!currentPlayerIsCardSzar()) {
+            doneRoundEnd = true;
         }
     }
 
