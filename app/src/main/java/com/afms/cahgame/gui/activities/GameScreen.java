@@ -126,7 +126,7 @@ public class GameScreen extends AppCompatActivity {
 
         playedBlackCard.setOnClickListener(event -> {
             if (showPlayedCardsAllowed) {
-                showPlayedCards(false);
+                showPlayedCards(currentPlayerIsCardSzar());
             }
         });
         waitingScreen.setOnClickListener(event -> {
@@ -401,9 +401,9 @@ public class GameScreen extends AppCompatActivity {
         showPlayedCardsAllowed = true;
         allowCardSubmitting = false;
 
-        if (currentPlayerIsCardSzar()) {
-            showPlayedCards(true);
-        } else {
+        showPlayedCards(currentPlayerIsCardSzar());
+
+        if (!currentPlayerIsCardSzar()) {
             setPlayerReady();
         }
     }
