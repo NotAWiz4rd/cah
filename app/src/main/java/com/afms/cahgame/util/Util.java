@@ -91,6 +91,11 @@ public class Util {
         return deckOptional.orElse(null);
     }
 
+    /**
+     * Gets a random name from the namelist.
+     *
+     * @return Random name from the namelist.
+     */
     public static String getRandomName() {
         return randomNames.stream().skip((int) (randomNames.size() * Math.random())).findAny().get();
     }
