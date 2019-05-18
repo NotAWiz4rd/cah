@@ -539,7 +539,7 @@ public class GameScreen extends AppCompatActivity {
 
                     if ((currentPlayerIsCardSzar()
                             || (!game.getGamestate().equals(lastGamestate) && !currentPlayerIsCardSzar())
-                            || player.isReady() && !game.getPlayer(player.getName()).isReady())
+                            || !game.getPlayer(player.getName()).isReady())
                             && game.getPlayers().values().size() >= Game.MIN_PLAYERS) {
                         lastGamestate = game.getGamestate();
                         updatePlayer();
