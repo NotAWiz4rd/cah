@@ -75,6 +75,9 @@ public class GameScreen extends AppCompatActivity {
     private List<FullSizeCard> playedWhiteCardList;
     private List<FullSizeCard> fullSizeCardList = new ArrayList<>();
 
+    private boolean doneRoundStart = false;
+    private boolean doneRoundEnd = false;
+
     private Gamestate lastGamestate;
 
     @Override
@@ -362,17 +365,22 @@ public class GameScreen extends AppCompatActivity {
     }
 
     private void onRoundStartGamestate() {
+        doneRoundEnd = false;
         showHandCardList();
         setPlayerReady();
 
         if (currentPlayerIsCardSzar() && game.allPlayersReady()) {
-            game.startNewRound();
-            submitGame();
+            if (!doneRoundStart) {
+                game.startNewRound();
+                submitGame();
+                doneRoundStart = true;
+            }
             advanceGamestate();
         }
     }
 
     private void onSubmitGamestate() {
+        doneRoundStart = false;
         if (!currentPlayerIsCardSzar()) {
             allowCardSubmitting = true;
         } else {
@@ -403,8 +411,11 @@ public class GameScreen extends AppCompatActivity {
         // todo notify player of winning card (only if player is not cardszar), show updated scores
 
         if (currentPlayerIsCardSzar() && game.allPlayersReady()) {
-            game.nextCardSzar();
-            submitGame();
+            if (!doneRoundEnd) {
+                game.nextCardSzar();
+                submitGame();
+                doneRoundEnd = true;
+            }
             advanceGamestate();
         }
     }
