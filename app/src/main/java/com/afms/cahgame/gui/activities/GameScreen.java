@@ -506,7 +506,7 @@ public class GameScreen extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 game = dataSnapshot.getValue(Game.class);
 
-                if (game != null) {
+                if (game != null && gamestateSameOrNewer(game.getGamestate())) {
                     // only get changes if this player wasnt the last committer
                     if (game.getLastCommitter().equals(player.getName())) {
                         return;
@@ -542,6 +542,11 @@ public class GameScreen extends AppCompatActivity {
                 && hostName.equals(player.getName())) {
             submitGame();
         }
+    }
+
+    private boolean gamestateSameOrNewer(Gamestate newGamestate) {
+        return newGamestate.compareTo(lastGamestate) >= 0
+                || (newGamestate.equals(Gamestate.ROUNDSTART) && lastGamestate.equals(Gamestate.ROUNDEND));
     }
 
     private void quitGame(String message) {
