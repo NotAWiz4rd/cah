@@ -507,6 +507,10 @@ public class GameScreen extends AppCompatActivity {
                 game = dataSnapshot.getValue(Game.class);
 
                 if (game != null) {
+                    if (game.getLastCommitter().equals(player.getName())) {
+                        return;
+                    }
+
                     updatePlayer();
 
                     // add player if it doesnt exist in game
@@ -570,6 +574,7 @@ public class GameScreen extends AppCompatActivity {
     }
 
     private void submitGame() {
+        game.setLastCommitter(player.getName());
         gameReference.setValue(game);
     }
 

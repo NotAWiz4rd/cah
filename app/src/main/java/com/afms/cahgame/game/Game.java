@@ -30,6 +30,8 @@ public class Game implements Serializable {
     private Card winningCard;
     private List<Card> playedCards;
 
+    private String lastCommitter = "";
+
     public Game() {
         this.players = new HashMap<>();
         this.discardPile = new ArrayList<>();
@@ -150,7 +152,6 @@ public class Game implements Serializable {
         }
     }
 
-    // todo check whether this works correctly
     public void nextCardSzar() {
         List<Player> playerList = Arrays.asList(players.values().toArray(new Player[0]));
         if (playerList.indexOf(getCardCzarPlayer()) + 1 <= playerList.size() - 1 && getCardCzarPlayer() != null) {
@@ -182,6 +183,14 @@ public class Game implements Serializable {
      */
     private Player getCardCzarPlayer() {
         return players.get(cardCzar);
+    }
+
+    public String getLastCommitter() {
+        return lastCommitter;
+    }
+
+    public void setLastCommitter(String lastCommitter) {
+        this.lastCommitter = lastCommitter;
     }
 
     public Player getPlayer(String name) {
