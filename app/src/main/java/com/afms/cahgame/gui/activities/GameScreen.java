@@ -507,6 +507,7 @@ public class GameScreen extends AppCompatActivity {
                 game = dataSnapshot.getValue(Game.class);
 
                 if (game != null) {
+                    // only get changes if this player wasnt the last committer
                     if (game.getLastCommitter().equals(player.getName())) {
                         return;
                     }
@@ -521,7 +522,7 @@ public class GameScreen extends AppCompatActivity {
                         submitGame();
                     }
 
-                    if (((game.getGamestate().equals(lastGamestate) && currentPlayerIsCardSzar())
+                    if ((currentPlayerIsCardSzar()
                             || (!game.getGamestate().equals(lastGamestate) && !currentPlayerIsCardSzar()))
                             && game.getPlayers().values().size() >= Game.MIN_PLAYERS) {
                         lastGamestate = game.getGamestate();
