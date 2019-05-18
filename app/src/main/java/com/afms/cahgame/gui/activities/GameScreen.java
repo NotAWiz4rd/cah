@@ -545,7 +545,7 @@ public class GameScreen extends AppCompatActivity {
     }
 
     private boolean gamestateSameOrNewer(Gamestate newGamestate) {
-        return newGamestate.compareTo(lastGamestate) >= 0
+        return lastGamestate == null || newGamestate.compareTo(lastGamestate) >= 0
                 || (newGamestate.equals(Gamestate.ROUNDSTART) && lastGamestate.equals(Gamestate.ROUNDEND));
     }
 
