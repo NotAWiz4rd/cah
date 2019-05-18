@@ -139,10 +139,16 @@ public class CreateLobby extends AppCompatActivity {
 
     private void createLobby() {
         // todo check that deck has enough cards for all players
-        Intent intent = new Intent(this, GameScreen.class);
         String playerName = settings.getString("player", Util.getRandomName());
+        Database.addLobby("testgame", new Lobby(
+                "testgame",
+                playerName,
+                "", // todo add password
+                Integer.parseInt(input_handcard_count.getText().toString()),
+                Integer.parseInt(input_player_count.getText().toString())));
+        Intent intent = new Intent(this, GameScreen.class);
         intent.putExtra("game", new Game(Database.getDeck("testdeck"), Collections.singletonList(playerName), Integer.parseInt(input_handcard_count.getText().toString())));
-        intent.putExtra("lobbyId", "01");
+        intent.putExtra("lobbyId", "testgame");
         intent.putExtra("host", playerName);
         startActivity(intent);
     }

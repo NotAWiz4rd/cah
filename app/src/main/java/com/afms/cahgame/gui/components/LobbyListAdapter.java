@@ -1,32 +1,32 @@
 package com.afms.cahgame.gui.components;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
-import android.graphics.Color;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afms.cahgame.R;
-import com.afms.cahgame.game.Card;
-import com.afms.cahgame.data.Colour;
 import com.afms.cahgame.game.Lobby;
+import com.afms.cahgame.gui.activities.GameScreen;
+import com.afms.cahgame.util.Database;
+import com.afms.cahgame.util.Util;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+
+import static android.content.Context.MODE_PRIVATE;
 
 public class LobbyListAdapter extends ArrayAdapter<Lobby> {
+    private SharedPreferences settings;
 
     public LobbyListAdapter(@NonNull Context context, ArrayList<Lobby> lobbies) {
         super(context, 0, lobbies);
@@ -36,6 +36,7 @@ public class LobbyListAdapter extends ArrayAdapter<Lobby> {
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+        settings = getContext().getSharedPreferences("Preferences", MODE_PRIVATE);
         Lobby lobby = getItem(position);
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_lobby_select, parent, false);
@@ -48,7 +49,7 @@ public class LobbyListAdapter extends ArrayAdapter<Lobby> {
         TextView item_lobby_select_name = convertView.findViewById(R.id.item_lobby_select_name);
         Button btn_item_lobby_select_join = convertView.findViewById(R.id.btn_item_lobby_select_join);
 
-        if(lobby.getPassword().equals("")){
+        if (lobby != null && lobby.getPassword().equals("")) {
             item_lobby_select_lock.setVisibility(View.INVISIBLE);
         }
 
@@ -59,7 +60,16 @@ public class LobbyListAdapter extends ArrayAdapter<Lobby> {
         item_lobby_select_count_maxplayer.setText(String.format("%s / %s", "0", String.valueOf(lobby.getMaxPlayers())));
 
         btn_item_lobby_select_join.setOnClickListener(e -> {
-            Toast.makeText(getContext(), String.format("Join lobby with id: %s", lobby.getId()), Toast.LENGTH_SHORT).show();
+            boolean joinedSuccessfully = Database.joinLobby(lobby.getId(), settings.getString("player", Util.getRandomName()));
+
+            if (joinedSuccessfully) {
+                Intent intent = new Intent(getContext(), GameScreen.class);
+                intent.putExtra("lobbyId", lobby.getId());
+                getContext().startActivity(intent);
+            } else {
+                Toast.makeText(getContext(), "Wasn't able to join selected lobby", Toast.LENGTH_LONG).show();
+            }
+
         });
 
         return convertView;

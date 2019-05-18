@@ -1,5 +1,6 @@
 package com.afms.cahgame.util;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.afms.cahgame.data.Card;
@@ -27,7 +28,7 @@ public class Database {
     private static FirebaseDatabase database = FirebaseDatabase.getInstance();
     private static DatabaseReference decksReference;
     private static DatabaseReference cardsReference;
-    private static DatabaseReference lobbiesReference;
+    public static DatabaseReference lobbiesReference;
 
     //.......................Initialization........................................................
 
@@ -45,7 +46,7 @@ public class Database {
 
         decksReference.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 // this interesting construct is here to suffice Firebases need for type safety
                 GenericTypeIndicator<ArrayList<Deck>> genericTypeIndicator = new GenericTypeIndicator<ArrayList<Deck>>() {
                 };
@@ -56,7 +57,7 @@ public class Database {
             }
 
             @Override
-            public void onCancelled(DatabaseError error) {
+            public void onCancelled(@NonNull DatabaseError error) {
                 Log.w("ERROR", "Failed to get decks from server.", error.toException());
             }
         });
@@ -68,7 +69,7 @@ public class Database {
 
         lobbiesReference.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 // this interesting construct is here to suffice Firebases need for type safety
                 GenericTypeIndicator<Map<String, Lobby>> genericTypeIndicator = new GenericTypeIndicator<Map<String, Lobby>>() {
                 };
@@ -79,7 +80,7 @@ public class Database {
             }
 
             @Override
-            public void onCancelled(DatabaseError error) {
+            public void onCancelled(@NonNull DatabaseError error) {
                 Log.w("ERROR", "Failed to get lobbies from server.", error.toException());
             }
         });
@@ -90,7 +91,7 @@ public class Database {
 
         cardsReference.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 // this interesting construct is here to suffice Firebases need for type safety
                 GenericTypeIndicator<ArrayList<Card>> genericTypeIndicator = new GenericTypeIndicator<ArrayList<Card>>() {
                 };
@@ -101,7 +102,7 @@ public class Database {
             }
 
             @Override
-            public void onCancelled(DatabaseError error) {
+            public void onCancelled(@NonNull DatabaseError error) {
                 Log.w("ERROR", "Failed to get cards from server.", error.toException());
             }
         });
@@ -127,8 +128,10 @@ public class Database {
      * @param playername Name of the player.
      */
     public static void removePlayerFromLobby(String lobbyId, String playername) {
-        Objects.requireNonNull(lobbies.get(lobbyId)).removePlayer(playername);
-        lobbiesReference.setValue(lobbies);
+        if (lobbies.get(lobbyId) != null) {
+            Objects.requireNonNull(lobbies.get(lobbyId)).removePlayer(playername);
+            lobbiesReference.setValue(lobbies);
+        }
     }
 
     /**
@@ -138,6 +141,16 @@ public class Database {
      */
     public static void removeLobby(String lobbyId) {
         lobbies.remove(lobbyId);
+        lobbiesReference.setValue(lobbies);
+    }
+
+    public static boolean joinLobby(String lobbyId, String playername) {
+        if (lobbies.get(lobbyId) != null) {
+            Objects.requireNonNull(lobbies.get(lobbyId)).addPlayer(playername);
+            lobbiesReference.setValue(lobbies);
+            return true;
+        }
+        return false;
     }
 
     //............................Cards and Decks..................................................
@@ -223,7 +236,6 @@ public class Database {
      * @param colour Colour of the card.
      */
     public static Card createNewCard(String text, Colour colour) {
-        // todo only create card if none with the same info already exists
         boolean cardExists = cards.stream().anyMatch(card -> card.getText().equals(text));
         if (cardExists) {
             return cards.stream().filter(card -> card.getText().equals(text)).findAny().get();

@@ -7,10 +7,10 @@ import java.util.List;
 public class Lobby implements Serializable {
     private String id;
     private String host;
-    private List<String> players;
+    private List<String> players = new ArrayList<>();
     private int handcardCount;
     private int maxPlayers;
-    private String password;
+    private String password = "";
 
 
     public Lobby() {
@@ -19,7 +19,6 @@ public class Lobby implements Serializable {
     public Lobby(String id, String host, String password, int handcardCount, int maxPlayers) {
         this.id = id;
         this.host = host;
-        this.players = new ArrayList<>();
         addPlayer(host);
         this.handcardCount = handcardCount;
         this.maxPlayers = maxPlayers;
@@ -51,6 +50,10 @@ public class Lobby implements Serializable {
     }
 
     public void addPlayer(String player) {
+        if (players == null) {
+            players = new ArrayList<>();
+        }
+
         if (this.players.size() < maxPlayers) {
             this.players.add(player);
         }
