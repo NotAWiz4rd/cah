@@ -519,13 +519,14 @@ public class GameScreen extends AppCompatActivity {
         gameReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                game = dataSnapshot.getValue(Game.class);
+                Game tempGame = dataSnapshot.getValue(Game.class);
 
-                if (game != null && gamestateSameOrNewer(game.getGamestate())) {
+                if (tempGame != null && gamestateSameOrNewer(tempGame.getGamestate())) {
                     // only get changes if this player wasnt the last committer
-                    if (game.getLastCommitter().equals(player.getName())) {
+                    if (tempGame.getLastCommitter().equals(player.getName())) {
                         return;
                     }
+                    game = tempGame;
 
                     // add player if it doesnt exist in game
                     if (!game.containsPlayerWithName(player.getName())) {
