@@ -1,20 +1,21 @@
 package com.afms.cahgame.gui.activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.afms.cahgame.R;
-import com.afms.cahgame.game.Card;
-import com.afms.cahgame.data.Colour;
-import com.afms.cahgame.gui.components.FullSizeCard;
-import com.afms.cahgame.gui.components.SwipeResultListener;
+import com.afms.cahgame.gui.components.SettingsDialog;
+import com.afms.cahgame.util.Database;
+import com.afms.cahgame.util.Util;
 
 public class Main extends AppCompatActivity {
 
@@ -23,17 +24,28 @@ public class Main extends AppCompatActivity {
     private Button btn_create_lobby;
     private Button btn_search_lobby;
     private Button btn_explore_decks;
+    private Button btn_piatest;
     private ImageButton btn_settings;
 
+    private SharedPreferences settings;
+
+    private SettingsDialog settingsDialog;
+
+    private String playerName;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        settings = getSharedPreferences("Preferences", MODE_PRIVATE);
         setContentView(R.layout.activity_main);
         contentView = findViewById(R.id.layout_main);
         hideUI();
         initializeUIElements();
         initializeUIEvents();
+        Database.initializeDatabaseConnections();
+
+        playerName = settings.getString("player", Util.getRandomName());
 
         String message = (String) getIntent().getSerializableExtra("message");
         if (message != null) {
@@ -46,15 +58,24 @@ public class Main extends AppCompatActivity {
         btn_search_lobby = findViewById(R.id.btn_main_searchLobby);
         btn_explore_decks = findViewById(R.id.btn_main_exploreDecks);
         btn_settings = findViewById(R.id.btn_main_settings);
+        btn_piatest = findViewById(R.id.btn_main_piatest);
+
+
+        settingsDialog = new SettingsDialog();
     }
 
     private void initializeUIEvents() {
         btn_create_lobby.setOnClickListener(event -> {
-            Toast.makeText(this, "clicked " + btn_create_lobby.toString(), Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(this, CreateLobby.class));
+            Intent intent = new Intent(this, CreateLobby.class);
+            intent.putExtra("player", playerName);
+            startActivity(intent);
         });
         btn_search_lobby.setOnClickListener(event -> {
-            Toast.makeText(this, "clicked " + btn_search_lobby.toString(), Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, SearchLobby.class);
+            startActivity(intent);
+        });
+        btn_piatest.setOnClickListener(event -> {
+
         });
         btn_explore_decks.setOnClickListener(event -> {
             Toast.makeText(this, "clicked " + btn_explore_decks.toString(), Toast.LENGTH_SHORT).show();
@@ -62,46 +83,22 @@ public class Main extends AppCompatActivity {
             startActivity(intent);
         });
         btn_settings.setOnClickListener(event -> {
-            Toast.makeText(this, "clicked " + btn_settings.toString(), Toast.LENGTH_SHORT).show();
+            settingsDialog.show(getSupportFragmentManager(), "settingsDialog");
+        });
 
-            FullSizeCard fullSizeCard = new FullSizeCard(this, new Card(Colour.WHITE, "Test"));
-            fullSizeCard.setSwipeGestures(FullSizeCard.SWIPE_ALL_DIRECTION);
-            fullSizeCard.setSwipeResultListener(new SwipeResultListener() {
-                @Override
-                public void onSwipeLeft() {
-                    Toast.makeText(getApplicationContext(), "left", Toast.LENGTH_SHORT).show();
-                }
-
-                @Override
-                public void onSwipeRight() {
-                    Toast.makeText(getApplicationContext(), "right", Toast.LENGTH_SHORT).show();
-                }
-
-                @Override
-                public void onSwipeUp() {
-                    Toast.makeText(getApplicationContext(), "up", Toast.LENGTH_SHORT).show();
-                }
-
-                @Override
-                public void onSwipeDown() {
-                    Toast.makeText(getApplicationContext(), "down", Toast.LENGTH_SHORT).show();
-                }
-            });
-
-            fullSizeCard.setButtonResultListener(label -> {
-                switch (label) {
-                    case "Close":
-                        contentView.removeView(fullSizeCard);
-                        break;
-                    case "Test":
-                        Toast.makeText(getApplicationContext(), "TEST", Toast.LENGTH_SHORT).show();
-                }
-            });
-
-            fullSizeCard.addOptionButton("Close");
-            fullSizeCard.addOptionButton("Test");
-            fullSizeCard.setDimBackground(true);
-            contentView.addView(fullSizeCard);
+        settingsDialog.setOnClickListener(v -> {
+            EditText playerNameView = settingsDialog.getPlayerNameView();
+            if (playerNameView == null) {
+                return;
+            }
+            if (playerNameView.getText().toString().equals("")) {
+                playerName = Util.getRandomName();
+            } else {
+                playerName = playerNameView.getText().toString();
+            }
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString("player", playerName);
+            editor.apply();
         });
     }
 

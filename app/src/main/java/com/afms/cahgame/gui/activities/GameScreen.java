@@ -1,42 +1,85 @@
 package com.afms.cahgame.gui.activities;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.OnLifecycleEvent;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.afms.cahgame.R;
+import com.afms.cahgame.data.Colour;
 import com.afms.cahgame.game.Card;
 import com.afms.cahgame.game.Game;
 import com.afms.cahgame.game.Gamestate;
 import com.afms.cahgame.game.Player;
+import com.afms.cahgame.gui.components.CardListAdapter;
+import com.afms.cahgame.gui.components.FullSizeCard;
+import com.afms.cahgame.gui.components.SwipeResultListener;
+import com.afms.cahgame.util.Database;
+import com.afms.cahgame.util.Util;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
-/**
- * An example full-screen activity that shows and hides the system UI (i.e.
- * status bar and navigation/system bar) with user interaction.
- */
 public class GameScreen extends AppCompatActivity {
     private Game game;
     private Player player;
 
-    private Gamestate lastGamestate;
+    private boolean showPlayedCardsAllowed;
+    private boolean allowCardSubmitting;
 
     private String lobbyId;
+    private String blackCardText = "";
     private DatabaseReference gameReference;
+    private DatabaseReference blackCardTextReference;
 
     private SharedPreferences settings;
+
+    private boolean playerIsWaiting = false;
+
+    private ImageButton playerOverview;
+    private ImageView blackCardIcon;
+    private ImageView whiteCardIcon;
+    private ConstraintLayout gameScreenLayout;
+    private ConstraintLayout playedBlackCard;
+    private ConstraintLayout waitingScreen;
+    private TextView playedBlackCardText;
+    private FullSizeCard playedWhiteCard;
+    private FrameLayout lowerFrameLayout;
+    private FrameLayout completeFrameLayout;
+
+    private ConstraintLayout userSelectionLayout;
+    private ListView userSelectionListView;
+    private CardListAdapter userSelectionListAdapter;
+    private List<FullSizeCard> playedWhiteCardList;
+    private List<FullSizeCard> fullSizeCardList = new ArrayList<>();
+
+    private boolean doneRoundStart = false;
+    private boolean doneRoundEnd = false;
+
+    private Gamestate lastGamestate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,17 +89,251 @@ public class GameScreen extends AppCompatActivity {
 
         setContentView(R.layout.activity_game_screen);
         hideUI();
+        initializeUIElements();
+        initializeUIEvents();
 
         lobbyId = (String) getIntent().getSerializableExtra("lobbyId");
         game = (Game) getIntent().getSerializableExtra("game");
-        String playerName = (String) getIntent().getSerializableExtra("name");
-        player = new Player(playerName);
 
         saveInfo();
     }
 
+    //<------ GUI LOGIC --------------------------------------------------------------------------------------------------------------->
+    private void initializeUIElements() {
+        playerOverview = findViewById(R.id.player_overview);
+        gameScreenLayout = findViewById(R.id.game_screen_layout);
+        playedBlackCard = findViewById(R.id.layout_game_screen_playedBlackCard);
+        playedBlackCardText = findViewById(R.id.blackCardText);
+        lowerFrameLayout = findViewById(R.id.layout_game_screen_lower);
+        completeFrameLayout = findViewById(R.id.game_screen_frameLayout);
+
+        playedBlackCardText.setText("");
+
+        playedWhiteCard = new FullSizeCard(this, new Card(Colour.WHITE, "test"));
+        userSelectionLayout = (ConstraintLayout) getLayoutInflater().inflate(R.layout.list_card_select, gameScreenLayout, false);
+        userSelectionListView = userSelectionLayout.findViewById(R.id.cardSelectList);
+        waitingScreen = (ConstraintLayout) getLayoutInflater().inflate(R.layout.waiting_screen, gameScreenLayout, false);
+        blackCardIcon = waitingScreen.findViewById(R.id.waiting_screen_blackCard);
+        whiteCardIcon = waitingScreen.findViewById(R.id.waiting_screen_whiteCard);
+
+    }
+
+    private void initializeUIEvents() {
+        playerOverview.setOnClickListener(event -> {
+            Toast.makeText(this, "clicked on players overview", Toast.LENGTH_SHORT).show();
+            //TODO show players and their score
+        });
+
+        playedBlackCard.setOnClickListener(event -> {
+            if (showPlayedCardsAllowed) {
+                showPlayedCards(currentPlayerIsCardSzar());
+            }
+        });
+        waitingScreen.setOnClickListener(event -> {
+        });
+    }
+
+    private void deleteAllViewsFromLowerFrameLayout() {
+        lowerFrameLayout.removeAllViews();
+    }
+
+    private void showHandCardList() {
+        if (player != null) {
+            deleteAllViewsFromLowerFrameLayout();
+            lowerFrameLayout.addView(userSelectionLayout);
+            userSelectionListAdapter = new CardListAdapter(this, new ArrayList<Card>());
+            userSelectionListView.setAdapter(userSelectionListAdapter);
+
+            userSelectionListAdapter.addAll(player.getHand());
+
+            userSelectionListView.setOnItemClickListener((parent, view, position, id) -> {
+                Card card = (Card) parent.getItemAtPosition(position);
+                completeFrameLayout.addView(getFullSizeCardInstance(card, position));
+            });
+        }
+    }
+
+    private void showPlayedCards(boolean allowCardSzarSubmit) {
+        deleteAllViewsFromLowerFrameLayout();
+        playedWhiteCardList = getPlayedCards(allowCardSzarSubmit);
+        if (playedWhiteCardList.size() > 0) {
+            playedWhiteCard = playedWhiteCardList.get(0);
+            lowerFrameLayout.addView(playedWhiteCard);
+        }
+    }
+
+    public FullSizeCard getFullSizeCardInstance(Card card, int selectedPosition) {
+        if (fullSizeCardList.stream().anyMatch(f -> f.getCard().equals(card))) {
+            return fullSizeCardList.stream().filter(f -> f.getCard().equals(card)).findFirst().get();
+        } else {
+            FullSizeCard fullCard = new FullSizeCard(this, card);
+            fullCard.addOptionButton("Close", v -> {
+                completeFrameLayout.removeView(fullCard);
+            });
+            fullCard.setDimBackground(true);
+            fullCard.setSwipeResultListener(new SwipeResultListener() {
+                @Override
+                public void onSwipeLeft() {
+                    int nextPos = (selectedPosition + 1) % userSelectionListView.getCount();
+                    completeFrameLayout.addView(getFullSizeCardInstance((Card) userSelectionListView.getItemAtPosition(nextPos), nextPos));
+                }
+
+                @Override
+                public void onSwipeRight() {
+                    int nextPos = selectedPosition - 1;
+                    if (nextPos < 0) {
+                        nextPos = userSelectionListView.getCount() - 1;
+                    }
+                    completeFrameLayout.addView(getFullSizeCardInstance((Card) userSelectionListView.getItemAtPosition(nextPos), nextPos));
+                }
+
+                @Override
+                public void onSwipeUp() {
+                    if (!currentPlayerIsCardSzar()) {
+                        if (allowCardSubmitting) {
+                            submitCard(card);
+                            allowCardSubmitting = false;
+                            showHandCardList();
+                        }
+                    }
+                }
+
+                @Override
+                public void onSwipeDown() {
+                    // do nothing
+                }
+            });
+            if (allowCardSubmitting) {
+                fullCard.setSwipeGestures(FullSizeCard.SWIPE_X_AXIS, FullSizeCard.SWIPE_UP);
+            } else {
+                fullCard.setSwipeGestures(FullSizeCard.SWIPE_X_AXIS);
+            }
+            fullSizeCardList.add(fullCard);
+            return fullCard;
+        }
+    }
+
+    private void hideUI() {
+        final int flags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+
+        // This work only for android 4.4+
+        getWindow().getDecorView().setSystemUiVisibility(flags);
+
+        final View decorView = getWindow().getDecorView();
+        decorView
+                .setOnSystemUiVisibilityChangeListener(visibility -> {
+                    if ((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0) {
+                        decorView.setSystemUiVisibility(flags);
+                    }
+                });
+    }
+
+    private void showWaitingScreen() {
+        playerIsWaiting = true;
+        lowerFrameLayout.addView(waitingScreen);
+        waitingScreenAnimation(whiteCardIcon, blackCardIcon);
+    }
+
+    private void waitingScreenAnimation(ImageView whiteCard, ImageView blackCard) {
+        while (playerIsWaiting) {
+            ObjectAnimator transOutBlack = ObjectAnimator.ofFloat(blackCard, "translationX", -100f).setDuration(700);
+            ObjectAnimator transOutWhite = ObjectAnimator.ofFloat(whiteCard, "translationX", 100f).setDuration(700);
+            AnimatorSet transOut = new AnimatorSet();
+            transOut.play(transOutBlack).with(transOutWhite);
+            transOut.start();
+            transOut.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    super.onAnimationEnd(animation);
+                    whiteCard.bringToFront();
+                    ObjectAnimator scaleDownX = ObjectAnimator.ofFloat(blackCard, "scaleX", 0.5f).setDuration(700);
+                    ObjectAnimator scaleDownY = ObjectAnimator.ofFloat(blackCard, "scaleY", 0.5f).setDuration(700);
+                    ObjectAnimator scaleUpX = ObjectAnimator.ofFloat(whiteCard, "scaleX", 2f).setDuration(700);
+                    ObjectAnimator scaleUpY = ObjectAnimator.ofFloat(whiteCard, "scaleY", 2f).setDuration(700);
+                    ObjectAnimator transInBlack = ObjectAnimator.ofFloat(blackCard, "translationX", 0f).setDuration(700);
+                    ObjectAnimator transInWhite = ObjectAnimator.ofFloat(whiteCard, "translationX", 0f).setDuration(700);
+                    ObjectAnimator scaleBackX = ObjectAnimator.ofFloat(blackCard, "scaleX", 1f).setDuration(700);
+                    ObjectAnimator scaleBackY = ObjectAnimator.ofFloat(blackCard, "scaleY", 1f).setDuration(700);
+                    ObjectAnimator scaleBack2X = ObjectAnimator.ofFloat(whiteCard, "scaleX", 1f).setDuration(700);
+                    ObjectAnimator scaleBack2Y = ObjectAnimator.ofFloat(whiteCard, "scaleY", 1f).setDuration(700);
+                    AnimatorSet scale = new AnimatorSet();
+                    AnimatorSet transIn = new AnimatorSet();
+                    AnimatorSet scaleBack = new AnimatorSet();
+                    scaleBack.play(scaleBackX).with(scaleBackY).with(scaleBack2X).with(scaleBack2Y);
+                    transIn.play(transInBlack).with(transInWhite).before(scaleBack);
+                    scale.play(scaleDownX).with(scaleDownY).with(scaleUpX).with(scaleUpY).before(transIn);
+                    scale.start();
+                    scale.addListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            super.onAnimationEnd(animation);
+                            waitingScreenAnimation(blackCard, whiteCard);
+                        }
+                    });
+                }
+            });
+        }
+    }
+
+    private void removeWaitingScreen() {
+        playerIsWaiting = false;
+        lowerFrameLayout.removeView(waitingScreen);
+    }
+    //<--------------------------------------------------------------------------------------------------------------------------->
+
+    private List<FullSizeCard> getPlayedCards(boolean allowCardSzarSubmit) {
+        List<FullSizeCard> playedCards = new ArrayList<>();
+
+        for (Card card : game.getPlayedCards()) {
+            FullSizeCard fullCard = new FullSizeCard(this, card);
+            fullCard.setSwipeResultListener(new SwipeResultListener() {
+                @Override
+                public void onSwipeLeft() {
+                    int nextPos = (playedWhiteCardList.indexOf(fullCard) + 1) % playedWhiteCardList.size();
+                    lowerFrameLayout.addView(playedWhiteCardList.get(nextPos));
+                }
+
+                @Override
+                public void onSwipeRight() {
+                    int nextPos = playedWhiteCardList.indexOf(fullCard) - 1;
+                    if (nextPos < 0) {
+                        nextPos = playedWhiteCardList.size() - 1;
+                    }
+                    lowerFrameLayout.addView(playedWhiteCardList.get(nextPos));
+                }
+
+                @Override
+                public void onSwipeUp() {
+                    if (game.getGamestate().equals(Gamestate.WAITING)) {
+                        game.submitWinningCard(card);
+                        setPlayerReady();
+                        advanceGamestate();
+                    }
+                }
+
+                @Override
+                public void onSwipeDown() {
+                    // do nothing
+                }
+            });
+            if (allowCardSzarSubmit) {
+                fullCard.setSwipeGestures(FullSizeCard.SWIPE_X_AXIS, FullSizeCard.SWIPE_UP);
+            } else {
+                fullCard.setSwipeGestures(FullSizeCard.SWIPE_X_AXIS);
+            }
+            playedCards.add(fullCard);
+        }
+
+        return playedCards;
+    }
+
     private void updatePlayer() {
-        Optional<Player> playerOptional = game.players.stream().filter(player1 -> player1.getName().equals(player.getName())).findFirst();
+        Optional<Player> playerOptional = game.players.values().stream().filter(player1 -> player1.getName().equals(player.getName())).findFirst();
         playerOptional.ifPresent(player1 -> player = player1);
     }
 
@@ -64,13 +341,12 @@ public class GameScreen extends AppCompatActivity {
      * Executes things based on the current gamestate of the lobby
      */
     private void gameStateLoop() {
-        if (game == null) {
+        if (currentPlayerIsCardSzar() && game == null) {
             quitGame("Something went terribly wrong...");
+        } else if (game == null) {
+            return;
         }
         switch (game.getGamestate()) {
-            case START:
-                onStartGamestate();
-                break;
             case ROUNDSTART:
                 onRoundStartGamestate();
                 break;
@@ -89,59 +365,64 @@ public class GameScreen extends AppCompatActivity {
         }
     }
 
-    private void onStartGamestate() {
-        if (currentPlayerIsCardSzar()) {
-            onRoundStartGamestate();
-            advanceGamestate();
-        }
-        setPlayerReady();
-    }
-
     private void onRoundStartGamestate() {
-        if (currentPlayerIsCardSzar()) {
-            game.startNewRound();
-            submitGame();
-            advanceGamestate();
-        }
+        doneRoundEnd = false;
+        showHandCardList();
         setPlayerReady();
+
+        if (currentPlayerIsCardSzar() && game.allPlayersReady()) {
+            if (!doneRoundStart) {
+                game.startNewRound();
+                submitGame();
+                doneRoundStart = true;
+            }
+            advanceGamestate();
+        } else if (!currentPlayerIsCardSzar()) {
+            doneRoundStart = true;
+        }
     }
 
     private void onSubmitGamestate() {
-        // todo show new cards and black card
-
-        // todo enable user to submit a card from his hand
-
+        doneRoundStart = false;
         if (!currentPlayerIsCardSzar()) {
-            submitCard(player.getHand().remove(0)); // todo for testing only
-            setPlayerReady();
+            allowCardSubmitting = true;
         } else {
             setPlayerReady();
+        }
+        showHandCardList();
+
+        if (currentPlayerIsCardSzar() && game.allPlayersReady()) {
             advanceGamestate();
         }
-
-        // then wait for input -> do nothing here
+        // then wait for input
     }
 
     private void onWaitingGamestate() {
-        // todo display "waiting for cardszar to choose winning card"
-        setPlayerReady();
+        showPlayedCardsAllowed = true;
+        allowCardSubmitting = false;
 
-        if (currentPlayerIsCardSzar()) {
-            // todo somehow at some point there are no playedCards...
-            game.submitWinningCard(game.getPlayedCards().get(0)); // todo cardszar chooses winning card from played Cards
-            submitGame();
-            advanceGamestate();
+        showPlayedCards(currentPlayerIsCardSzar());
+
+        if (!currentPlayerIsCardSzar()) {
+            setPlayerReady();
         }
     }
 
     private void onRoundEndGamestate() {
-        if (currentPlayerIsCardSzar()) {
-            game.nextCardSzar();
-            submitGame();
-            advanceGamestate();
-        }
-        // todo notify player of winning card (only if player is not cardszar), show updated scores
+        showPlayedCardsAllowed = false;
         setPlayerReady();
+        // todo notify player of winning card (only if player is not cardszar), show updated scores
+
+        if (currentPlayerIsCardSzar() && game.allPlayersReady()) {
+            if (!doneRoundEnd) {
+                game.nextCardSzar();
+                submitGame();
+                doneRoundEnd = true;
+            }
+            advanceGamestate();
+        } else if (!currentPlayerIsCardSzar()) {
+            doneRoundEnd = true;
+        }
     }
 
     private void onGamestateError() {
@@ -155,37 +436,26 @@ public class GameScreen extends AppCompatActivity {
         return game.getCardCzar().equals(player.getName());
     }
 
-    /**
-     * For host only!
-     * Initializes lobby and pushes it to server.
-     */
-    private void startGame() {
-        game.startNewRound();
-
-        game.setGamestate(Gamestate.START);
-
-        submitGame();
-        updatePlayer();
-        gameStateLoop();
-    }
-
     private void setPlayerReady() {
-        this.player.setReady(true);
-        submitLobbyPlayer();
+        if (!game.getPlayer(player.getName()).isReady()) {
+            this.player.setReady(true);
+            submitLobbyPlayer();
+        }
     }
 
     /**
      * Advances Gamestate if all players in lobby are ready, submits lobby after advancing.
      */
     private void advanceGamestate() {
+        if (game == null) {
+            quitGame("Something went terribly wrong...");
+        }
         if (!game.allPlayersReady()) {
             Handler handler = new Handler();
             handler.postDelayed(this::advanceGamestate, 500);
         } else {
+            game.setAllPlayersNotReady();
             switch (game.getGamestate()) {
-                case START:
-                    game.setGamestate(Gamestate.ROUNDSTART);
-                    break;
                 case ROUNDSTART:
                     game.setGamestate(Gamestate.SUBMIT);
                     break;
@@ -202,6 +472,7 @@ public class GameScreen extends AppCompatActivity {
                     game.setGamestate(Gamestate.ROUNDSTART);
                     break;
             }
+            lastGamestate = game.getGamestate();
             submitGame();
         }
     }
@@ -218,45 +489,97 @@ public class GameScreen extends AppCompatActivity {
         super.onResume();
 
         String hostName = (String) getIntent().getSerializableExtra("host");
+        if (hostName != null && hostName.equals(settings.getString("player", Util.getRandomName()))) {
+            player = game.getPlayer(hostName);
+            lastGamestate = Gamestate.ROUNDSTART;
+        } else {
+            player = new Player(settings.getString("player", Util.getRandomName()));
+        }
 
-        player = new Player(settings.getString("player", ""));
         lobbyId = settings.getString("lobbyId", "");
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         gameReference = database.getReference(lobbyId + "-game");
+        blackCardTextReference = database.getReference(lobbyId + "-game/currentBlackCard/text");
 
-        gameReference.addValueEventListener(new ValueEventListener() {
+        blackCardTextReference.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                game = dataSnapshot.getValue(Game.class);
-                if (game != null) {
-                    updatePlayer();
-                    if (game.getGamestate() != lastGamestate) {
-                        lastGamestate = game.getGamestate();
-                        gameStateLoop();
-                    }
-                } else {
-                    quitGame("");
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                blackCardText = dataSnapshot.getValue(String.class);
+                if (blackCardText != null) {
+                    changeBlackCardText(blackCardText);
                 }
             }
 
             @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                Log.w("ERROR", "Failed to read value.", error.toException());
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.w("ERROR", "Failed to get blackCard.", databaseError.toException());
             }
         });
 
-        if (hostName != null && hostName.equals(player.getName())) {
-            startGame();
-        }
+        gameReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Game tempGame = dataSnapshot.getValue(Game.class);
 
-        if (game == null) {
-            quitGame("");
+                if (tempGame != null && gamestateSameOrNewer(tempGame.getGamestate())) {
+                    // only get changes if this player wasnt the last committer
+                    if (tempGame.getLastCommitter().equals(player.getName())) {
+                        return;
+                    }
+                    game = tempGame;
+
+                    // add player if it doesnt exist in game
+                    if (!game.containsPlayerWithName(player.getName())) {
+                        game = dataSnapshot.getValue(Game.class);
+                        game.addPlayer(player);
+                        updatePlayer();
+                        submitGame();
+                    }
+
+                    if ((currentPlayerIsCardSzar()
+                            || (!game.getGamestate().equals(lastGamestate) && !currentPlayerIsCardSzar())
+                            || !game.getPlayer(player.getName()).isReady())
+                            && game.getPlayers().values().size() >= Game.MIN_PLAYERS) {
+                        lastGamestate = game.getGamestate();
+                        updatePlayer();
+                        gameStateLoop();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.w("ERROR", "Failed to get game.", databaseError.toException());
+            }
+        });
+
+        // initial game submit by host
+        if (game != null && game.getGamestate().equals(Gamestate.ROUNDSTART) && hostName != null
+                && hostName.equals(player.getName())) {
+            submitGame();
         }
     }
 
+    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    protected void onStop() {
+        super.onStop();
+        if (currentPlayerIsCardSzar()) {
+            gameReference.removeValue();
+            Database.removeLobby(lobbyId);
+        }
+    }
+
+    private boolean gamestateSameOrNewer(Gamestate newGamestate) {
+        return (lastGamestate == null) || ((newGamestate.compareTo(lastGamestate) >= 0) && (newGamestate.compareTo(lastGamestate) != 3))
+                || (newGamestate.equals(Gamestate.ROUNDSTART) && lastGamestate.equals(Gamestate.ROUNDEND));
+    }
+
     private void quitGame(String message) {
+        if (game != null) {
+            game.removePlayer(player);
+            submitGame();
+        }
         Intent intent = new Intent(this, Main.class);
         intent.putExtra("message", message.length() > 0 ? message : "Your lobby couldn't be found.");
         startActivity(intent);
@@ -264,7 +587,6 @@ public class GameScreen extends AppCompatActivity {
 
     private void saveInfo() {
         SharedPreferences.Editor editor = settings.edit();
-        editor.putString("player", player.getName());
         editor.putString("lobbyId", lobbyId);
 
         editor.apply();
@@ -276,12 +598,15 @@ public class GameScreen extends AppCompatActivity {
      * @param card Card to sumbit.
      */
     private void submitCard(Card card) {
+        player.removeCard(card);
         card.setOwner(player);
         game.submitCard(card);
-        submitGame();
+        player.setReady(true);
+        submitLobbyPlayer();
     }
 
     private void submitGame() {
+        game.setLastCommitter(player.getName());
         gameReference.setValue(game);
     }
 
@@ -289,36 +614,11 @@ public class GameScreen extends AppCompatActivity {
      * Submits the updated game/player to the server.
      */
     private void submitLobbyPlayer() {
-        for (int i = 0; i < game.players.size(); i++) {
-            if (game.players.get(i).getName().equals(player.getName())) {
-                game.players.set(i, player);
-                submitGame();
-                return;
-            }
-        }
+        game.players.put(player.getName(), player);
+        submitGame();
     }
 
-    private void hideUI() {
-        final int flags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
-
-        // This work only for android 4.4+
-
-        getWindow().getDecorView().setSystemUiVisibility(flags);
-
-        // Code below is to handle presses of Volume up or Volume down.
-        // Without this, after pressing volume buttons, the navigation bar will
-        // show up and won't hide
-        final View decorView = getWindow().getDecorView();
-        decorView
-                .setOnSystemUiVisibilityChangeListener(visibility -> {
-                    if ((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0) {
-                        decorView.setSystemUiVisibility(flags);
-                    }
-                });
+    private void changeBlackCardText(String text) {
+        playedBlackCardText.setText(text);
     }
 }

@@ -6,23 +6,38 @@ import java.util.List;
 
 public class Player implements Serializable {
     private String name;
-    private List<Card> hand;
+    private List<Card> hand = new ArrayList<>();
     private int score;
     private boolean isReady;
+    private static List<Player> playerList = new ArrayList<>();
 
     public Player() {
     }
 
     public Player(String name, ArrayList<Card> hand) {
-        this.name = name;
+        this.name = checkForSameName(name, 1);
         this.hand = hand;
         this.score = 0;
+        playerList.add(this);
     }
 
     public Player(String name) {
-        this.name = name;
+        this.name = checkForSameName(name, 1);
         this.hand = new ArrayList<>();
         this.score = 0;
+        playerList.add(this);
+    }
+
+    private String checkForSameName(String name, int countSames) {
+        for (Player player : playerList) {
+            if (name.equals(player.getName())) {
+                countSames++;
+                player.setName(checkForSameName((player.getName() + (countSames - 1)), countSames));
+                name = name + countSames;
+                name = checkForSameName(name, countSames);
+            }
+        }
+        return name;
     }
 
     @Override
@@ -36,7 +51,12 @@ public class Player implements Serializable {
     }
 
     public void removeCard(Card card) {
-        hand.remove(card);
+        for(Card handCard : hand){
+            if(handCard.getText().equals(card.getText())){
+                hand.remove(handCard);
+                return;
+            }
+        }
     }
 
     public boolean isReady() {

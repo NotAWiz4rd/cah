@@ -5,11 +5,18 @@ import com.afms.cahgame.exceptions.MissingOwnerException;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 public class Game implements Serializable {
-    public List<Player> players;
+    public static final int MIN_PLAYERS = 2;
+
+    public Map<String, Player> players;
     private Deck deck;
     private int handCardCount;
 
@@ -18,12 +25,15 @@ public class Game implements Serializable {
     private List<Card> blackCardsPile;
     private List<Card> discardPile;
     private List<Card> newCardsPile;
-    private String cardCzar;
-    private Card currentBlackCard;
+    private String cardCzar = "";
+    private Card currentBlackCard = new Card();
+    private Card winningCard;
     private List<Card> playedCards;
 
+    private String lastCommitter = "";
+
     public Game() {
-        this.players = new ArrayList<>();
+        this.players = new HashMap<>();
         this.discardPile = new ArrayList<>();
         this.newCardsPile = new ArrayList<>();
         this.blackCardsPile = new ArrayList<>();
@@ -31,10 +41,10 @@ public class Game implements Serializable {
     }
 
     public Game(Deck deck, List<String> playerNames, int handCardCount) {
-        this.gamestate = Gamestate.START;
+        this.gamestate = Gamestate.ROUNDSTART;
         this.deck = deck;
         createPlayers(playerNames);
-        this.cardCzar = players.get(0).getName();
+        nextCardSzar();
         this.discardPile = new ArrayList<>();
         this.newCardsPile = new ArrayList<>();
         newCardsPile.addAll(deck.getWhiteCards());
@@ -43,34 +53,15 @@ public class Game implements Serializable {
         this.playedCards = new ArrayList<>();
         this.handCardCount = handCardCount;
 
+        shuffleCards();
+
         drawInitialCards();
     }
 
     private void createPlayers(List<String> playerNames) {
-        this.players = new ArrayList<>();
+        this.players = new HashMap<>();
         for (String playerName : playerNames) {
-            this.players.add(new Player(playerName));
-        }
-        this.players = removeDuplicates(players);
-    }
-
-    private List<Player> removeDuplicates(List<Player> players) {
-        for (int i = 0; i < players.size(); i++) {
-            for (int j = 0; j < players.size(); j++) {
-                if (i != j && players.get(i).getName().equals(players.get(j).getName())) {
-                    renameDuplicateNames(players, players.get(i).getName());
-                }
-            }
-        }
-        return players;
-    }
-
-    private void renameDuplicateNames(List<Player> players, String name) {
-        int count = 1;
-        for (int i = 0; i < players.size(); i++) {
-            if (players.get(i).getName().equals(name)) {
-                players.get(i).setName(name + "(" + count + ")");
-            }
+            this.players.put(playerName, new Player(playerName));
         }
     }
 
@@ -78,15 +69,26 @@ public class Game implements Serializable {
         discardPile.addAll(playedCards);
         playedCards = new ArrayList<>();
 
-        if (blackCardsPile.size() == 0) {
-            blackCardsPile = deck.getBlackCards();
+        if (blackCardsPile != null && !(blackCardsPile.size() == 0)) {
+            currentBlackCard = blackCardsPile.remove(blackCardsPile.size() - 1);
+        } else if (blackCardsPile != null) {
+            blackCardsPile = new ArrayList<>();
+            blackCardsPile.addAll(deck.getBlackCards());
+            currentBlackCard = blackCardsPile.remove(blackCardsPile.size() - 1);
         }
-        currentBlackCard = blackCardsPile.remove(blackCardsPile.size() - 1);
+
         drawCards();
     }
 
+    public void setAllPlayersNotReady() {
+        for (Player player : players.values()) {
+            player.setReady(false);
+            players.put(player.getName(), player);
+        }
+    }
+
     public boolean allPlayersReady() {
-        for (Player player : players) {
+        for (Player player : players.values()) {
             if (!player.isReady()) return false;
         }
         return true;
@@ -101,14 +103,16 @@ public class Game implements Serializable {
     }
 
     public void submitWinningCard(Card card) {
-        card.getOwner().setScore(card.getOwner().getScore() + 1);
+        Optional<Player> playerOptional = players.values().stream().filter(player -> player.getName().equals(card.getOwner().getName())).findFirst();
+        playerOptional.ifPresent(player -> Objects.requireNonNull(players.get(player.getName())).setScore(Objects.requireNonNull(players.get(player.getName())).getScore() + 1));
+        winningCard = card;
     }
 
     /**
      * Draws cards for every player except the cardCzar
      */
     private void drawCards() {
-        for (Player player : players) {
+        for (Player player : players.values()) {
             if (!player.getName().equals(cardCzar) && player.getHand().size() < handCardCount) {
                 if (newCardsPile.size() == 0) {
                     reshuffleCards();
@@ -118,27 +122,58 @@ public class Game implements Serializable {
         }
     }
 
+    private void shuffleCards() {
+        Collections.shuffle(newCardsPile);
+        Collections.shuffle(blackCardsPile);
+    }
+
     private void reshuffleCards() {
-        // todo shuffle discrd pile
+        Collections.shuffle(discardPile);
         newCardsPile = discardPile;
     }
 
     private void drawInitialCards() {
+        // todo check that deck has enough cards for all players
         for (int i = 0; i < handCardCount; i++) {
-            for (Player player : players) {
+            for (Player player : players.values()) {
                 player.addCard(newCardsPile.remove(newCardsPile.size() - 1));
             }
         }
     }
 
-    public void nextCardSzar() {
-        int cardCzarIndex = players.indexOf(getCardCzarPlayer());
-
-        if (cardCzarIndex + 1 < players.size() - 1) {
-            cardCzar = players.get(cardCzarIndex + 1).getName();
-        } else {
-            cardCzar = players.get(0).getName();
+    private void drawInitialCards(Player player) {
+        // todo check that deck has enough cards for all players
+        for (int i = 0; i < handCardCount; i++) {
+            if (newCardsPile.size() > 0) {
+                player.addCard(newCardsPile.remove(newCardsPile.size() - 1));
+            } else {
+                reshuffleCards();
+            }
         }
+    }
+
+    public void nextCardSzar() {
+        List<Player> playerList = Arrays.asList(players.values().toArray(new Player[0]));
+        if (playerList.indexOf(getCardCzarPlayer()) + 1 <= playerList.size() - 1 && getCardCzarPlayer() != null) {
+            int cardCzarIndex = playerList.indexOf(players.get(cardCzar));
+            cardCzar = playerList.get(cardCzarIndex + 1).getName();
+        } else {
+            cardCzar = playerList.get(0).getName();
+        }
+    }
+
+    public void addPlayer(Player player) {
+        players.put(player.getName(), player);
+        drawInitialCards(player);
+    }
+
+    public void removePlayer(Player player) {
+        playedCards.addAll(player.getHand());
+        players.remove(player.getName());
+    }
+
+    public boolean containsPlayerWithName(String name) {
+        return players.containsKey(name);
     }
 
     /**
@@ -147,8 +182,19 @@ public class Game implements Serializable {
      * @return If existent the cardCzar, otherwise the first player.
      */
     private Player getCardCzarPlayer() {
-        Optional<Player> playerOptional = players.stream().filter(player -> player.getName().equals(cardCzar)).findFirst();
-        return playerOptional.orElse(players.get(0));
+        return players.get(cardCzar);
+    }
+
+    public String getLastCommitter() {
+        return lastCommitter;
+    }
+
+    public void setLastCommitter(String lastCommitter) {
+        this.lastCommitter = lastCommitter;
+    }
+
+    public Player getPlayer(String name) {
+        return players.get(name);
     }
 
     public Deck getDeck() {
@@ -215,11 +261,11 @@ public class Game implements Serializable {
         this.playedCards = playedCards;
     }
 
-    public List<Player> getPlayers() {
+    public Map<String, Player> getPlayers() {
         return players;
     }
 
-    public void setPlayers(List<Player> players) {
+    public void setPlayers(Map<String, Player> players) {
         this.players = players;
     }
 
@@ -229,5 +275,13 @@ public class Game implements Serializable {
 
     public void setGamestate(Gamestate gamestate) {
         this.gamestate = gamestate;
+    }
+
+    public Card getWinningCard() {
+        return winningCard;
+    }
+
+    public void setWinningCard(Card winningCard) {
+        this.winningCard = winningCard;
     }
 }

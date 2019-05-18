@@ -9,6 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
+        android:fontFamily="@font/helveticaneuelight"
+        android:textColor="@color/cardTextColorWhite"
         android:text="@string/selectCardHint"
         android:textAlignment="center"
         app:layout_constraintEnd_toEndOf="parent"
@@ -25,6 +27,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/selectCardHint"
         android:divider="@android:color/transparent"
-        android:dividerHeight="4dp" />
+        android:dividerHeight="4dp"/>
 
 </android.support.constraint.ConstraintLayout>

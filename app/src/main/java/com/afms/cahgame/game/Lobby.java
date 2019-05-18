@@ -56,6 +56,10 @@ public class Lobby implements Serializable {
         }
     }
 
+    public void removePlayer(String player) {
+        this.players.remove(player);
+    }
+
     public String getHost() {
         return host;
     }
