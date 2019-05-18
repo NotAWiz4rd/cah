@@ -131,6 +131,11 @@ public class Database {
         lobbiesReference.setValue(lobbies);
     }
 
+    /**
+     * Removes a lobby from the list of lobbies.
+     *
+     * @param lobbyId The lobbyId.
+     */
     public static void removeLobby(String lobbyId) {
         lobbies.remove(lobbyId);
     }
