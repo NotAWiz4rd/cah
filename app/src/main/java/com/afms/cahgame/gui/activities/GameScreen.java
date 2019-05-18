@@ -512,8 +512,6 @@ public class GameScreen extends AppCompatActivity {
                         return;
                     }
 
-                    updatePlayer();
-
                     // add player if it doesnt exist in game
                     if (!game.containsPlayerWithName(player.getName())) {
                         game = dataSnapshot.getValue(Game.class);
@@ -523,9 +521,11 @@ public class GameScreen extends AppCompatActivity {
                     }
 
                     if ((currentPlayerIsCardSzar()
-                            || (!game.getGamestate().equals(lastGamestate) && !currentPlayerIsCardSzar()))
+                            || (!game.getGamestate().equals(lastGamestate) && !currentPlayerIsCardSzar())
+                            || player.isReady() && !game.getPlayer(player.getName()).isReady())
                             && game.getPlayers().values().size() >= Game.MIN_PLAYERS) {
                         lastGamestate = game.getGamestate();
+                        updatePlayer();
                         gameStateLoop();
                     }
                 }
