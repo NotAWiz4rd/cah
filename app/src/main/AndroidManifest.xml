@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.afms.cahgame">
+
+    <uses-permission
+        android:name="android.permission.INTERNET"
+        tools:ignore="ManifestOrder" />
 
     <application
         android:allowBackup="true"
@@ -8,23 +13,34 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".gui.activities.ExploreDecks"></activity>
         <activity
-            android:name=".GameScreen"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="@string/title_activity_game_screen"
-            android:theme="@style/FullscreenTheme"></activity>
-        <activity
-            android:name=".FullscreenActivity"
+            android:name=".gui.activities.Main"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name"
-            android:theme="@style/FullscreenTheme">
+            android:theme="@style/cahLayout">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".gui.activities.Test"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_test"
+            android:theme="@style/cahLayout"></activity>
+        <activity
+            android:name=".gui.activities.CreateLobby"
+            android:label="@string/title_activity_lobby"
+            android:theme="@style/cahLayout"></activity>
+        <activity
+            android:name=".gui.activities.GameScreen"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_game_screen"
+            android:theme="@style/cahLayout" />
     </application>
 
 </manifest>

@@ -13,4 +13,22 @@
         <item>Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.</item>
     </string-array>
     <string name="title_activity_game_screen">GameScreen</string>
+    <string name="title_activity_lobby">LobbyActivity</string>
+    <string name="delete">Löschen</string>
+    <string name="hint_Username">Enter username</string>
+    <string name="button_createLobby">Create Lobby</string>
+    <string name="hint_lobbyname">Enter lobbyname</string>
+    <string name="label_handcardcount">Handcard Count:</string>
+    <string name="placeholder_number1">5</string>
+    <string name="label_PlayerCount">Player count:</string>
+    <string name="hint_DeckSelect">Please select a deck</string>
+    <string name="button_SelectDeck">Select Deck</string>
+    <string name="button_searchLobby">Search for lobby</string>
+    <string name="string_Version">Version alpha-0.0.1</string>
+    <string name="button_exploreDecks">Explore decks</string>
+    <string name="title_activity_test">Test</string>
+    <string name="select_player_count">Select player count</string>
+    <string name="select_handcard_count">Select handcard count</string>
+    <string name="start_game">Start Game</string>
+    <string name="no_password">No password</string>
 </resources>

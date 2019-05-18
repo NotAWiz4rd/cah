@@ -1,44 +1,37 @@
 package com.afms.cahgame.game;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
-public class Lobby {
-   private Player host;
-   private List<Player> players;
-   private String name;
-   private String password;
-   private Game game;
+public class Lobby implements Serializable {
+    private String id;
+    private String host;
+    private List<String> players;
+    private int handcardCount;
+    private int maxPlayers;
+    private String password;
 
-    public Lobby(Player host, List<Player> players, String name, String password, Game game) {
+
+    public Lobby() {
+    }
+
+    public Lobby(String id, String host, String password, int handcardCount, int maxPlayers) {
+        this.id = id;
         this.host = host;
-        this.players = players;
-        this.name = name;
+        this.players = new ArrayList<>();
+        addPlayer(host);
+        this.handcardCount = handcardCount;
+        this.maxPlayers = maxPlayers;
         this.password = password;
-        this.game = game;
     }
 
-    public Player getHost() {
-        return host;
+    public String getId() {
+        return id;
     }
 
-    public void setHost(Player host) {
-        this.host = host;
-    }
-
-    public List<Player> getPlayers() {
-        return players;
-    }
-
-    public void setPlayers(List<Player> players) {
-        this.players = players;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getPassword() {
@@ -49,11 +42,41 @@ public class Lobby {
         this.password = password;
     }
 
-    public Game getGame() {
-        return game;
+    public List<String> getPlayers() {
+        return players;
     }
 
-    public void setGame(Game game) {
-        this.game = game;
+    public void setPlayers(List<String> players) {
+        this.players = players;
+    }
+
+    public void addPlayer(String player) {
+        if (this.players.size() < maxPlayers) {
+            this.players.add(player);
+        }
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public int getHandcardCount() {
+        return handcardCount;
+    }
+
+    public void setHandcardCount(int handcardCount) {
+        this.handcardCount = handcardCount;
+    }
+
+    public int getMaxPlayers() {
+        return maxPlayers;
+    }
+
+    public void setMaxPlayers(int maxPlayers) {
+        this.maxPlayers = maxPlayers;
     }
 }

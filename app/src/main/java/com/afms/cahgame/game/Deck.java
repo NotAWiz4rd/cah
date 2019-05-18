@@ -1,9 +1,21 @@
 package com.afms.cahgame.game;
 
-public class Deck {
-   private String name;
-   private Card[] whiteCards;
-   private Card[] blackCards;
+import java.io.Serializable;
+import java.util.List;
+
+public class Deck implements Serializable {
+    private String name;
+    private List<Card> whiteCards;
+    private List<Card> blackCards;
+
+    public Deck() {
+    }
+
+    public Deck(String name, List<Card> whiteCards, List<Card> blackCards) {
+        this.name = name;
+        this.whiteCards = whiteCards;
+        this.blackCards = blackCards;
+    }
 
     public String getName() {
         return name;
@@ -13,19 +25,19 @@ public class Deck {
         this.name = name;
     }
 
-    public Card[] getWhiteCards() {
-        return whiteCards;
-    }
-
-    public void setWhiteCards(Card[] whiteCards) {
+    public void setWhiteCards(List<Card> whiteCards) {
         this.whiteCards = whiteCards;
     }
 
-    public Card[] getBlackCards() {
-        return blackCards;
+    public void setBlackCards(List<Card> blackCards) {
+        this.blackCards = blackCards;
     }
 
-    public void setBlackCards(Card[] blackCards) {
-        this.blackCards = blackCards;
+    public List<Card> getWhiteCards() {
+        return whiteCards;
+    }
+
+    public List<Card> getBlackCards() {
+        return blackCards;
     }
 }

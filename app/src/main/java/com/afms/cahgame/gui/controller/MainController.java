@@ -1,38 +1,35 @@
 package com.afms.cahgame.gui.controller;
 
 import android.app.Activity;
-import android.graphics.Color;
-import android.support.constraint.ConstraintLayout;
-import android.support.v4.content.ContextCompat;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewManager;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ListView;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import com.afms.cahgame.R;
 import com.afms.cahgame.game.Card;
-import com.afms.cahgame.game.Colour;
+import com.afms.cahgame.data.Colour;
 import com.afms.cahgame.gui.components.CardListAdapter;
-
-import org.w3c.dom.Text;
+import com.afms.cahgame.gui.components.FullSizeCard;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class MainController {
-    // main
+    // Main
     private Activity mainActivity;
     private FrameLayout mainFrame;
 
     // user card selection
     private ListView userSelectionListView;
+    private int selectedListViewPosition;
     private CardListAdapter userSelectionListAdapter;
 
-    public MainController(Activity mainActivity){
+    // instances
+    private List<FullSizeCard> fullSizeCardList = new ArrayList<>();
+
+    public MainController(Activity mainActivity) {
         this.mainActivity = mainActivity;
         mainFrame = mainActivity.findViewById(R.id.mainFrame);
 
@@ -41,9 +38,9 @@ public class MainController {
 
         // dummy data
 
-        for(int i = 0; i < 15; i++){
+        for (int i = 0; i < 5; i++) {
             userSelectionListAdapter.add(new Card(
-                    Colour.values()[(int)(Math.random()*Colour.values().length)],
+                    Colour.values()[(int) (Math.random() * Colour.values().length)],
                     Arrays.stream(mainActivity.getResources().getStringArray(R.array.sample_card_texts))
                             .sorted((o1, o2) -> ThreadLocalRandom.current().nextInt(-1, 2))
                             .findAny()
@@ -51,27 +48,53 @@ public class MainController {
         }
     }
 
-    private void initializeUserCardSelection(){
+
+    // initializer methods
+
+    private void initializeUserCardSelection() {
         userSelectionListView = mainActivity.findViewById(R.id.cardSelectList);
         userSelectionListAdapter = new CardListAdapter(mainActivity, new ArrayList<Card>());
         userSelectionListView.setAdapter(userSelectionListAdapter);
 
         userSelectionListView.setOnItemClickListener((parent, view, position, id) -> {
-            Card card = (Card) parent.getItemAtPosition(position);
-            View fullSizeCard = LayoutInflater.from(mainActivity.getApplicationContext()).inflate(R.layout.fullsize_card_options, parent, false);
-            ConstraintLayout fullsizeCardLayout = fullSizeCard.findViewById(R.id.fullsizeCardLayout);
-            fullsizeCardLayout.setBackgroundResource(card.getColour() == Colour.WHITE ? R.drawable.card_background_white : R.drawable.card_background_black);
-            TextView fullSizeCardText = fullSizeCard.findViewById(R.id.fullsizeCardText);
-            fullSizeCardText.setTextColor(card.getColour() == Colour.WHITE ? ContextCompat.getColor(mainActivity.getApplicationContext(), R.color.cardTextColorWhite) : Color.WHITE);
-            fullSizeCardText.setText(card.getText());
-            TextView fullSizeGameName = fullSizeCard.findViewById(R.id.fullsizeGameName);
-            fullSizeGameName.setTextColor(card.getColour() == Colour.WHITE ? ContextCompat.getColor(mainActivity.getApplicationContext(), R.color.cardTextColorWhite) : Color.WHITE);
-            Button fullSizeCardButton = fullSizeCard.findViewById(R.id.fullSizeOptionButton);
-            fullSizeCardButton.setText(mainActivity.getString(R.string.close));
-            fullSizeCardButton.setOnClickListener(v -> ((ViewManager)fullSizeCard.getParent()).removeView(fullSizeCard));
-            Button fullSizeCardButton2 = fullSizeCard.findViewById(R.id.fullSizeOptionButton2);
-            ((ViewManager)fullSizeCardButton2.getParent()).removeView(fullSizeCardButton2);
-            mainFrame.addView(fullSizeCard);
+            selectedListViewPosition = position;
+            Toast.makeText(mainActivity, String.valueOf(selectedListViewPosition), Toast.LENGTH_SHORT).show();
+            Card card = (Card) parent.getItemAtPosition(selectedListViewPosition);
+            //mainFrame.addView(getFullSizeCardInstance(card));
         });
     }
+
+    // get instances
+
+/*
+    public FullSizeCard getFullSizeCardInstance(Card card) {
+        Log.d("Test", "Test");
+        if (fullSizeCardList.stream().anyMatch(f -> f.getCard().equals(card))) {
+            return fullSizeCardList.stream().filter(f -> f.getCard().equals(card)).findFirst().get();
+        } else {
+            FullSizeCard returnValue = new FullSizeCard(mainActivity, this, card);
+            fullSizeCardList.add(returnValue);
+            return returnValue;
+        }
+    }
+*/
+
+    public void showNextViewFromList() {
+        int nextPos = (selectedListViewPosition + 1) % userSelectionListView.getCount();
+        selectedListViewPosition = nextPos;
+        Toast.makeText(mainActivity, String.valueOf(nextPos), Toast.LENGTH_SHORT).show();
+        //mainFrame.addView(getFullSizeCardInstance((Card) userSelectionListView.getItemAtPosition(nextPos)));
+    }
+
+
+    public void showPreviousViewFromList() {
+        int nextPos = selectedListViewPosition - 1;
+        if(nextPos < 0){
+            nextPos = userSelectionListView.getCount() - 1;
+        }
+        selectedListViewPosition = nextPos;
+        Toast.makeText(mainActivity, String.valueOf(nextPos), Toast.LENGTH_SHORT).show();
+        //mainFrame.addView(getFullSizeCardInstance((Card) userSelectionListView.getItemAtPosition(nextPos)));
+    }
+
 }

@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "708115010744",
+    "firebase_url": "https://afms-cards-against-humanity.firebaseio.com",
+    "project_id": "afms-cards-against-humanity",
+    "storage_bucket": "afms-cards-against-humanity.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:708115010744:android:eee9bbadee38317e",
+        "android_client_info": {
+          "package_name": "com.afms.cahgame"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "708115010744-4g8erulnu8c6bbadpc9jbp25co0j1etm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBAqMvE200jciEDpbHNVNY4X3Ktd_X8UhY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "708115010744-4g8erulnu8c6bbadpc9jbp25co0j1etm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

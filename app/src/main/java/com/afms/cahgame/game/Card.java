@@ -1,39 +1,23 @@
 package com.afms.cahgame.game;
 
-public class Card {
-    private Colour colour;
-    private String text;
+import com.afms.cahgame.data.Colour;
 
+import java.io.Serializable;
+
+public class Card extends com.afms.cahgame.data.Card implements Serializable {
     private Player owner;
 
+    public Card() {
+    }
+
+    public Card(int id, Colour colour, String text) {
+        super(id, colour, text);
+    }
+
     public Card(Colour colour, String text) {
-        this.colour = colour;
-        this.text = text;
-    }
-
-    @Override
-    public String toString() {
-        if (owner != null) {
-            return "{\"text\": \"" + text + "\", \"color\":\"" + colour.toString() + "\"," +
-                    "\"owner\": \"" + owner.toString() + "\"}";
-        }
-        return "{\"text\": \"" + text + "\", \"color\":\"" + colour.toString() + "\"}";
-    }
-
-    public Colour getColour() {
-        return colour;
-    }
-
-    public void setColour(Colour colour) {
-        this.colour = colour;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
+        super();
+        setColour(colour);
+        setText(text);
     }
 
     public Player getOwner() {
