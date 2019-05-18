@@ -194,6 +194,7 @@ public class GameScreen extends AppCompatActivity {
                             submitCard(card);
                             allowCardSubmitting = false;
                             showHandCardList();
+                            // todo show waiting screen until next gamestate
                         }
                     }
                 }
@@ -535,6 +536,10 @@ public class GameScreen extends AppCompatActivity {
                         game.addPlayer(player);
                         updatePlayer();
                         submitGame();
+                    }
+
+                    if (!(game.getPlayers().values().size() >= Game.MIN_PLAYERS)) {
+                        // todo show waiting screen
                     }
 
                     if ((currentPlayerIsCardSzar()
