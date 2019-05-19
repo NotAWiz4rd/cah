@@ -131,10 +131,10 @@ public class CreateLobby extends AppCompatActivity {
     }
 
     private void createSampleDeck() {
-        if (Util.getDataDeckFromName("testdeck") != null) {
+        if (Util.getDataDeckFromName("standarddeck") != null) {
             return;
         }
-        com.afms.cahgame.data.Deck deck = new com.afms.cahgame.data.Deck("testdeck");
+        com.afms.cahgame.data.Deck deck = new com.afms.cahgame.data.Deck("standarddeck");
         deck.addCard(1);
         deck.addCard(2);
         deck.addCard(3);
@@ -176,6 +176,46 @@ public class CreateLobby extends AppCompatActivity {
         deck.addCard(38);
         deck.addCard(39);
         deck.addCard(40);
+        deck.addCard(99);
+        deck.addCard(109);
+        deck.addCard(121);
+        deck.addCard(240);
+        deck.addCard(400);
+        deck.addCard(320);
+        deck.addCard(301);
+        deck.addCard(299);
+        deck.addCard(287);
+        deck.addCard(76);
+        deck.addCard(322);
+        deck.addCard(288);
+        deck.addCard(77);
+        deck.addCard(276);
+        deck.addCard(131);
+        deck.addCard(311);
+        deck.addCard(255);
+        deck.addCard(350);
+        deck.addCard(265);
+        deck.addCard(340);
+        deck.addCard(412);
+        deck.addCard(413);
+        deck.addCard(414);
+        deck.addCard(415);
+        deck.addCard(416);
+        deck.addCard(417);
+        deck.addCard(418);
+        deck.addCard(419);
+        deck.addCard(420);
+        deck.addCard(421);
+        deck.addCard(422);
+        deck.addCard(423);
+        deck.addCard(424);
+        deck.addCard(425);
+        deck.addCard(426);
+        deck.addCard(427);
+        deck.addCard(428);
+        deck.addCard(429);
+        deck.addCard(430);
+        deck.addCard(431);
         Database.addDeck(deck);
     }
 
