@@ -13,14 +13,12 @@ import android.widget.Toast;
 
 import com.afms.cahgame.R;
 import com.afms.cahgame.data.Colour;
-import com.afms.cahgame.game.Game;
 import com.afms.cahgame.game.Lobby;
 import com.afms.cahgame.gui.components.ValueSelector;
 import com.afms.cahgame.util.Database;
 import com.afms.cahgame.util.Util;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 public class CreateLobby extends AppCompatActivity {
 
@@ -34,8 +32,6 @@ public class CreateLobby extends AppCompatActivity {
 
     // ui elements
     private Button btn_create_lobby;
-    private Button btn_start_game_test;
-    private Button btn_join_game_test;
     private Button btn_select_deck;
     private ImageButton btn_back;
 
@@ -74,8 +70,6 @@ public class CreateLobby extends AppCompatActivity {
     }
 
     private void initializeUIElements() {
-        btn_start_game_test = findViewById(R.id.btn_create_lobby_start_game_test);
-        btn_join_game_test = findViewById(R.id.btn_create_lobby_join_game_test);
         btn_create_lobby = findViewById(R.id.btn_create_lobby_create_lobby);
         btn_select_deck = findViewById(R.id.btn_create_lobby_select_deck);
         btn_back = findViewById(R.id.btn_create_lobby_back);
@@ -101,8 +95,6 @@ public class CreateLobby extends AppCompatActivity {
     }
 
     private void initializeUIEvents() {
-        btn_start_game_test.setOnClickListener(event -> createLobby());
-        btn_join_game_test.setOnClickListener(event -> joinLobby());
         btn_create_lobby.setOnClickListener(event -> {
             String lobbyId = input_lobby_name.getText().toString();
 
@@ -134,29 +126,6 @@ public class CreateLobby extends AppCompatActivity {
         });
         input_player_count.setOnClickListener(event -> value_selector_player_count.show(getSupportFragmentManager(), "value_selector_player_count"));
         input_handcard_count.setOnClickListener(event -> value_selector_handcard_count.show(getSupportFragmentManager(), "value_selector_handcard_count"));
-    }
-
-    private void joinLobby() {
-        Intent intent = new Intent(this, GameScreen.class);
-        intent.putExtra("lobbyId", "01");
-        startActivity(intent);
-    }
-
-    private void createLobby() {
-        // todo check that deck has enough cards for all players
-        String playerName = settings.getString("player", Util.getRandomName());
-        Util.saveName(settings, playerName);
-        Database.addLobby("testgame", new Lobby(
-                "testgame",
-                playerName,
-                "", // todo add password
-                Integer.parseInt(input_handcard_count.getText().toString()),
-                Integer.parseInt(input_player_count.getText().toString())));
-        Intent intent = new Intent(this, GameScreen.class);
-        intent.putExtra("game", new Game(Database.getDeck("testdeck"), Collections.singletonList(playerName), Integer.parseInt(input_handcard_count.getText().toString())));
-        intent.putExtra("lobbyId", "testgame");
-        intent.putExtra("host", playerName);
-        startActivity(intent);
     }
 
     private void createSampleDeck() {
