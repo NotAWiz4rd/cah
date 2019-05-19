@@ -99,6 +99,7 @@ public class CreateLobby extends AppCompatActivity {
     private void initializeUIEvents() {
         btn_create_lobby.setOnClickListener(event -> {
             String lobbyId = input_lobby_name.getText().toString();
+            String deckName = input_select_deck.getText().toString().equals("") ? "standarddeck" : input_select_deck.getText().toString();
 
             if (Database.getLobbies().containsKey(lobbyId)) {
                 Toast.makeText(this, "A lobby with this name already exists", Toast.LENGTH_LONG).show();
@@ -115,6 +116,7 @@ public class CreateLobby extends AppCompatActivity {
                     lobbyId,
                     playerName,
                     input_create_lobby_password.getText().toString(),
+                    deckName,
                     Integer.parseInt(input_handcard_count.getText().toString()),
                     Integer.parseInt(input_player_count.getText().toString())));
 

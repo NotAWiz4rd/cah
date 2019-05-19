@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.afms.cahgame.R;
 import com.afms.cahgame.game.Game;
@@ -146,11 +147,15 @@ public class WaitingLobby extends AppCompatActivity {
 
         // todo make this only visible for the host and start the game from here
         btn_waiting_lobby_ready.setOnClickListener(event -> {
+            if (currentLobby.getPlayers().size() < Game.MIN_PLAYERS) {
+                Toast.makeText(context, "There are not enough players to start the game.", Toast.LENGTH_LONG).show();
+                return;
+            }
             currentLobby.setGameInProgress(true);
             lobbyReference.setValue(currentLobby);
 
             Intent intent = new Intent(context, GameScreen.class);
-            intent.putExtra("game", new Game(Database.getDeck("standarddeck"), Collections.singletonList(playerName), currentLobby.getHandcardCount()));
+            intent.putExtra("game", new Game(Database.getDeck(currentLobby.getDeckName()), Collections.singletonList(playerName), currentLobby.getHandcardCount()));
             intent.putExtra("lobbyId", lobbyId);
             intent.putExtra("host", currentLobby.getHost());
             startActivity(intent);

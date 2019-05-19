@@ -10,6 +10,7 @@ public class Lobby implements Serializable {
     private List<String> players = new ArrayList<>();
     private int handcardCount;
     private int maxPlayers;
+    private String deckName = "";
     private String password = "";
     private boolean gameInProgress = false;
 
@@ -17,12 +18,13 @@ public class Lobby implements Serializable {
     public Lobby() {
     }
 
-    public Lobby(String id, String host, String password, int handcardCount, int maxPlayers) {
+    public Lobby(String id, String host, String password, String deckName, int handcardCount, int maxPlayers) {
         this.id = id;
         this.host = host;
         this.handcardCount = handcardCount;
         this.maxPlayers = maxPlayers;
         this.password = password;
+        this.deckName = deckName;
     }
 
     public String getId() {
@@ -101,5 +103,13 @@ public class Lobby implements Serializable {
 
     public void setGameInProgress(boolean gameInProgress) {
         this.gameInProgress = gameInProgress;
+    }
+
+    public String getDeckName() {
+        return deckName;
+    }
+
+    public void setDeckName(String deckName) {
+        this.deckName = deckName;
     }
 }
