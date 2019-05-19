@@ -58,18 +58,11 @@ public class CardListAdapter extends ArrayAdapter<Card> {
         ImageView cardIcon = convertView.findViewById(R.id.cardIcon);
         cardIcon.setImageResource(colorMap.getOrDefault(card.getColour(), colorMap.get(Colour.WHITE)).get("icon"));
 
-        ConstraintLayout cardLayout = convertView.findViewById(R.id.innerCardLayout);
-        cardLayout.setBackgroundResource(colorMap.getOrDefault(card.getColour(), colorMap.get(Colour.WHITE)).get("background"));
+        convertView.setBackgroundResource(colorMap.getOrDefault(card.getColour(), colorMap.get(Colour.WHITE)).get("background"));
 
         TextView cardText = convertView.findViewById(R.id.cardText);
         cardText.setTextColor(colorMap.getOrDefault(card.getColour(), colorMap.get(Colour.WHITE)).get("textcolor"));
         cardText.setText(card.getText());
-
-
-        ImageButton deleteButton = convertView.findViewById(R.id.deleteButton);
-        deleteButton.setOnClickListener(v -> {
-            Toast.makeText(mainActivity, String.format("Clicked: deleteButton pos: %d", position), Toast.LENGTH_SHORT).show();
-        });
 
         return convertView;
     }

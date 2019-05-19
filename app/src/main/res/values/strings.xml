@@ -48,4 +48,5 @@
     <string name="label_private_lobby">The selected lobby is private. You need to enter the correct password.</string>
     <string name="title_password">Please enter the password</string>
     <string name="hint_password">Enter password..</string>
+    <string name="label_private_lobby_wrong">Your entered password was incorrect. Please try again.</string>
 </resources>

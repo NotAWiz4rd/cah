@@ -76,7 +76,7 @@ public class LobbyListAdapter extends ArrayAdapter<Lobby> {
                             getContext().startActivity(intent);
                         } else {
                             fragmentManager.beginTransaction().remove(fragmentManager.findFragmentByTag("passwordDialog")).commit();
-                            passwordDialog[0] = PasswordDialog.create(getContext(), new ArrayList<>(Arrays.asList("Join", "Cancel")));
+                            passwordDialog[0] = PasswordDialog.create(getContext().getResources().getString(R.string.title_password),getContext().getResources().getString(R.string.label_private_lobby_wrong), new ArrayList<>(Arrays.asList("Join", "Cancel")));
                             passwordDialog[0].setResultListener(resultListener);
                             passwordDialog[0].show(fragmentManager, "passwordDialog");
                         }
