@@ -44,7 +44,10 @@ public class SearchLobby extends AppCompatActivity {
 
     private void initializeVariables() {
         updateLobbyList();
+        initializeDatabaseConnection();
+    }
 
+    private void initializeDatabaseConnection() {
         Database.lobbiesReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

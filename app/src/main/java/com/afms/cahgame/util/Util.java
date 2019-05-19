@@ -1,5 +1,7 @@
 package com.afms.cahgame.util;
 
+import android.content.SharedPreferences;
+
 import com.afms.cahgame.data.Card;
 import com.afms.cahgame.data.Colour;
 import com.afms.cahgame.game.Deck;
@@ -96,7 +98,21 @@ public class Util {
      *
      * @return Random name from the namelist.
      */
-    public static String getRandomName() {
-        return randomNames.stream().skip((int) (randomNames.size() * Math.random())).findAny().get();
+    public static String getRandomName(SharedPreferences settings) {
+        String newName = randomNames.stream().skip((int) (randomNames.size() * Math.random())).findAny().get();
+        saveName(settings, newName);
+        return newName;
+    }
+
+    /**
+     * Saves the given name.
+     *
+     * @param settings SharedPreferences to save the name in.
+     * @param newName  The players name.
+     */
+    public static void saveName(SharedPreferences settings, String newName) {
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putString("player", newName);
+        editor.apply();
     }
 }

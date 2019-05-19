@@ -45,7 +45,7 @@ public class Main extends AppCompatActivity {
         initializeUIEvents();
         Database.initializeDatabaseConnections();
 
-        playerName = settings.getString("player", Util.getRandomName());
+        playerName = settings.getString("player", Util.getRandomName(settings));
 
         String message = (String) getIntent().getSerializableExtra("message");
         if (message != null) {
@@ -92,13 +92,11 @@ public class Main extends AppCompatActivity {
                 return;
             }
             if (playerNameView.getText().toString().equals("")) {
-                playerName = Util.getRandomName();
+                playerName = Util.getRandomName(settings);
             } else {
                 playerName = playerNameView.getText().toString();
+                Util.saveName(settings, playerName);
             }
-            SharedPreferences.Editor editor = settings.edit();
-            editor.putString("player", playerName);
-            editor.apply();
         });
     }
 

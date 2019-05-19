@@ -17,7 +17,7 @@ import android.widget.Toast;
 
 import com.afms.cahgame.R;
 import com.afms.cahgame.game.Lobby;
-import com.afms.cahgame.gui.activities.GameScreen;
+import com.afms.cahgame.gui.activities.WaitingLobby;
 import com.afms.cahgame.util.Database;
 import com.afms.cahgame.util.Util;
 
@@ -60,10 +60,10 @@ public class LobbyListAdapter extends ArrayAdapter<Lobby> {
         item_lobby_select_count_maxplayer.setText(String.format("%s / %s", "0", String.valueOf(lobby.getMaxPlayers())));
 
         btn_item_lobby_select_join.setOnClickListener(e -> {
-            boolean joinedSuccessfully = Database.joinLobby(lobby.getId(), settings.getString("player", Util.getRandomName()));
+            boolean joinedSuccessfully = Database.joinLobby(lobby.getId(), settings.getString("player", Util.getRandomName(settings)));
 
             if (joinedSuccessfully) {
-                Intent intent = new Intent(getContext(), GameScreen.class);
+                Intent intent = new Intent(getContext(), WaitingLobby.class);
                 intent.putExtra("lobbyId", lobby.getId());
                 getContext().startActivity(intent);
             } else {
