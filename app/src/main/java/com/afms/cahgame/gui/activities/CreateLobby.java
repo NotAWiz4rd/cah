@@ -115,13 +115,17 @@ public class CreateLobby extends AppCompatActivity {
                 return;
             }
 
-            String playerName = settings.getString("player", Util.getRandomName());
+            String playerName = settings.getString("player", Util.getRandomName(settings));
             Database.addLobby(lobbyId, new Lobby(
                     lobbyId,
                     playerName,
                     "", // todo add password
                     Integer.parseInt(input_handcard_count.getText().toString()),
                     Integer.parseInt(input_player_count.getText().toString())));
+
+            Intent intent = new Intent(this, WaitingLobby.class);
+            intent.putExtra("lobbyId", lobbyId);
+            startActivity(intent);
         });
         btn_select_deck.setOnClickListener(event -> Toast.makeText(this, "clicked " + btn_select_deck.toString(), Toast.LENGTH_SHORT).show());
         btn_back.setOnClickListener(event -> {
@@ -139,7 +143,7 @@ public class CreateLobby extends AppCompatActivity {
 
     private void createLobby() {
         // todo check that deck has enough cards for all players
-        String playerName = settings.getString("player", Util.getRandomName());
+        String playerName = settings.getString("player", Util.getRandomName(settings));
         Database.addLobby("testgame", new Lobby(
                 "testgame",
                 playerName,

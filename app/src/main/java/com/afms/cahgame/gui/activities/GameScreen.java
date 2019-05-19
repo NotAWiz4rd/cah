@@ -490,11 +490,11 @@ public class GameScreen extends AppCompatActivity {
         super.onResume();
 
         String hostName = (String) getIntent().getSerializableExtra("host");
-        if (hostName != null && hostName.equals(settings.getString("player", Util.getRandomName()))) {
+        if (hostName != null && hostName.equals(settings.getString("player", Util.getRandomName(settings)))) {
             player = game.getPlayer(hostName);
             lastGamestate = Gamestate.ROUNDSTART;
         } else {
-            player = new Player(settings.getString("player", Util.getRandomName()));
+            player = new Player(settings.getString("player", Util.getRandomName(settings)));
         }
 
         lobbyId = settings.getString("lobbyId", "");

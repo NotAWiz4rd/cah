@@ -122,6 +122,16 @@ public class Database {
     }
 
     /**
+     * Gets a Lobby.
+     *
+     * @param lobbyId The lobbyId.
+     * @return The lobby corresponding to the lobbyId.
+     */
+    public static Lobby getLobby(String lobbyId) {
+        return lobbies.get(lobbyId);
+    }
+
+    /**
      * Removes a player from the lobby-object.
      *
      * @param lobbyId    LobbyId.

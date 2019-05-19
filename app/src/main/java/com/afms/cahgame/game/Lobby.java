@@ -19,7 +19,6 @@ public class Lobby implements Serializable {
     public Lobby(String id, String host, String password, int handcardCount, int maxPlayers) {
         this.id = id;
         this.host = host;
-        addPlayer(host);
         this.handcardCount = handcardCount;
         this.maxPlayers = maxPlayers;
         this.password = password;
@@ -41,8 +40,8 @@ public class Lobby implements Serializable {
         this.password = password;
     }
 
-    public List<String> getPlayers() {
-        return players;
+    public ArrayList<String> getPlayers() {
+        return new ArrayList<>(players);
     }
 
     public void setPlayers(List<String> players) {
