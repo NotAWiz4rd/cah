@@ -31,7 +31,7 @@ public class WaitingLobby extends AppCompatActivity {
     private ImageButton btn_waiting_lobby_back;
     private Button btn_waiting_lobby_ready;
     private TextView label_waiting_lobby_name;
-    private TextView label_waiting_lobby_current;
+    private TextView label_waiting_lobby_count_maxplayer;
     private TextView label_waiting_lobby_count_handcard;
     private WaitingListAdapter waitingListAdapter;
 
@@ -114,7 +114,7 @@ public class WaitingLobby extends AppCompatActivity {
 
     private void updateLobbyMetadata() {
         label_waiting_lobby_name.setText(currentLobby.getId());
-        label_waiting_lobby_current.setText(String.format("%s / %s", currentLobby.getPlayers().size(), currentLobby.getMaxPlayers()));
+        label_waiting_lobby_count_maxplayer.setText(String.format("%s / %s", currentLobby.getPlayers().size(), currentLobby.getMaxPlayers()));
         label_waiting_lobby_count_handcard.setText(String.valueOf(currentLobby.getHandcardCount()));
     }
 
@@ -128,7 +128,7 @@ public class WaitingLobby extends AppCompatActivity {
         btn_waiting_lobby_back = findViewById(R.id.btn_waiting_lobby_back);
         btn_waiting_lobby_ready = findViewById(R.id.btn_waiting_lobby_ready);
         label_waiting_lobby_name = findViewById(R.id.label_waiting_lobby_name);
-        label_waiting_lobby_current = findViewById(R.id.label_waiting_lobby_current);
+        label_waiting_lobby_count_maxplayer = findViewById(R.id.label_waiting_lobby_count_maxplayer);
         label_waiting_lobby_count_handcard = findViewById(R.id.label_waiting_lobby_count_handcard);
     }
 
