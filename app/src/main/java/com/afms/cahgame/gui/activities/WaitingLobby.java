@@ -14,6 +14,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.afms.cahgame.R;
+import com.afms.cahgame.game.Game;
 import com.afms.cahgame.game.Lobby;
 import com.afms.cahgame.gui.components.WaitingListAdapter;
 import com.afms.cahgame.util.Database;
@@ -23,6 +24,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import java.util.Collections;
 
 public class WaitingLobby extends AppCompatActivity {
     private SharedPreferences settings;
@@ -88,9 +91,10 @@ public class WaitingLobby extends AppCompatActivity {
                     updatePlayerList();
                     updateLobbyMetadata();
 
-                    if (currentLobby.isGameInProgress()) {
+                    if (currentLobby.isGameInProgress() && !currentLobby.getHost().equals(playerName)) {
                         Intent intent = new Intent(context, GameScreen.class);
                         intent.putExtra("lobbyId", lobbyId);
+                        intent.putExtra("host", currentLobby.getHost());
                         startActivity(intent);
                     }
                 } else if (tempLobby == null) {
@@ -140,8 +144,16 @@ public class WaitingLobby extends AppCompatActivity {
             finish();
         });
 
+        // todo make this only visible for the host and start the game from here
         btn_waiting_lobby_ready.setOnClickListener(event -> {
-            // todo make this only visible for the host and start the game from here
+            currentLobby.setGameInProgress(true);
+            lobbyReference.setValue(currentLobby);
+
+            Intent intent = new Intent(context, GameScreen.class);
+            intent.putExtra("game", new Game(Database.getDeck("standarddeck"), Collections.singletonList(playerName), currentLobby.getHandcardCount()));
+            intent.putExtra("lobbyId", lobbyId);
+            intent.putExtra("host", currentLobby.getHost());
+            startActivity(intent);
         });
     }
 

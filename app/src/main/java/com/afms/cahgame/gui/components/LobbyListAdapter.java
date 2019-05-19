@@ -62,12 +62,12 @@ public class LobbyListAdapter extends ArrayAdapter<Lobby> {
         item_lobby_select_count_maxplayer.setText(String.format("%s / %s", currentPlayerCount, String.valueOf(lobby.getMaxPlayers())));
 
         btn_item_lobby_select_join.setOnClickListener(e -> {
-            if(lobby != null && !lobby.getPassword().equals("")){
+            if (!lobby.getPassword().equals("")) {
                 FragmentManager fragmentManager = ((AppCompatActivity) getContext()).getSupportFragmentManager();
                 final PasswordDialog[] passwordDialog = {PasswordDialog.create(getContext(), new ArrayList<>(Arrays.asList("Join", "Cancel")))};
                 resultListener = result -> {
-                    if(result.equals("Join")){
-                        if(passwordDialog[0].getPassword().equals(lobby.getPassword())){
+                    if (result.equals("Join")) {
+                        if (passwordDialog[0].getPassword().equals(lobby.getPassword())) {
                             String playerName = settings.getString("player", Util.getRandomName());
                             Util.saveName(settings, playerName);
 
@@ -75,8 +75,8 @@ public class LobbyListAdapter extends ArrayAdapter<Lobby> {
                             intent.putExtra("lobbyId", lobby.getId());
                             getContext().startActivity(intent);
                         } else {
-                            fragmentManager.beginTransaction().remove(fragmentManager.findFragmentByTag("passwordDialog")).commit();
-                            passwordDialog[0] = PasswordDialog.create(getContext().getResources().getString(R.string.title_password),getContext().getResources().getString(R.string.label_private_lobby_wrong), new ArrayList<>(Arrays.asList("Join", "Cancel")));
+                            fragmentManager.beginTransaction().remove(fragmentManager.findFragmentByTag("passwordDialog")).commit(); // todo check that this is not null!
+                            passwordDialog[0] = PasswordDialog.create(getContext().getResources().getString(R.string.title_password), getContext().getResources().getString(R.string.label_private_lobby_wrong), new ArrayList<>(Arrays.asList("Join", "Cancel")));
                             passwordDialog[0].setResultListener(resultListener);
                             passwordDialog[0].show(fragmentManager, "passwordDialog");
                         }
@@ -84,6 +84,13 @@ public class LobbyListAdapter extends ArrayAdapter<Lobby> {
                 };
                 passwordDialog[0].setResultListener(resultListener);
                 passwordDialog[0].show(fragmentManager, "passwordDialog");
+            } else {
+                String playerName = settings.getString("player", Util.getRandomName());
+                Util.saveName(settings, playerName);
+
+                Intent intent = new Intent(getContext(), WaitingLobby.class);
+                intent.putExtra("lobbyId", lobby.getId());
+                getContext().startActivity(intent);
             }
 
         });
