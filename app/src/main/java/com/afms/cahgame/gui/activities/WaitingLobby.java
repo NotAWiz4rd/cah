@@ -115,7 +115,7 @@ public class WaitingLobby extends AppCompatActivity {
     private void updateLobbyMetadata() {
         label_waiting_lobby_name.setText(currentLobby.getId());
         label_waiting_lobby_current.setText(String.format("%s / %s", currentLobby.getPlayers().size(), currentLobby.getMaxPlayers()));
-       // label_waiting_lobby_count_handcard.setText(currentLobby.getHandcardCount());  // todo this doesnt work :(
+        label_waiting_lobby_count_handcard.setText(String.valueOf(currentLobby.getHandcardCount()));
     }
 
     private void updatePlayerList() {
