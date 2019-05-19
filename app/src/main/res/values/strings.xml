@@ -41,4 +41,8 @@
     <string name="label_ready">Ready</string>
     <string name="label_not_ready">Not ready</string>
     <string name="label_currentLobby">You are currently in lobby:</string>
+    <string name="title_leave">Do you really want to leave?</string>
+    <string name="message_leave_lobby">You are currently in soon starting lobby!</string>
+    <string name="message_leave_game">You are currently in a running match!</string>
+    <string name="title_quit">Do you really want to quit the game?</string>
 </resources>

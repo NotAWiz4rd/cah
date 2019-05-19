@@ -67,7 +67,7 @@ public class ValueSelector extends DialogFragment {
         });
     }
 
-    public static ValueSelector showValueSelector(Context context, String title, ArrayList<String> values) {
+    public static ValueSelector create(String title, ArrayList<String> values) {
         ValueSelector valueSelector = new ValueSelector();
         Bundle args = new Bundle();
         args.putStringArrayList("values", values);

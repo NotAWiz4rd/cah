@@ -13,9 +13,14 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.afms.cahgame.R;
+import com.afms.cahgame.gui.components.MessageDialog;
+import com.afms.cahgame.gui.components.ResultListener;
 import com.afms.cahgame.gui.components.SettingsDialog;
 import com.afms.cahgame.util.Database;
 import com.afms.cahgame.util.Util;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Main extends AppCompatActivity {
 
@@ -30,6 +35,7 @@ public class Main extends AppCompatActivity {
     private SharedPreferences settings;
 
     private SettingsDialog settingsDialog;
+    private MessageDialog messageDialog;
 
     private String playerName;
 
@@ -62,6 +68,12 @@ public class Main extends AppCompatActivity {
 
 
         settingsDialog = new SettingsDialog();
+        messageDialog = MessageDialog.create(getResources().getString(R.string.title_quit), new ArrayList<>(Arrays.asList("Ok", "Cancel")));
+    }
+
+    @Override
+    public void onBackPressed() {
+        messageDialog.show(getSupportFragmentManager(), "quitMessageDialog");
     }
 
     private void initializeUIEvents() {
@@ -96,6 +108,12 @@ public class Main extends AppCompatActivity {
             } else {
                 playerName = playerNameView.getText().toString();
                 Util.saveName(settings, playerName);
+            }
+        });
+
+        messageDialog.setResultListener(result -> {
+            if(result.equals("Ok")){
+                super.onBackPressed();
             }
         });
     }
