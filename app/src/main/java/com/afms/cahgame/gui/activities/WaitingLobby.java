@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.afms.cahgame.R;
 import com.afms.cahgame.game.Lobby;
@@ -29,6 +30,9 @@ public class WaitingLobby extends AppCompatActivity {
     private ListView listView;
     private ImageButton btn_waiting_lobby_back;
     private Button btn_waiting_lobby_ready;
+    private TextView label_waiting_lobby_name;
+    private TextView label_waiting_lobby_current;
+    private TextView label_waiting_lobby_count_handcard;
     private WaitingListAdapter waitingListAdapter;
 
     private ValueEventListener valueEventListener;
@@ -46,6 +50,11 @@ public class WaitingLobby extends AppCompatActivity {
         context = this;
 
         setContentView(R.layout.activity_waiting_lobby);
+
+        hideUI();
+        initializeUIElements();
+        initializeDatabaseConnection();
+        initializeUIEvents();
 
         lobbyId = (String) getIntent().getSerializableExtra("lobbyId");
         if (Database.getLobby(lobbyId) != null) {
@@ -77,6 +86,7 @@ public class WaitingLobby extends AppCompatActivity {
                 if (tempLobby != null) {
                     currentLobby = tempLobby;
                     updatePlayerList();
+                    updateLobbyMetadata();
                     // todo change GUI
 
                     if (currentLobby.isGameInProgress()) {
@@ -102,6 +112,12 @@ public class WaitingLobby extends AppCompatActivity {
         lobbyReference.addValueEventListener(valueEventListener);
     }
 
+    private void updateLobbyMetadata() {
+        label_waiting_lobby_name.setText(currentLobby.getId());
+        label_waiting_lobby_current.setText(String.format("%s / %s", currentLobby.getPlayers().size(), currentLobby.getMaxPlayers()));
+       // label_waiting_lobby_count_handcard.setText(currentLobby.getHandcardCount());  // todo this doesnt work :(
+    }
+
     private void updatePlayerList() {
         waitingListAdapter = new WaitingListAdapter(this, currentLobby.getPlayers(), currentLobby);
         listView.setAdapter(waitingListAdapter);
@@ -111,6 +127,9 @@ public class WaitingLobby extends AppCompatActivity {
         listView = findViewById(R.id.list_waiting_lobby_players);
         btn_waiting_lobby_back = findViewById(R.id.btn_waiting_lobby_back);
         btn_waiting_lobby_ready = findViewById(R.id.btn_waiting_lobby_ready);
+        label_waiting_lobby_name = findViewById(R.id.label_waiting_lobby_name);
+        label_waiting_lobby_current = findViewById(R.id.label_waiting_lobby_current);
+        label_waiting_lobby_count_handcard = findViewById(R.id.label_waiting_lobby_count_handcard);
     }
 
     private void initializeUIEvents() {
