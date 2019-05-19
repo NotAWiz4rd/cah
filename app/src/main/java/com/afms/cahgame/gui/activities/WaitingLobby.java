@@ -83,19 +83,19 @@ public class WaitingLobby extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Lobby tempLobby = dataSnapshot.getValue(Lobby.class);
 
-                if (tempLobby != null) {
+                if (tempLobby != null && tempLobby.getId() != null) {
                     currentLobby = tempLobby;
                     updatePlayerList();
                     updateLobbyMetadata();
-                    // todo change GUI
 
                     if (currentLobby.isGameInProgress()) {
                         Intent intent = new Intent(context, GameScreen.class);
                         intent.putExtra("lobbyId", lobbyId);
                         startActivity(intent);
                     }
-                } else {
-                    if (currentLobby.getPlayers().contains(playerName)) {
+                } else if (tempLobby == null) {
+                    if (currentLobby != null && currentLobby.getPlayers().contains(playerName)) {
+                        currentLobby = null;
                         Intent intent = new Intent(context, Main.class);
                         intent.putExtra("message", "The lobby you were trying to reach is not available anymore.");
                         startActivity(intent);
@@ -113,7 +113,7 @@ public class WaitingLobby extends AppCompatActivity {
     }
 
     private void updateLobbyMetadata() {
-        label_waiting_lobby_name.setText(currentLobby.getId());
+        label_waiting_lobby_name.setText(String.valueOf(currentLobby.getId()));
         label_waiting_lobby_count_maxplayer.setText(String.format("%s / %s", currentLobby.getPlayers().size(), currentLobby.getMaxPlayers()));
         label_waiting_lobby_count_handcard.setText(String.valueOf(currentLobby.getHandcardCount()));
     }
@@ -135,6 +135,7 @@ public class WaitingLobby extends AppCompatActivity {
     private void initializeUIEvents() {
         btn_waiting_lobby_back.setOnClickListener(event -> {
             lobbyReference.removeEventListener(valueEventListener);
+            currentLobby = null;
             Database.removePlayerFromLobby(lobbyId, playerName);
             finish();
         });
