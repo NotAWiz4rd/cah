@@ -56,8 +56,8 @@ public class LobbyListAdapter extends ArrayAdapter<Lobby> {
         item_lobby_select_name.setText(lobby.getId());
         item_lobby_select_host.setText(lobby.getHost());
         item_lobby_select_count_handcard.setText(String.valueOf(lobby.getHandcardCount()));
-        // TODO player count
-        item_lobby_select_count_maxplayer.setText(String.format("%s / %s", "0", String.valueOf(lobby.getMaxPlayers())));
+        int currentPlayerCount = lobby.getPlayers().size();
+        item_lobby_select_count_maxplayer.setText(String.format("%s / %s", currentPlayerCount, String.valueOf(lobby.getMaxPlayers())));
 
         btn_item_lobby_select_join.setOnClickListener(e -> {
             boolean joinedSuccessfully = Database.joinLobby(lobby.getId(), settings.getString("player", Util.getRandomName(settings)));
