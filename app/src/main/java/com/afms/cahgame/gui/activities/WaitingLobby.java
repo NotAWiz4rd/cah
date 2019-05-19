@@ -1,5 +1,6 @@
 package com.afms.cahgame.gui.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -32,11 +33,14 @@ public class WaitingLobby extends AppCompatActivity {
 
     private String lobbyId = "";
     private Lobby currentLobby;
-    public DatabaseReference lobbiesReference;
+    public DatabaseReference lobbyReference;
+
+    private Context context;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         settings = getSharedPreferences("Preferences", MODE_PRIVATE);
+        context = this;
 
         setContentView(R.layout.activity_waiting_lobby);
 
@@ -45,7 +49,7 @@ public class WaitingLobby extends AppCompatActivity {
             String playerName = settings.getString("player", Util.getRandomName());
             playerName = Database.joinLobby(lobbyId, playerName);
             if (playerName.equals("")) {
-                Intent intent = new Intent(this, Main.class);
+                Intent intent = new Intent(context, Main.class);
                 intent.putExtra("message", "Couldn't join the lobby.");
                 startActivity(intent);
                 return;
@@ -60,9 +64,9 @@ public class WaitingLobby extends AppCompatActivity {
 
     private void initializeDatabaseConnection() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        lobbiesReference = database.getReference("lobbies/" + lobbyId);
+        lobbyReference = database.getReference("lobbies/" + lobbyId);
 
-        lobbiesReference.addValueEventListener(new ValueEventListener() {
+        lobbyReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Lobby tempLobby = dataSnapshot.getValue(Lobby.class);
@@ -71,6 +75,12 @@ public class WaitingLobby extends AppCompatActivity {
                     currentLobby = tempLobby;
                     updatePlayerList();
                     // todo change GUI
+
+                    if (currentLobby.isGameInProgress()) {
+                        Intent intent = new Intent(context, GameScreen.class);
+                        intent.putExtra("lobbyId", lobbyId);
+                        startActivity(intent);
+                    }
                 }
             }
 

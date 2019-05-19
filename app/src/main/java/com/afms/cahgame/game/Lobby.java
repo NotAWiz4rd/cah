@@ -11,6 +11,7 @@ public class Lobby implements Serializable {
     private int handcardCount;
     private int maxPlayers;
     private String password = "";
+    private boolean gameInProgress = false;
 
 
     public Lobby() {
@@ -92,5 +93,13 @@ public class Lobby implements Serializable {
 
     public void setMaxPlayers(int maxPlayers) {
         this.maxPlayers = maxPlayers;
+    }
+
+    public boolean isGameInProgress() {
+        return gameInProgress;
+    }
+
+    public void setGameInProgress(boolean gameInProgress) {
+        this.gameInProgress = gameInProgress;
     }
 }
