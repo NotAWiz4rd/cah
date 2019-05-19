@@ -38,6 +38,7 @@ public class CreateLobby extends AppCompatActivity {
     private EditText input_lobby_name;
     private EditText input_handcard_count;
     private EditText input_player_count;
+    private EditText input_create_lobby_password;
     private EditText input_select_deck;
 
     private SharedPreferences settings;
@@ -77,6 +78,7 @@ public class CreateLobby extends AppCompatActivity {
         input_lobby_name = findViewById(R.id.input_create_lobby_name);
         input_player_count = findViewById(R.id.input_create_lobby_player_count);
         input_select_deck = findViewById(R.id.input_create_lobby_select_deck);
+        input_create_lobby_password = findViewById(R.id.input_create_lobby_password);
 
         ArrayList<String> player_count_values = new ArrayList<>();
         for (int i = MIN_PLAYER_COUNT; i <= MAX_PLAYER_COUNT; i++) {
@@ -112,7 +114,7 @@ public class CreateLobby extends AppCompatActivity {
             Database.addLobby(lobbyId, new Lobby(
                     lobbyId,
                     playerName,
-                    "", // todo add password
+                    input_create_lobby_password.getText().toString(),
                     Integer.parseInt(input_handcard_count.getText().toString()),
                     Integer.parseInt(input_player_count.getText().toString())));
 
