@@ -21,7 +21,6 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class SearchLobby extends AppCompatActivity {
 
@@ -53,10 +52,8 @@ public class SearchLobby extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 GenericTypeIndicator<Map<String, Lobby>> genericTypeIndicator = new GenericTypeIndicator<Map<String, Lobby>>() {
                 };
-                if (dataSnapshot.getValue(genericTypeIndicator) == null) {
-                    return;
-                }
-                lobbies = Objects.requireNonNull(dataSnapshot.getValue(genericTypeIndicator));
+
+                lobbies = dataSnapshot.getValue(genericTypeIndicator);
                 updateLobbyList();
             }
 
@@ -69,7 +66,9 @@ public class SearchLobby extends AppCompatActivity {
 
     private void updateLobbyList() {
         lobbyListAdapter = new LobbyListAdapter(context, new ArrayList<>());
-        lobbyListAdapter.addAll(lobbies.values());
+        if (lobbies != null) {
+            lobbyListAdapter.addAll(lobbies.values());
+        }
         listView.setAdapter(lobbyListAdapter);
     }
 

@@ -133,14 +133,21 @@ public class Database {
 
     /**
      * Removes a player from the lobby-object.
+     * Also deletes the lobby if the leaving player was the host.
      *
      * @param lobbyId    LobbyId.
      * @param playername Name of the player.
      */
     public static void removePlayerFromLobby(String lobbyId, String playername) {
-        if (lobbies.get(lobbyId) != null) {
-            Objects.requireNonNull(lobbies.get(lobbyId)).removePlayer(playername);
+        Lobby lobby = lobbies.get(lobbyId);
+        if (lobby != null) {
+            lobby.removePlayer(playername);
+            lobbies.put(lobbyId, lobby);
             lobbiesReference.setValue(lobbies);
+
+            if (lobby.getHost().equals(playername)) {
+                removeLobby(lobbyId);
+            }
         }
     }
 

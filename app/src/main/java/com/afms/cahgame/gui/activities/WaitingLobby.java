@@ -31,7 +31,10 @@ public class WaitingLobby extends AppCompatActivity {
     private Button btn_waiting_lobby_ready;
     private WaitingListAdapter waitingListAdapter;
 
+    private ValueEventListener valueEventListener;
+
     private String lobbyId = "";
+    private String playerName;
     private Lobby currentLobby;
     public DatabaseReference lobbyReference;
 
@@ -46,7 +49,7 @@ public class WaitingLobby extends AppCompatActivity {
 
         lobbyId = (String) getIntent().getSerializableExtra("lobbyId");
         if (Database.getLobby(lobbyId) != null) {
-            String playerName = settings.getString("player", Util.getRandomName());
+            playerName = settings.getString("player", Util.getRandomName());
             playerName = Database.joinLobby(lobbyId, playerName);
             if (playerName.equals("")) {
                 Intent intent = new Intent(context, Main.class);
@@ -66,7 +69,7 @@ public class WaitingLobby extends AppCompatActivity {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         lobbyReference = database.getReference("lobbies/" + lobbyId);
 
-        lobbyReference.addValueEventListener(new ValueEventListener() {
+        valueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Lobby tempLobby = dataSnapshot.getValue(Lobby.class);
@@ -81,6 +84,10 @@ public class WaitingLobby extends AppCompatActivity {
                         intent.putExtra("lobbyId", lobbyId);
                         startActivity(intent);
                     }
+                } else {
+                    Intent intent = new Intent(context, Main.class);
+                    intent.putExtra("message", "The lobby you were trying to reach is not available anymore.");
+                    startActivity(intent);
                 }
             }
 
@@ -88,7 +95,9 @@ public class WaitingLobby extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError error) {
                 Log.w("ERROR", "Failed to get lobby from server.", error.toException());
             }
-        });
+        };
+
+        lobbyReference.addValueEventListener(valueEventListener);
     }
 
     private void updatePlayerList() {
@@ -103,8 +112,14 @@ public class WaitingLobby extends AppCompatActivity {
     }
 
     private void initializeUIEvents() {
-        btn_waiting_lobby_back.setOnClickListener(event -> finish());
+        btn_waiting_lobby_back.setOnClickListener(event -> {
+            lobbyReference.removeEventListener(valueEventListener);
+            Database.removePlayerFromLobby(lobbyId, playerName);
+            finish();
+        });
+
         btn_waiting_lobby_ready.setOnClickListener(event -> {
+            // todo make this only visible for the host and start the game from here
         });
     }
 
