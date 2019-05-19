@@ -24,7 +24,7 @@
     <string name="hint_DeckSelect">Please select a deck</string>
     <string name="button_SelectDeck">Select Deck</string>
     <string name="button_searchLobby">Search for lobby</string>
-    <string name="string_Version">Version alpha-0.0.1</string>
+    <string name="string_Version">Version alpha-0.7.2</string>
     <string name="button_exploreDecks">Explore decks</string>
     <string name="title_activity_test">Test</string>
     <string name="select_player_count">Select player count</string>
