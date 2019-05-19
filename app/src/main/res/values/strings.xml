@@ -38,4 +38,7 @@
     <string name="label_enter">ENTER</string>
     <string name="label_join">JOIN</string>
     <string name="host">Host:</string>
+    <string name="label_ready">Ready</string>
+    <string name="label_not_ready">Not ready</string>
+    <string name="label_currentLobby">You are currently in lobby:</string>
 </resources>

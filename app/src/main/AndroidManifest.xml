@@ -46,6 +46,11 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_game_screen"
             android:theme="@style/cahLayout" />
+        <activity
+            android:name=".gui.activities.WaitingLobby"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_game_screen"
+            android:theme="@style/cahLayout" />
     </application>
 
 </manifest>
