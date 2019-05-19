@@ -63,7 +63,9 @@ public class WaitingLobby extends AppCompatActivity {
         lobbyId = (String) getIntent().getSerializableExtra("lobbyId");
         if (Database.getLobby(lobbyId) != null) {
             playerName = settings.getString("player", Util.getRandomName());
+            saveRealname(playerName);
             playerName = Database.joinLobby(lobbyId, playerName);
+
             if (playerName.equals("")) {
                 Intent intent = new Intent(context, Main.class);
                 intent.putExtra("message", "Couldn't join the lobby.");
@@ -76,6 +78,12 @@ public class WaitingLobby extends AppCompatActivity {
         initializeDatabaseConnection();
         initializeUIElements();
         initializeUIEvents();
+    }
+
+    private void saveRealname(String realname) {
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putString("realname", realname);
+        editor.apply();
     }
 
     private void initializeDatabaseConnection() {

@@ -50,7 +50,10 @@ public class Main extends AppCompatActivity {
         initializeUIEvents();
         Database.initializeDatabaseConnections();
 
-        playerName = settings.getString("player", Util.getRandomName());
+        playerName = settings.getString("realname", "");
+        if (playerName == null || playerName.equals("")) {
+            playerName = settings.getString("player", Util.getRandomName());
+        }
         Util.saveName(settings, playerName);
 
         String message = (String) getIntent().getSerializableExtra("message");
