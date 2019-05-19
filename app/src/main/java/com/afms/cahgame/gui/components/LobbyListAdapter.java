@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,11 +22,13 @@ import com.afms.cahgame.gui.activities.WaitingLobby;
 import com.afms.cahgame.util.Util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import static android.content.Context.MODE_PRIVATE;
 
 public class LobbyListAdapter extends ArrayAdapter<Lobby> {
     private SharedPreferences settings;
+    private ResultListener resultListener;
 
     public LobbyListAdapter(@NonNull Context context, ArrayList<Lobby> lobbies) {
         super(context, 0, lobbies);
@@ -58,12 +62,30 @@ public class LobbyListAdapter extends ArrayAdapter<Lobby> {
         item_lobby_select_count_maxplayer.setText(String.format("%s / %s", currentPlayerCount, String.valueOf(lobby.getMaxPlayers())));
 
         btn_item_lobby_select_join.setOnClickListener(e -> {
-            String playerName = settings.getString("player", Util.getRandomName());
-            Util.saveName(settings, playerName);
+            if(lobby != null && !lobby.getPassword().equals("")){
+                FragmentManager fragmentManager = ((AppCompatActivity) getContext()).getSupportFragmentManager();
+                final PasswordDialog[] passwordDialog = {PasswordDialog.create(getContext(), new ArrayList<>(Arrays.asList("Join", "Cancel")))};
+                resultListener = result -> {
+                    if(result.equals("Join")){
+                        if(passwordDialog[0].getPassword().equals(lobby.getPassword())){
+                            String playerName = settings.getString("player", Util.getRandomName());
+                            Util.saveName(settings, playerName);
 
-            Intent intent = new Intent(getContext(), WaitingLobby.class);
-            intent.putExtra("lobbyId", lobby.getId());
-            getContext().startActivity(intent);
+                            Intent intent = new Intent(getContext(), WaitingLobby.class);
+                            intent.putExtra("lobbyId", lobby.getId());
+                            getContext().startActivity(intent);
+                        } else {
+                            fragmentManager.beginTransaction().remove(fragmentManager.findFragmentByTag("passwordDialog")).commit();
+                            passwordDialog[0] = PasswordDialog.create(getContext(), new ArrayList<>(Arrays.asList("Join", "Cancel")));
+                            passwordDialog[0].setResultListener(resultListener);
+                            passwordDialog[0].show(fragmentManager, "passwordDialog");
+                        }
+                    }
+                };
+                passwordDialog[0].setResultListener(resultListener);
+                passwordDialog[0].show(fragmentManager, "passwordDialog");
+            }
+
         });
 
         return convertView;

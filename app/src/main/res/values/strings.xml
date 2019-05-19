@@ -45,4 +45,7 @@
     <string name="message_leave_lobby">You are currently in soon starting lobby!</string>
     <string name="message_leave_game">You are currently in a running match!</string>
     <string name="title_quit">Do you really want to quit the game?</string>
+    <string name="label_private_lobby">The selected lobby is private. You need to enter the correct password.</string>
+    <string name="title_password">Please enter the password</string>
+    <string name="hint_password">Enter password..</string>
 </resources>
