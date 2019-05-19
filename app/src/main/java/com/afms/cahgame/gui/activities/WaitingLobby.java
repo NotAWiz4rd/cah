@@ -41,7 +41,9 @@ public class WaitingLobby extends AppCompatActivity {
 
         lobbyId = (String) getIntent().getSerializableExtra("lobbyId");
         if (Database.getLobby(lobbyId) != null) {
-            Database.joinLobby(lobbyId, settings.getString("player", Util.getRandomName(settings)));
+            String playerName = settings.getString("player", Util.getRandomName());
+            Database.joinLobby(lobbyId, playerName);
+            Util.saveName(settings, playerName);
         }
         hideUI();
         initializeDatabaseConnection();

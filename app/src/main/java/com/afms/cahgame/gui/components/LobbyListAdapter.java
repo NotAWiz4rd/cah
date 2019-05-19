@@ -13,12 +13,10 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.afms.cahgame.R;
 import com.afms.cahgame.game.Lobby;
 import com.afms.cahgame.gui.activities.WaitingLobby;
-import com.afms.cahgame.util.Database;
 import com.afms.cahgame.util.Util;
 
 import java.util.ArrayList;
@@ -60,16 +58,12 @@ public class LobbyListAdapter extends ArrayAdapter<Lobby> {
         item_lobby_select_count_maxplayer.setText(String.format("%s / %s", currentPlayerCount, String.valueOf(lobby.getMaxPlayers())));
 
         btn_item_lobby_select_join.setOnClickListener(e -> {
-            boolean joinedSuccessfully = Database.joinLobby(lobby.getId(), settings.getString("player", Util.getRandomName(settings)));
+            String playerName = settings.getString("player", Util.getRandomName());
+            Util.saveName(settings, playerName);
 
-            if (joinedSuccessfully) {
-                Intent intent = new Intent(getContext(), WaitingLobby.class);
-                intent.putExtra("lobbyId", lobby.getId());
-                getContext().startActivity(intent);
-            } else {
-                Toast.makeText(getContext(), "Wasn't able to join selected lobby", Toast.LENGTH_LONG).show();
-            }
-
+            Intent intent = new Intent(getContext(), WaitingLobby.class);
+            intent.putExtra("lobbyId", lobby.getId());
+            getContext().startActivity(intent);
         });
 
         return convertView;

@@ -115,7 +115,8 @@ public class CreateLobby extends AppCompatActivity {
                 return;
             }
 
-            String playerName = settings.getString("player", Util.getRandomName(settings));
+            String playerName = settings.getString("player", Util.getRandomName());
+            Util.saveName(settings, playerName);
             Database.addLobby(lobbyId, new Lobby(
                     lobbyId,
                     playerName,
@@ -143,7 +144,8 @@ public class CreateLobby extends AppCompatActivity {
 
     private void createLobby() {
         // todo check that deck has enough cards for all players
-        String playerName = settings.getString("player", Util.getRandomName(settings));
+        String playerName = settings.getString("player", Util.getRandomName());
+        Util.saveName(settings, playerName);
         Database.addLobby("testgame", new Lobby(
                 "testgame",
                 playerName,

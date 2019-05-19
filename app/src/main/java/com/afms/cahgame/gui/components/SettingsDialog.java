@@ -39,11 +39,14 @@ public class SettingsDialog extends DialogFragment {
         Button btn_save = view.findViewById(R.id.btn_settings_save);
         playerNameView = view.findViewById(R.id.input_settings_playername);
 
-        String playerString = settings.getString("player", Util.getRandomName(settings));
+        String playerString = settings.getString("player", Util.getRandomName());
+        Util.saveName(settings, playerString);
         playerNameView.setText(playerString);
 
         playerName_random.setOnClickListener(v -> {
-            playerNameView.setText(Util.getRandomName(settings));
+            String newPlayerName = Util.getRandomName();
+            playerNameView.setText(newPlayerName);
+            Util.saveName(settings, newPlayerName);
         });
 
         btn_save.setOnClickListener(v -> {

@@ -98,10 +98,8 @@ public class Util {
      *
      * @return Random name from the namelist.
      */
-    public static String getRandomName(SharedPreferences settings) {
-        String newName = randomNames.stream().skip((int) (randomNames.size() * Math.random())).findAny().get();
-        saveName(settings, newName);
-        return newName;
+    public static String getRandomName() {
+        return randomNames.stream().skip((int) (randomNames.size() * Math.random())).findAny().get();
     }
 
     /**

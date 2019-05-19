@@ -14,7 +14,6 @@ import android.widget.Toast;
 
 import com.afms.cahgame.R;
 import com.afms.cahgame.gui.components.MessageDialog;
-import com.afms.cahgame.gui.components.ResultListener;
 import com.afms.cahgame.gui.components.SettingsDialog;
 import com.afms.cahgame.util.Database;
 import com.afms.cahgame.util.Util;
@@ -51,7 +50,8 @@ public class Main extends AppCompatActivity {
         initializeUIEvents();
         Database.initializeDatabaseConnections();
 
-        playerName = settings.getString("player", Util.getRandomName(settings));
+        playerName = settings.getString("player", Util.getRandomName());
+        Util.saveName(settings, playerName);
 
         String message = (String) getIntent().getSerializableExtra("message");
         if (message != null) {
@@ -104,7 +104,8 @@ public class Main extends AppCompatActivity {
                 return;
             }
             if (playerNameView.getText().toString().equals("")) {
-                playerName = Util.getRandomName(settings);
+                playerName = Util.getRandomName();
+                Util.saveName(settings, playerName);
             } else {
                 playerName = playerNameView.getText().toString();
                 Util.saveName(settings, playerName);
@@ -112,7 +113,7 @@ public class Main extends AppCompatActivity {
         });
 
         messageDialog.setResultListener(result -> {
-            if(result.equals("Ok")){
+            if (result.equals("Ok")) {
                 super.onBackPressed();
             }
         });
