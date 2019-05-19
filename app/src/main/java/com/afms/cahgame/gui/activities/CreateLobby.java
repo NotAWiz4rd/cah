@@ -88,7 +88,7 @@ public class CreateLobby extends AppCompatActivity {
         for (int i = MIN_PLAYER_COUNT; i <= MAX_PLAYER_COUNT; i++) {
             player_count_values.add(String.valueOf(i));
         }
-        value_selector_player_count = ValueSelector.showValueSelector(this, getString(R.string.select_player_count), player_count_values);
+        value_selector_player_count = ValueSelector.create(getString(R.string.select_player_count), player_count_values);
         value_selector_player_count.setResultListener(result -> value_player_count.setValue(Integer.valueOf(result)));
 
 
@@ -96,7 +96,7 @@ public class CreateLobby extends AppCompatActivity {
         for (int i = MIN_HANDCARD_COUNT; i <= MAX_HANDCARD_COUNT; i++) {
             handcard_count_values.add(String.valueOf(i));
         }
-        value_selector_handcard_count = ValueSelector.showValueSelector(this, getString(R.string.select_handcard_count), handcard_count_values);
+        value_selector_handcard_count = ValueSelector.create(getString(R.string.select_handcard_count), handcard_count_values);
         value_selector_handcard_count.setResultListener(result -> value_handcard_count.setValue(Integer.valueOf(result)));
     }
 
