@@ -85,9 +85,11 @@ public class WaitingLobby extends AppCompatActivity {
                         startActivity(intent);
                     }
                 } else {
-                    Intent intent = new Intent(context, Main.class);
-                    intent.putExtra("message", "The lobby you were trying to reach is not available anymore.");
-                    startActivity(intent);
+                    if (currentLobby.getPlayers().contains(playerName)) {
+                        Intent intent = new Intent(context, Main.class);
+                        intent.putExtra("message", "The lobby you were trying to reach is not available anymore.");
+                        startActivity(intent);
+                    }
                 }
             }
 
