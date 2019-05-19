@@ -154,13 +154,13 @@ public class Database {
         lobbiesReference.setValue(lobbies);
     }
 
-    public static boolean joinLobby(String lobbyId, String playername) {
+    public static String joinLobby(String lobbyId, String playername) {
         if (lobbies.get(lobbyId) != null) {
-            Objects.requireNonNull(lobbies.get(lobbyId)).addPlayer(playername);
+            String playerName = Objects.requireNonNull(lobbies.get(lobbyId)).addPlayer(playername);
             lobbiesReference.setValue(lobbies);
-            return true;
+            return playerName;
         }
-        return false;
+        return "";
     }
 
     //............................Cards and Decks..................................................

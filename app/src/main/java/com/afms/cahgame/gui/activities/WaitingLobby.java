@@ -1,5 +1,6 @@
 package com.afms.cahgame.gui.activities;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -42,7 +43,13 @@ public class WaitingLobby extends AppCompatActivity {
         lobbyId = (String) getIntent().getSerializableExtra("lobbyId");
         if (Database.getLobby(lobbyId) != null) {
             String playerName = settings.getString("player", Util.getRandomName());
-            Database.joinLobby(lobbyId, playerName);
+            playerName = Database.joinLobby(lobbyId, playerName);
+            if (playerName.equals("")) {
+                Intent intent = new Intent(this, Main.class);
+                intent.putExtra("message", "Couldn't join the lobby.");
+                startActivity(intent);
+                return;
+            }
             Util.saveName(settings, playerName);
         }
         hideUI();

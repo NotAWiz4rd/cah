@@ -48,14 +48,22 @@ public class Lobby implements Serializable {
         this.players = players;
     }
 
-    public void addPlayer(String player) {
+    public String addPlayer(String player) {
         if (players == null) {
             players = new ArrayList<>();
         }
 
-        if (this.players.size() < maxPlayers) {
-            this.players.add(player);
+        if (players.size() < maxPlayers) {
+            if (!players.contains(player)) {
+                players.add(player);
+                return player;
+            } else {
+                String newPlayerName = player + "2";
+                players.add(newPlayerName);
+                return newPlayerName;
+            }
         }
+        return "";
     }
 
     public void removePlayer(String player) {
