@@ -30,7 +30,6 @@ import com.afms.cahgame.game.Player;
 import com.afms.cahgame.gui.components.CardListAdapter;
 import com.afms.cahgame.gui.components.FullSizeCard;
 import com.afms.cahgame.gui.components.MessageDialog;
-import com.afms.cahgame.gui.components.ResultListener;
 import com.afms.cahgame.gui.components.ScoreBoardDialog;
 import com.afms.cahgame.gui.components.SwipeResultListener;
 import com.afms.cahgame.util.Database;
@@ -596,11 +595,11 @@ public class GameScreen extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         MessageDialog messageDialog = MessageDialog.create(getString(R.string.message_leave_game), new ArrayList<>(Arrays.asList(
-            "Leave", "Cancel"
+                "Leave", "Cancel"
         )));
         messageDialog.setResultListener(result -> {
-            if(result.equals("Leave")){
-                quitGame("You closed the lobby.");
+            if (result.equals("Leave")) {
+                quitGame("You left the lobby.");
             }
         });
         messageDialog.show(getSupportFragmentManager(), "gameLeave");
