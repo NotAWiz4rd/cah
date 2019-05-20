@@ -592,6 +592,7 @@ public class GameScreen extends AppCompatActivity {
         Intent intent = new Intent(this, Main.class);
         intent.putExtra("message", message.length() > 0 ? message : "Your lobby couldn't be found.");
         startActivity(intent);
+        finish();
     }
 
     private void saveInfo() {

@@ -129,6 +129,7 @@ public class CreateLobby extends AppCompatActivity {
             Intent intent = new Intent(this, WaitingLobby.class);
             intent.putExtra("lobbyId", lobbyId);
             startActivity(intent);
+            finish();
         });
         btn_select_deck.setOnClickListener(event -> deckSelectorDialog.show(getSupportFragmentManager(), "deck_selector"));
         btn_back.setOnClickListener(event -> {
