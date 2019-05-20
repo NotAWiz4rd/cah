@@ -119,6 +119,7 @@ public class Main extends AppCompatActivity {
         messageDialog.setResultListener(result -> {
             if (result.equals("Ok")) {
                 super.onBackPressed();
+                System.exit(0);
             }
         });
     }

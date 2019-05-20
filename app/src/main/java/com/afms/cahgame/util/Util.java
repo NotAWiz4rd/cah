@@ -6,6 +6,8 @@ import com.afms.cahgame.data.Card;
 import com.afms.cahgame.data.Colour;
 import com.afms.cahgame.game.Deck;
 import com.github.javafaker.Faker;
+import com.github.javafaker.Pokemon;
+import com.github.javafaker.service.FakeValues;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -100,7 +102,7 @@ public class Util {
      * @return Random name from the namelist.
      */
     public static String getRandomName() {
-        return Faker.instance().funnyName().name();
+        return Faker.instance().pokemon().name();
     }
 
     /**
