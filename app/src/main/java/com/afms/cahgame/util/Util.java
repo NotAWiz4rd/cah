@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import com.afms.cahgame.data.Card;
 import com.afms.cahgame.data.Colour;
 import com.afms.cahgame.game.Deck;
+import com.github.javafaker.Faker;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -99,7 +100,7 @@ public class Util {
      * @return Random name from the namelist.
      */
     public static String getRandomName() {
-        return randomNames.stream().skip((int) (randomNames.size() * Math.random())).findAny().get();
+        return Faker.instance().funnyName().name();
     }
 
     /**
