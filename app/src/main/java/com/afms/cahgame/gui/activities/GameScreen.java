@@ -30,6 +30,7 @@ import com.afms.cahgame.game.Gamestate;
 import com.afms.cahgame.game.Player;
 import com.afms.cahgame.gui.components.CardListAdapter;
 import com.afms.cahgame.gui.components.FullSizeCard;
+import com.afms.cahgame.gui.components.ScoreBoardDialog;
 import com.afms.cahgame.gui.components.SwipeResultListener;
 import com.afms.cahgame.util.Database;
 import com.afms.cahgame.util.Util;
@@ -75,6 +76,7 @@ public class GameScreen extends AppCompatActivity {
     private CardListAdapter userSelectionListAdapter;
     private List<FullSizeCard> playedWhiteCardList;
     private List<FullSizeCard> fullSizeCardList = new ArrayList<>();
+    private ScoreBoardDialog scoreBoard;
 
     private boolean doneRoundStart = false;
     private boolean doneRoundEnd = false;
@@ -120,8 +122,8 @@ public class GameScreen extends AppCompatActivity {
 
     private void initializeUIEvents() {
         playerOverview.setOnClickListener(event -> {
-            Toast.makeText(this, "clicked on players overview", Toast.LENGTH_SHORT).show();
-            //TODO show players and their score
+            scoreBoard = ScoreBoardDialog.create(game);
+            scoreBoard.show(getSupportFragmentManager(), "playerOverview");
         });
 
         playedBlackCard.setOnClickListener(event -> {
