@@ -129,6 +129,14 @@ public class WaitingLobby extends AppCompatActivity {
         label_waiting_lobby_name.setText(String.valueOf(currentLobby.getId()));
         label_waiting_lobby_count_maxplayer.setText(String.format("%s / %s", currentLobby.getPlayers().size(), currentLobby.getMaxPlayers()));
         label_waiting_lobby_count_handcard.setText(String.valueOf(currentLobby.getHandcardCount()));
+
+        if(currentLobby.getHost().equals(playerName)){
+            btn_waiting_lobby_ready.setText(getString(R.string.label_hoststartgame));
+            btn_waiting_lobby_ready.setBackgroundResource(R.drawable.button_background_black);
+        } else {
+            btn_waiting_lobby_ready.setText(getString(R.string.label_nothost));
+            btn_waiting_lobby_ready.setBackgroundResource(R.drawable.button_background_black_disabled);
+        }
     }
 
     private void updatePlayerList() {
@@ -155,18 +163,20 @@ public class WaitingLobby extends AppCompatActivity {
 
         // todo make this only visible for the host and start the game from here
         btn_waiting_lobby_ready.setOnClickListener(event -> {
-            if (currentLobby.getPlayers().size() < Game.MIN_PLAYERS) {
-                Toast.makeText(context, "There are not enough players to start the game.", Toast.LENGTH_LONG).show();
-                return;
-            }
-            currentLobby.setGameInProgress(true);
-            lobbyReference.setValue(currentLobby);
+            if(currentLobby.getHost().equals(playerName)){
+                if (currentLobby.getPlayers().size() < Game.MIN_PLAYERS) {
+                    Toast.makeText(context, "There are not enough players to start the game.", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                currentLobby.setGameInProgress(true);
+                lobbyReference.setValue(currentLobby);
 
-            Intent intent = new Intent(context, GameScreen.class);
-            intent.putExtra("game", new Game(Database.getDeck(currentLobby.getDeckName()), Collections.singletonList(playerName), currentLobby.getHandcardCount()));
-            intent.putExtra("lobbyId", lobbyId);
-            intent.putExtra("host", currentLobby.getHost());
-            startActivity(intent);
+                Intent intent = new Intent(context, GameScreen.class);
+                intent.putExtra("game", new Game(Database.getDeck(currentLobby.getDeckName()), Collections.singletonList(playerName), currentLobby.getHandcardCount()));
+                intent.putExtra("lobbyId", lobbyId);
+                intent.putExtra("host", currentLobby.getHost());
+                startActivity(intent);
+            }
         });
     }
 

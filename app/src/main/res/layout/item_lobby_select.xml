@@ -45,6 +45,15 @@
             android:layout_below="@+id/item_lobby_select_name"/>
 
         <TextView
+            android:id="@+id/item_lobby_select_deck"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/helveticaneuelight"
+            android:text="@string/label_deck"
+            android:textSize="18sp"
+            android:layout_below="@+id/item_lobby_select_host"/>
+
+        <TextView
             android:id="@+id/item_lobby_select_count_maxplayer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

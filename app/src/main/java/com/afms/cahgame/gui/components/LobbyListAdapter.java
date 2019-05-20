@@ -50,6 +50,7 @@ public class LobbyListAdapter extends ArrayAdapter<Lobby> {
         TextView item_lobby_select_count_maxplayer = convertView.findViewById(R.id.item_lobby_select_count_maxplayer);
         TextView item_lobby_select_host = convertView.findViewById(R.id.item_lobby_select_host);
         TextView item_lobby_select_name = convertView.findViewById(R.id.item_lobby_select_name);
+        TextView item_lobby_select_deck = convertView.findViewById(R.id.item_lobby_select_deck);
         Button btn_item_lobby_select_join = convertView.findViewById(R.id.btn_item_lobby_select_join);
 
         if (lobby != null && lobby.getPassword().equals("")) {
@@ -58,12 +59,13 @@ public class LobbyListAdapter extends ArrayAdapter<Lobby> {
 
         item_lobby_select_name.setText(String.format("%s %s", getContext().getResources().getString(R.string.label_name), Objects.requireNonNull(lobby).getId()));
         item_lobby_select_host.setText(String.format("%s %s", getContext().getResources().getString(R.string.host), lobby.getHost()));
+        item_lobby_select_deck.setText(String.format("%s %s", getContext().getResources().getString(R.string.label_deck), lobby.getDeckName()));
         item_lobby_select_count_handcard.setText(String.valueOf(lobby.getHandcardCount()));
         int currentPlayerCount = lobby.getPlayers().size();
         item_lobby_select_count_maxplayer.setText(String.format("%s / %s", currentPlayerCount, String.valueOf(lobby.getMaxPlayers())));
 
         btn_item_lobby_select_join.setOnClickListener(e -> {
-            if(lobby != null && !lobby.getPassword().equals("")){
+            if(!lobby.getPassword().equals("")){
                 FragmentManager fragmentManager = ((AppCompatActivity) getContext()).getSupportFragmentManager();
                 final PasswordDialog[] passwordDialog = {PasswordDialog.create(getContext(), new ArrayList<>(Arrays.asList("Join", "Cancel")))};
                 resultListener = result -> {
@@ -76,7 +78,7 @@ public class LobbyListAdapter extends ArrayAdapter<Lobby> {
                             intent.putExtra("lobbyId", lobby.getId());
                             getContext().startActivity(intent);
                         } else {
-                            fragmentManager.beginTransaction().remove(fragmentManager.findFragmentByTag("passwordDialog")).commit();
+                            fragmentManager.beginTransaction().remove(Objects.requireNonNull(fragmentManager.findFragmentByTag("passwordDialog"))).commit();
                             passwordDialog[0] = PasswordDialog.create(getContext().getResources().getString(R.string.title_password),getContext().getResources().getString(R.string.label_private_lobby_wrong), new ArrayList<>(Arrays.asList("Join", "Cancel")));
                             passwordDialog[0].setResultListener(resultListener);
                             passwordDialog[0].show(fragmentManager, "passwordDialog");
