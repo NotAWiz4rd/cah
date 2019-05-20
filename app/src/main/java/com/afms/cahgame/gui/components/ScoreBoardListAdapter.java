@@ -43,6 +43,8 @@ public class ScoreBoardListAdapter extends ArrayAdapter<Player> {
         settings = getContext().getSharedPreferences("Preferences", MODE_PRIVATE);
         if(player.getName().equals(settings.getString("player", ""))){
             playerName.setTypeface(ResourcesCompat.getFont(getContext(), R.font.helveticaneuebold));
+        }else{
+            playerName.setTypeface(ResourcesCompat.getFont(getContext(), R.font.helveticaneuelight));
         }
 
         playerName.setText(player.getName());
