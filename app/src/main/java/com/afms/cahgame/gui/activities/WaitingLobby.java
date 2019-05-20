@@ -161,7 +161,6 @@ public class WaitingLobby extends AppCompatActivity {
             finish();
         });
 
-        // todo make this only visible for the host and start the game from here
         btn_waiting_lobby_ready.setOnClickListener(event -> {
             if(currentLobby.getHost().equals(playerName)){
                 if (currentLobby.getPlayers().size() < Game.MIN_PLAYERS) {

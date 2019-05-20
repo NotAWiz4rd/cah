@@ -36,24 +36,14 @@ public class WaitingListAdapter extends ArrayAdapter<String> {
 
         ImageView img_item_waiting_players_host = convertView.findViewById(R.id.img_item_waiting_players_host);
         TextView label_item_waiting_players_name = convertView.findViewById(R.id.label_item_waiting_players_name);
-        TextView label_item_waiting_players_ready = convertView.findViewById(R.id.label_item_waiting_players_ready);
 
-        label_item_waiting_players_name.setText(player);
+        label_item_waiting_players_name.setText(String.valueOf(player));
 
-        if (player.equals(currentLobby.getHost())) {
+        if (player != null && player.equals(currentLobby.getHost())) {
             img_item_waiting_players_host.setVisibility(View.VISIBLE);
         } else {
             img_item_waiting_players_host.setVisibility(View.INVISIBLE);
         }
-
-        // todo this is not intended for in-lobby use
-//        if (player.isReady()) {
-//            label_item_waiting_players_ready.setText(getContext().getResources().getString(R.string.label_ready));
-//            label_item_waiting_players_ready.setBackgroundResource(R.drawable.pill_ready);
-//        } else {
-//            label_item_waiting_players_ready.setText(getContext().getResources().getString(R.string.label_not_ready));
-//            label_item_waiting_players_ready.setBackgroundResource(R.drawable.pill_not_ready);
-//        }
 
         return convertView;
     }

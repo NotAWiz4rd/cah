@@ -20,7 +20,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.afms.cahgame.R;
 import com.afms.cahgame.data.Colour;
@@ -73,6 +72,7 @@ public class GameScreen extends AppCompatActivity {
     private FullSizeCard playedWhiteCard;
     private FrameLayout lowerFrameLayout;
     private FrameLayout completeFrameLayout;
+    private TextView navigationBarText;
 
     private ConstraintLayout userSelectionLayout;
     private ListView userSelectionListView;
@@ -111,6 +111,7 @@ public class GameScreen extends AppCompatActivity {
         playedBlackCardText = findViewById(R.id.blackCardText);
         lowerFrameLayout = findViewById(R.id.layout_game_screen_lower);
         completeFrameLayout = findViewById(R.id.game_screen_frameLayout);
+        navigationBarText = findViewById(R.id.bottom_navigation_bar_text_field);
 
         playedBlackCardText.setText("");
 
@@ -372,6 +373,7 @@ public class GameScreen extends AppCompatActivity {
     }
 
     private void onRoundStartGamestate() {
+        removeWaitingScreen();
         doneRoundEnd = false;
         showHandCardList();
         setPlayerReady();
@@ -392,13 +394,16 @@ public class GameScreen extends AppCompatActivity {
         doneRoundStart = false;
         if (!currentPlayerIsCardSzar()) {
             allowCardSubmitting = true;
+            navigationBarText.setText(R.string.play_card);
         } else {
             setPlayerReady();
+            navigationBarText.setText(R.string.waiting_for_others);
         }
         showHandCardList();
 
         if (currentPlayerIsCardSzar() && game.allPlayersReady()) {
             advanceGamestate();
+            navigationBarText.setText(R.string.choose_winning_card);
         }
         // then wait for input
     }
@@ -406,16 +411,17 @@ public class GameScreen extends AppCompatActivity {
     private void onWaitingGamestate() {
         showPlayedCardsAllowed = true;
         allowCardSubmitting = false;
-
         showPlayedCards(currentPlayerIsCardSzar());
 
         if (!currentPlayerIsCardSzar()) {
+            navigationBarText.setText(R.string.wait_for_winning_card);
             setPlayerReady();
         }
     }
 
     private void onRoundEndGamestate() {
         showPlayedCardsAllowed = false;
+        navigationBarText.setText(R.string.waiting_for_others);
         setPlayerReady();
         // todo notify player of winning card (only if player is not cardszar), show updated scores
 
