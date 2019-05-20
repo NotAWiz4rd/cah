@@ -79,7 +79,6 @@ public class MessageDialog extends DialogFragment {
     }
 
 
-
     public static MessageDialog create(String title, ArrayList<String> values) {
         MessageDialog messageDialog = new MessageDialog();
         Bundle args = new Bundle();

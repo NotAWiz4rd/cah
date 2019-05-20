@@ -60,7 +60,7 @@ public class WaitingLobby extends AppCompatActivity {
         initializeDatabaseConnection();
         initializeUIEvents();
 
-        lobbyId = (String) getIntent().getSerializableExtra("lobbyId");
+        lobbyId = (String) getIntent().getSerializableExtra(getString(R.string.lobbyId));
         if (Database.getLobby(lobbyId) != null) {
             playerName = settings.getString("player", Util.getRandomName());
             saveRealname(playerName);
@@ -68,7 +68,7 @@ public class WaitingLobby extends AppCompatActivity {
 
             if (playerName.equals("")) {
                 Intent intent = new Intent(context, Main.class);
-                intent.putExtra("message", "Couldn't join the lobby.");
+                intent.putExtra("message", getString(R.string.cantFindLobby));
                 startActivity(intent);
                 lobbyReference.removeEventListener(valueEventListener);
                 finish();
@@ -104,7 +104,7 @@ public class WaitingLobby extends AppCompatActivity {
 
                     if (currentLobby.isGameInProgress() && !currentLobby.getHost().equals(playerName)) {
                         Intent intent = new Intent(context, GameScreen.class);
-                        intent.putExtra("lobbyId", lobbyId);
+                        intent.putExtra(getString(R.string.lobbyId), lobbyId);
                         intent.putExtra("host", currentLobby.getHost());
                         currentLobby = null;
                         lobbyReference.removeEventListener(valueEventListener);
@@ -179,7 +179,7 @@ public class WaitingLobby extends AppCompatActivity {
 
                 Intent intent = new Intent(context, GameScreen.class);
                 intent.putExtra("game", new Game(Database.getDeck(currentLobby.getDeckName()), Collections.singletonList(playerName), currentLobby.getHandcardCount()));
-                intent.putExtra("lobbyId", lobbyId);
+                intent.putExtra(getString(R.string.lobbyId), lobbyId);
                 intent.putExtra("host", currentLobby.getHost());
                 startActivity(intent);
                 finish();

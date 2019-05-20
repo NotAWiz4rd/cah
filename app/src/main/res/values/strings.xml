@@ -33,7 +33,7 @@
     <string name="no_password">No password</string>
     <string name="label_settings">Settings</string>
     <string name="label_save">Save</string>
-    <string name="waiting_slogan">waiting for other players</string>
+    <string name="waiting_slogan">Waiting for other players.</string>
     <string name="label_name">Name:</string>
     <string name="label_enter">ENTER</string>
     <string name="label_join">JOIN</string>
@@ -58,4 +58,13 @@
     <string name="waiting_for_others">Waiting for the other players to choose a card.</string>
     <string name="choose_winning_card">Choose the winning card.</string>
     <string name="wait_for_winning_card">Waiting for cardszar to choose the winning card.</string>
+    <string name="impossibleError">Something went terribly wrong…</string>
+    <string name="getGameFailure">Failed to get game.</string>
+    <string name="getBlackCardFailure">Failed to get blackCard.</string>
+    <string name="leftLobby">You left the lobby.</string>
+    <string name="cantFindLobby">Your lobby couldn\'t be found.</string>
+    <string name="lobbyId">lobbyId</string>
+    <string name="cantGetLobbies">Failed to get lobbies from server.</string>
+    <string name="lobbyNameExists">A lobby with this name already exists</string>
+    <string name="missingLobbyname">Please enter a lobbyname to proceed.</string>
 </resources>

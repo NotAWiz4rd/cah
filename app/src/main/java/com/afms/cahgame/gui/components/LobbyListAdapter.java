@@ -65,7 +65,7 @@ public class LobbyListAdapter extends ArrayAdapter<Lobby> {
         item_lobby_select_count_maxplayer.setText(String.format("%s / %s", currentPlayerCount, String.valueOf(lobby.getMaxPlayers())));
 
         btn_item_lobby_select_join.setOnClickListener(e -> {
-            if(!lobby.getPassword().equals("")){
+            if (!lobby.getPassword().equals("")) {
                 FragmentManager fragmentManager = ((AppCompatActivity) getContext()).getSupportFragmentManager();
                 final PasswordDialog[] passwordDialog = {PasswordDialog.create(getContext(), new ArrayList<>(Arrays.asList("Join", "Cancel")))};
                 resultListener = result -> {
@@ -80,7 +80,7 @@ public class LobbyListAdapter extends ArrayAdapter<Lobby> {
                             ((AppCompatActivity) getContext()).finish();
                         } else {
                             fragmentManager.beginTransaction().remove(Objects.requireNonNull(fragmentManager.findFragmentByTag("passwordDialog"))).commit();
-                            passwordDialog[0] = PasswordDialog.create(getContext().getResources().getString(R.string.title_password),getContext().getResources().getString(R.string.label_private_lobby_wrong), new ArrayList<>(Arrays.asList("Join", "Cancel")));
+                            passwordDialog[0] = PasswordDialog.create(getContext().getResources().getString(R.string.title_password), getContext().getResources().getString(R.string.label_private_lobby_wrong), new ArrayList<>(Arrays.asList("Join", "Cancel")));
                             passwordDialog[0].setResultListener(resultListener);
                             passwordDialog[0].show(fragmentManager, "passwordDialog");
                         }
@@ -93,7 +93,7 @@ public class LobbyListAdapter extends ArrayAdapter<Lobby> {
                 Util.saveName(settings, playerName);
 
                 Intent intent = new Intent(getContext(), WaitingLobby.class);
-                intent.putExtra("lobbyId", lobby.getId());
+                intent.putExtra(getContext().getString(R.string.cantGetLobbies), lobby.getId());
                 getContext().startActivity(intent);
             }
 

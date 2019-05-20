@@ -108,11 +108,11 @@ public class CreateLobby extends AppCompatActivity {
             String deckName = input_select_deck.getText().toString().equals("") ? "standarddeck" : input_select_deck.getText().toString();
 
             if (Database.getLobbies().containsKey(lobbyId)) {
-                Toast.makeText(this, "A lobby with this name already exists", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, getString(R.string.lobbyNameExists), Toast.LENGTH_LONG).show();
                 return;
             }
             if (lobbyId.isEmpty()) {
-                Toast.makeText(this, "Please enter a lobbyname to proceed.", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, getString(R.string.missingLobbyname), Toast.LENGTH_LONG).show();
                 return;
             }
 
@@ -127,7 +127,7 @@ public class CreateLobby extends AppCompatActivity {
                     Integer.parseInt(input_player_count.getText().toString())));
 
             Intent intent = new Intent(this, WaitingLobby.class);
-            intent.putExtra("lobbyId", lobbyId);
+            intent.putExtra(getString(R.string.lobbyId), lobbyId);
             startActivity(intent);
             finish();
         });

@@ -3,7 +3,6 @@ package com.afms.cahgame.gui.components;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.res.ResourcesCompat;
@@ -41,9 +40,9 @@ public class ScoreBoardListAdapter extends ArrayAdapter<Player> {
         TextView playerScore = convertView.findViewById(R.id.score_board_player_score);
 
         settings = getContext().getSharedPreferences("Preferences", MODE_PRIVATE);
-        if(player.getName().equals(settings.getString("player", ""))){
+        if (player.getName().equals(settings.getString("player", ""))) {
             playerName.setTypeface(ResourcesCompat.getFont(getContext(), R.font.helveticaneuebold));
-        }else{
+        } else {
             playerName.setTypeface(ResourcesCompat.getFont(getContext(), R.font.helveticaneuelight));
         }
 

@@ -97,5 +97,7 @@ public class PasswordDialog extends DialogFragment {
         this.resultListener = resultListener;
     }
 
-    public String getPassword(){return input_dialog_password.getText().toString();}
+    public String getPassword() {
+        return input_dialog_password.getText().toString();
+    }
 }

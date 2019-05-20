@@ -14,7 +14,6 @@ import android.widget.Toast;
 
 import com.afms.cahgame.R;
 import com.afms.cahgame.gui.components.MessageDialog;
-import com.afms.cahgame.gui.components.ScoreBoardDialog;
 import com.afms.cahgame.gui.components.SettingsDialog;
 import com.afms.cahgame.util.Database;
 import com.afms.cahgame.util.Util;

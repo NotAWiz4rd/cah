@@ -7,7 +7,6 @@ import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
@@ -20,8 +19,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.afms.cahgame.R;
-import com.afms.cahgame.game.Card;
 import com.afms.cahgame.data.Colour;
+import com.afms.cahgame.game.Card;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,8 +45,6 @@ public class FullSizeCard extends ConstraintLayout {
     private LinearLayout fullSizeCardOptionLayout;
     private ConstraintLayout constraintLayout;
     private TextView fullSizeGameName;
-    private Button fullSizeCardButton;
-    private Button fullSizeCardButton2;
     private Card card;
     private float downPosY;
     private float downPosX;
@@ -64,8 +61,8 @@ public class FullSizeCard extends ConstraintLayout {
         this.swipeResultListener = swipeResultListener;
     }
 
-    public void setDimBackground(boolean value){
-        if(value){
+    public void setDimBackground(boolean value) {
+        if (value) {
             constraintLayout.setBackgroundColor(Color.parseColor("#8D000000"));
         } else {
             constraintLayout.setBackgroundColor(Color.TRANSPARENT);

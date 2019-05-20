@@ -1,7 +1,6 @@
 package com.afms.cahgame.gui.components;
 
 import android.app.Dialog;
-import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -41,7 +40,6 @@ public class ValueSelector extends DialogFragment {
         Dialog dialog = super.onCreateDialog(savedInstanceState);
         dialog.setCanceledOnTouchOutside(true);
         Window window = dialog.getWindow();
-        //window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
         window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         return dialog;
     }

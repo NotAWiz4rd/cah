@@ -98,7 +98,7 @@ public class GameScreen extends AppCompatActivity {
         initializeUIElements();
         initializeUIEvents();
 
-        lobbyId = (String) getIntent().getSerializableExtra("lobbyId");
+        lobbyId = (String) getIntent().getSerializableExtra(getString(R.string.lobbyId));
         game = (Game) getIntent().getSerializableExtra("game");
 
         saveInfo();
@@ -350,7 +350,7 @@ public class GameScreen extends AppCompatActivity {
      */
     private void gameStateLoop() {
         if (currentPlayerIsCardSzar() && game == null) {
-            quitGame("Something went terribly wrong...");
+            quitGame(getString(R.string.impossibleError));
         } else if (game == null) {
             return;
         }
@@ -439,7 +439,7 @@ public class GameScreen extends AppCompatActivity {
     }
 
     private void onGamestateError() {
-        quitGame("Something went horribly wrong...");
+        quitGame(getString(R.string.impossibleError));
     }
 
     private boolean currentPlayerIsCardSzar() {
@@ -461,7 +461,7 @@ public class GameScreen extends AppCompatActivity {
      */
     private void advanceGamestate() {
         if (game == null) {
-            quitGame("Something went terribly wrong...");
+            quitGame(getString(R.string.impossibleError));
         }
         if (!game.allPlayersReady()) {
             Handler handler = new Handler();
@@ -554,7 +554,7 @@ public class GameScreen extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.w("ERROR", "Failed to get game.", databaseError.toException());
+                Log.w("ERROR", getString(R.string.getGameFailure), databaseError.toException());
             }
         };
 
@@ -569,7 +569,7 @@ public class GameScreen extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.w("ERROR", "Failed to get blackCard.", databaseError.toException());
+                Log.w("ERROR", getString(R.string.getBlackCardFailure), databaseError.toException());
             }
         };
 
@@ -607,7 +607,7 @@ public class GameScreen extends AppCompatActivity {
         )));
         messageDialog.setResultListener(result -> {
             if (result.equals("Leave")) {
-                quitGame("You left the lobby.");
+                quitGame(getString(R.string.leftLobby));
             }
         });
         messageDialog.show(getSupportFragmentManager(), "gameLeave");
@@ -622,7 +622,7 @@ public class GameScreen extends AppCompatActivity {
             submitGame();
         }
         Intent intent = new Intent(this, Main.class);
-        intent.putExtra("message", message.length() > 0 ? message : "Your lobby couldn't be found.");
+        intent.putExtra("message", message.length() > 0 ? message : getString(R.string.cantFindLobby));
         startActivity(intent);
         finish();
     }

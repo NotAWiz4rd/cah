@@ -59,7 +59,7 @@ public class SearchLobby extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.w("ERROR", "Failed to get lobbies from server.", databaseError.toException());
+                Log.w("ERROR", getString(R.string.cantGetLobbies), databaseError.toException());
             }
         });
     }
