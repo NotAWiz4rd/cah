@@ -175,6 +175,7 @@ public class WaitingLobby extends AppCompatActivity {
                 intent.putExtra("lobbyId", lobbyId);
                 intent.putExtra("host", currentLobby.getHost());
                 startActivity(intent);
+                finish();
             }
         });
     }

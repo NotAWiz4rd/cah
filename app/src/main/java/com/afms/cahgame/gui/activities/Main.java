@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.afms.cahgame.R;
 import com.afms.cahgame.gui.components.MessageDialog;
+import com.afms.cahgame.gui.components.ScoreBoardDialog;
 import com.afms.cahgame.gui.components.SettingsDialog;
 import com.afms.cahgame.util.Database;
 import com.afms.cahgame.util.Util;
@@ -90,7 +91,8 @@ public class Main extends AppCompatActivity {
             startActivity(intent);
         });
         btn_piatest.setOnClickListener(event -> {
-
+            ScoreBoardDialog playerOverview = new ScoreBoardDialog();
+            playerOverview.show(getSupportFragmentManager(), "playerOverview");
         });
         btn_explore_decks.setOnClickListener(event -> {
             Toast.makeText(this, "clicked " + btn_explore_decks.toString(), Toast.LENGTH_SHORT).show();

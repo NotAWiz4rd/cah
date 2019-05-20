@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="6dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@android:color/transparent">
+
+        <ImageView
+            android:id="@+id/score_board_player_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:layout_alignParentStart="true"
+            android:background="@drawable/ic_person_black_24dp"/>
+        <TextView
+            android:id="@+id/score_board_player_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/helveticaneuelight"
+            android:layout_margin="8dp"
+            android:layout_toEndOf="@+id/score_board_player_icon"
+            android:text="Player Ölf"/>
+        <TextView
+            android:id="@+id/score_board_score_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:fontFamily="@font/helveticaneuelight"
+            android:text="SCORE:"
+            android:layout_toStartOf="@+id/score_board_player_score"/>
+        <TextView
+            android:id="@+id/score_board_player_score"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/helveticaneuelight"
+            android:layout_margin="8dp"
+            android:text="watermelon"
+            android:layout_alignParentEnd="true"/>
+
+    </RelativeLayout>
+
+</android.support.constraint.ConstraintLayout>
