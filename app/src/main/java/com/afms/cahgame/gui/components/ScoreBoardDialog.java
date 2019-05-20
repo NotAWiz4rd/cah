@@ -1,7 +1,6 @@
 package com.afms.cahgame.gui.components;
 
 import android.app.Dialog;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -17,11 +16,8 @@ import android.widget.ListView;
 
 import com.afms.cahgame.R;
 import com.afms.cahgame.game.Game;
-import com.afms.cahgame.game.Player;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Map;
 
 public class ScoreBoardDialog extends DialogFragment {
 
@@ -34,11 +30,13 @@ public class ScoreBoardDialog extends DialogFragment {
 
         playerList = view.findViewById(R.id.score_board_list);
         Game game = (Game) getArguments().getSerializable("game");
-        ScoreBoardListAdapter scoreBoardListAdapter = new ScoreBoardListAdapter(getContext(), new ArrayList<>(game.getPlayers().values()));
-        playerList.setAdapter(scoreBoardListAdapter);
+        if (game != null && game.getPlayers() != null) {
+            ScoreBoardListAdapter scoreBoardListAdapter = new ScoreBoardListAdapter(getContext(), new ArrayList<>(game.getPlayers().values()));
+            playerList.setAdapter(scoreBoardListAdapter);
+        }
 
         closeButton = view.findViewById(R.id.score_board_button_close);
-        closeButton.setOnClickListener( event -> {
+        closeButton.setOnClickListener(event -> {
             getDialog().dismiss();
         });
     }
