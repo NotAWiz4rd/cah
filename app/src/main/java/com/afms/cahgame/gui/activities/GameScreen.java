@@ -30,6 +30,8 @@ import com.afms.cahgame.game.Gamestate;
 import com.afms.cahgame.game.Player;
 import com.afms.cahgame.gui.components.CardListAdapter;
 import com.afms.cahgame.gui.components.FullSizeCard;
+import com.afms.cahgame.gui.components.MessageDialog;
+import com.afms.cahgame.gui.components.ResultListener;
 import com.afms.cahgame.gui.components.ScoreBoardDialog;
 import com.afms.cahgame.gui.components.SwipeResultListener;
 import com.afms.cahgame.util.Database;
@@ -41,6 +43,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -582,6 +585,19 @@ public class GameScreen extends AppCompatActivity {
     private boolean gamestateSameOrNewer(Gamestate newGamestate) {
         return (lastGamestate == null) || ((newGamestate.compareTo(lastGamestate) >= 0) && (newGamestate.compareTo(lastGamestate) != 3))
                 || (newGamestate.equals(Gamestate.ROUNDSTART) && lastGamestate.equals(Gamestate.ROUNDEND));
+    }
+
+    @Override
+    public void onBackPressed() {
+        MessageDialog messageDialog = MessageDialog.create(getString(R.string.message_leave_game), new ArrayList<>(Arrays.asList(
+            "Leave", "Cancel"
+        )));
+        messageDialog.setResultListener(result -> {
+            if(result.equals("Leave")){
+                quitGame("You closed the lobby.");
+            }
+        });
+        messageDialog.show(getSupportFragmentManager(), "gameLeave");
     }
 
     private void quitGame(String message) {
