@@ -48,14 +48,14 @@
     <string name="label_private_lobby">The selected lobby is private. You need to enter the correct password.</string>
     <string name="title_password">Please enter the password</string>
     <string name="hint_password">Enter password..</string>
-    <string name="label_private_lobby_wrong">Your entered password was incorrect. Please try again.</string>
+    <string name="label_private_lobby_wrong">The password you entered was incorrect. Please try again.</string>
     <string name="title_deck_select">Select the deck to play</string>
     <string name="label_deck">Deck:</string>
     <string name="label_hoststartgame">Start game</string>
-    <string name="label_nothost">Waiting for host</string>
+    <string name="label_nothost">Waiting for host.</string>
     <string name="score_board">Score Board</string>
-    <string name="play_card">Play a card</string>
-    <string name="waiting_for_others">Wait for the other players to choose a card.</string>
+    <string name="play_card">Play a card.</string>
+    <string name="waiting_for_others">Waiting for the other players to choose a card.</string>
     <string name="choose_winning_card">Choose the winning card.</string>
-    <string name="wait_for_winning_card">Wait for the car szar to choose the winning card.</string>
+    <string name="wait_for_winning_card">Waiting for cardszar to choose the winning card.</string>
 </resources>
