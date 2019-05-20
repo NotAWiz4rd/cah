@@ -2,13 +2,15 @@
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/layout_dialog_message"
-    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_dialog_deckselector"
+    android:layout_height="match_parent"
     android:background="@drawable/transparent_white_background"
     android:padding="8dp"
     android:layout_width="match_parent">
 
     <View
+        android:id="@+id/view"
         android:layout_width="wrap_content"
         android:layout_height="1dp"
         android:layout_gravity="fill_horizontal"
@@ -17,13 +19,13 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/label_dialog_message_title"
+        android:id="@+id/label_dialog_deckselector_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:text="@string/title_leave"
+        android:text="@string/title_deck_select"
         android:textSize="18sp"
         android:gravity="center"
         android:textColor="@color/cardTextColorWhite"
@@ -32,34 +34,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/label_dialog_message_text"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:text="@string/loremIpsum"
-        android:textSize="16sp"
-        android:gravity="center"
-        android:textColor="@color/cardTextColorWhite"
-        android:fontFamily="@font/helveticaneuelight"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/label_dialog_message_title" />
 
-    <LinearLayout
-        android:id="@+id/layout_dialog_message_buttons"
+    <ListView
+        android:id="@+id/list_dialog_deckselector"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:orientation="horizontal"
-        android:gravity="center"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/label_dialog_message_text" />
+        app:layout_constraintTop_toBottomOf="@+id/label_dialog_deckselector_title" />
 
 
 </android.support.constraint.ConstraintLayout>

@@ -23,6 +23,7 @@ import com.afms.cahgame.util.Util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -55,14 +56,14 @@ public class LobbyListAdapter extends ArrayAdapter<Lobby> {
             item_lobby_select_lock.setVisibility(View.INVISIBLE);
         }
 
-        item_lobby_select_name.setText(lobby.getId());
-        item_lobby_select_host.setText(lobby.getHost());
+        item_lobby_select_name.setText(String.format("%s %s", getContext().getResources().getString(R.string.label_name), Objects.requireNonNull(lobby).getId()));
+        item_lobby_select_host.setText(String.format("%s %s", getContext().getResources().getString(R.string.host), lobby.getHost()));
         item_lobby_select_count_handcard.setText(String.valueOf(lobby.getHandcardCount()));
         int currentPlayerCount = lobby.getPlayers().size();
         item_lobby_select_count_maxplayer.setText(String.format("%s / %s", currentPlayerCount, String.valueOf(lobby.getMaxPlayers())));
 
         btn_item_lobby_select_join.setOnClickListener(e -> {
-            if (!lobby.getPassword().equals("")) {
+            if(lobby != null && !lobby.getPassword().equals("")){
                 FragmentManager fragmentManager = ((AppCompatActivity) getContext()).getSupportFragmentManager();
                 final PasswordDialog[] passwordDialog = {PasswordDialog.create(getContext(), new ArrayList<>(Arrays.asList("Join", "Cancel")))};
                 resultListener = result -> {
@@ -75,8 +76,8 @@ public class LobbyListAdapter extends ArrayAdapter<Lobby> {
                             intent.putExtra("lobbyId", lobby.getId());
                             getContext().startActivity(intent);
                         } else {
-                            fragmentManager.beginTransaction().remove(fragmentManager.findFragmentByTag("passwordDialog")).commit(); // todo check that this is not null!
-                            passwordDialog[0] = PasswordDialog.create(getContext().getResources().getString(R.string.title_password), getContext().getResources().getString(R.string.label_private_lobby_wrong), new ArrayList<>(Arrays.asList("Join", "Cancel")));
+                            fragmentManager.beginTransaction().remove(fragmentManager.findFragmentByTag("passwordDialog")).commit();
+                            passwordDialog[0] = PasswordDialog.create(getContext().getResources().getString(R.string.title_password),getContext().getResources().getString(R.string.label_private_lobby_wrong), new ArrayList<>(Arrays.asList("Join", "Cancel")));
                             passwordDialog[0].setResultListener(resultListener);
                             passwordDialog[0].show(fragmentManager, "passwordDialog");
                         }

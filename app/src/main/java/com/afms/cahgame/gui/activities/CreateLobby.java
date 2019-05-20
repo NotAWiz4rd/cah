@@ -14,6 +14,8 @@ import android.widget.Toast;
 import com.afms.cahgame.R;
 import com.afms.cahgame.data.Colour;
 import com.afms.cahgame.game.Lobby;
+import com.afms.cahgame.gui.components.DeckSelectorDialog;
+import com.afms.cahgame.gui.components.ResultListener;
 import com.afms.cahgame.gui.components.ValueSelector;
 import com.afms.cahgame.util.Database;
 import com.afms.cahgame.util.Util;
@@ -49,6 +51,8 @@ public class CreateLobby extends AppCompatActivity {
 
     private MutableLiveData<Integer> value_player_count = new MutableLiveData<>();
     private MutableLiveData<Integer> value_handcard_count = new MutableLiveData<>();
+
+    private DeckSelectorDialog deckSelectorDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +98,8 @@ public class CreateLobby extends AppCompatActivity {
         }
         value_selector_handcard_count = ValueSelector.create(getString(R.string.select_handcard_count), handcard_count_values);
         value_selector_handcard_count.setResultListener(result -> value_handcard_count.setValue(Integer.valueOf(result)));
+
+        deckSelectorDialog = DeckSelectorDialog.create(getString(R.string.title_deck_select));
     }
 
     private void initializeUIEvents() {
@@ -124,12 +130,16 @@ public class CreateLobby extends AppCompatActivity {
             intent.putExtra("lobbyId", lobbyId);
             startActivity(intent);
         });
-        btn_select_deck.setOnClickListener(event -> Toast.makeText(this, "clicked " + btn_select_deck.toString(), Toast.LENGTH_SHORT).show());
+        btn_select_deck.setOnClickListener(event -> deckSelectorDialog.show(getSupportFragmentManager(), "deck_selector"));
         btn_back.setOnClickListener(event -> {
             finish();
         });
         input_player_count.setOnClickListener(event -> value_selector_player_count.show(getSupportFragmentManager(), "value_selector_player_count"));
         input_handcard_count.setOnClickListener(event -> value_selector_handcard_count.show(getSupportFragmentManager(), "value_selector_handcard_count"));
+
+        deckSelectorDialog.setResultListener(result -> {
+            input_select_deck.setText(result);
+        });
     }
 
     private void createSampleDeck() {

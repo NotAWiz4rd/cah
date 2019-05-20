@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/item_lobby_select_layout"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:descendantFocusability="blocksDescendants">
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:background="@drawable/transparent_black_background"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/item_deckselector_img_blackcard"
+            android:layout_width="24dp"
+            android:layout_height="32dp"
+            android:layout_marginEnd="4dp"
+            android:layout_toStartOf="@+id/item_deckselector_countBlack"
+            android:layout_centerVertical="true"
+            app:srcCompat="@drawable/cardblack" />
+
+        <TextView
+            android:id="@+id/item_deckselector_countBlack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="0dp"
+            android:layout_marginEnd="10dp"
+            android:layout_toStartOf="@+id/item_deckselector_img_whitecard"
+            android:layout_centerVertical="true"
+            android:fontFamily="@font/helveticaneuebold"
+            android:text="50"
+            android:textSize="16sp"
+            tools:ignore="HardcodedText" />
+
+        <ImageView
+            android:id="@+id/item_deckselector_img_whitecard"
+            android:layout_width="24dp"
+            android:layout_height="32dp"
+            android:layout_marginEnd="4dp"
+            android:layout_toStartOf="@+id/item_deckselector_countWhite"
+            android:layout_centerVertical="true"
+            app:srcCompat="@drawable/card"/>
+
+        <TextView
+            android:id="@+id/item_deckselector_countWhite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="0dp"
+            android:fontFamily="@font/helveticaneuebold"
+            android:text="50"
+            android:textSize="16sp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            tools:ignore="HardcodedText" />
+
+
+        <TextView
+            android:id="@+id/item_deckselector_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/helveticaneuebold"
+            android:text="@string/label_name"
+            android:layout_centerVertical="true"
+            android:textSize="16sp" />
+
+    </RelativeLayout>
+
+</android.support.constraint.ConstraintLayout>
