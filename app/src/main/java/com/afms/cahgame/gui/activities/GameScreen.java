@@ -56,6 +56,8 @@ public class GameScreen extends AppCompatActivity {
     private String blackCardText = "";
     private DatabaseReference gameReference;
     private DatabaseReference blackCardTextReference;
+    ValueEventListener gameListener;
+    ValueEventListener blackCardListener;
 
     private SharedPreferences settings;
 
@@ -515,22 +517,7 @@ public class GameScreen extends AppCompatActivity {
         gameReference = database.getReference(lobbyId + "-game");
         blackCardTextReference = database.getReference(lobbyId + "-game/currentBlackCard/text");
 
-        blackCardTextReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                blackCardText = dataSnapshot.getValue(String.class);
-                if (blackCardText != null) {
-                    changeBlackCardText(blackCardText);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.w("ERROR", "Failed to get blackCard.", databaseError.toException());
-            }
-        });
-
-        gameReference.addValueEventListener(new ValueEventListener() {
+        gameListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Game tempGame = dataSnapshot.getValue(Game.class);
@@ -569,7 +556,25 @@ public class GameScreen extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 Log.w("ERROR", "Failed to get game.", databaseError.toException());
             }
-        });
+        };
+
+        blackCardListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                blackCardText = dataSnapshot.getValue(String.class);
+                if (blackCardText != null) {
+                    changeBlackCardText(blackCardText);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.w("ERROR", "Failed to get blackCard.", databaseError.toException());
+            }
+        };
+
+        gameReference.addValueEventListener(gameListener);
+        blackCardTextReference.addValueEventListener(blackCardListener);
 
         // initial game submit by host
         if (game != null && game.getGamestate().equals(Gamestate.ROUNDSTART) && hostName != null
@@ -584,6 +589,9 @@ public class GameScreen extends AppCompatActivity {
         if (currentPlayerIsCardSzar()) {
             gameReference.removeValue();
             Database.removeLobby(lobbyId);
+            gameReference.removeEventListener(gameListener);
+            blackCardTextReference.removeEventListener(blackCardListener);
+            finish();
         }
     }
 
@@ -606,6 +614,9 @@ public class GameScreen extends AppCompatActivity {
     }
 
     private void quitGame(String message) {
+        gameReference.removeEventListener(gameListener);
+        blackCardTextReference.removeEventListener(blackCardListener);
+
         if (game != null) {
             game.removePlayer(player);
             submitGame();

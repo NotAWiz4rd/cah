@@ -70,6 +70,8 @@ public class WaitingLobby extends AppCompatActivity {
                 Intent intent = new Intent(context, Main.class);
                 intent.putExtra("message", "Couldn't join the lobby.");
                 startActivity(intent);
+                lobbyReference.removeEventListener(valueEventListener);
+                finish();
                 return;
             }
             Util.saveName(settings, playerName);
@@ -104,14 +106,19 @@ public class WaitingLobby extends AppCompatActivity {
                         Intent intent = new Intent(context, GameScreen.class);
                         intent.putExtra("lobbyId", lobbyId);
                         intent.putExtra("host", currentLobby.getHost());
+                        currentLobby = null;
+                        lobbyReference.removeEventListener(valueEventListener);
                         startActivity(intent);
+                        finish();
                     }
                 } else if (tempLobby == null) {
                     if (currentLobby != null && currentLobby.getPlayers().contains(playerName)) {
                         currentLobby = null;
+                        lobbyReference.removeEventListener(valueEventListener);
                         Intent intent = new Intent(context, Main.class);
                         intent.putExtra("message", "The lobby you were trying to reach is not available anymore.");
                         startActivity(intent);
+                        finish();
                     }
                 }
             }
@@ -130,7 +137,7 @@ public class WaitingLobby extends AppCompatActivity {
         label_waiting_lobby_count_maxplayer.setText(String.format("%s / %s", currentLobby.getPlayers().size(), currentLobby.getMaxPlayers()));
         label_waiting_lobby_count_handcard.setText(String.valueOf(currentLobby.getHandcardCount()));
 
-        if(currentLobby.getHost().equals(playerName)){
+        if (currentLobby.getHost().equals(playerName)) {
             btn_waiting_lobby_ready.setText(getString(R.string.label_hoststartgame));
             btn_waiting_lobby_ready.setBackgroundResource(R.drawable.button_background_black);
         } else {
@@ -162,7 +169,7 @@ public class WaitingLobby extends AppCompatActivity {
         });
 
         btn_waiting_lobby_ready.setOnClickListener(event -> {
-            if(currentLobby.getHost().equals(playerName)){
+            if (currentLobby.getHost().equals(playerName)) {
                 if (currentLobby.getPlayers().size() < Game.MIN_PLAYERS) {
                     Toast.makeText(context, "There are not enough players to start the game.", Toast.LENGTH_LONG).show();
                     return;
