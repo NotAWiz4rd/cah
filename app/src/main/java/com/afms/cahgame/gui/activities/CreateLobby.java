@@ -12,15 +12,16 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.afms.cahgame.R;
+import com.afms.cahgame.data.Card;
 import com.afms.cahgame.data.Colour;
 import com.afms.cahgame.game.Lobby;
 import com.afms.cahgame.gui.components.DeckSelectorDialog;
-import com.afms.cahgame.gui.components.ResultListener;
 import com.afms.cahgame.gui.components.ValueSelector;
 import com.afms.cahgame.util.Database;
 import com.afms.cahgame.util.Util;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class CreateLobby extends AppCompatActivity {
 
@@ -61,7 +62,7 @@ public class CreateLobby extends AppCompatActivity {
         settings = getSharedPreferences("Preferences", MODE_PRIVATE);
         hideUI();
         createCards();
-        createSampleDeck();
+        createAllCardsDeck();
         initializeUIElements();
         initializeUIEvents();
         initializeVariables();
@@ -105,7 +106,7 @@ public class CreateLobby extends AppCompatActivity {
     private void initializeUIEvents() {
         btn_create_lobby.setOnClickListener(event -> {
             String lobbyId = input_lobby_name.getText().toString();
-            String deckName = input_select_deck.getText().toString().equals("") ? "standarddeck" : input_select_deck.getText().toString();
+            String deckName = input_select_deck.getText().toString().equals("") ? "allcardsdeck" : input_select_deck.getText().toString();
 
             if (Database.getLobbies().containsKey(lobbyId)) {
                 Toast.makeText(this, getString(R.string.lobbyNameExists), Toast.LENGTH_LONG).show();
@@ -143,92 +144,18 @@ public class CreateLobby extends AppCompatActivity {
         });
     }
 
-    private void createSampleDeck() {
-        if (Util.getDataDeckFromName("standarddeck") != null) {
+    /**
+     * Creates a deck with all available cards.
+     */
+    private void createAllCardsDeck() {
+        if (Util.getDataDeckFromName("allcardsdeck") != null) {
             return;
         }
-        com.afms.cahgame.data.Deck deck = new com.afms.cahgame.data.Deck("standarddeck");
-        deck.addCard(1);
-        deck.addCard(2);
-        deck.addCard(3);
-        deck.addCard(4);
-        deck.addCard(5);
-        deck.addCard(6);
-        deck.addCard(7);
-        deck.addCard(0);
-        deck.addCard(8);
-        deck.addCard(9);
-        deck.addCard(10);
-        deck.addCard(11);
-        deck.addCard(12);
-        deck.addCard(13);
-        deck.addCard(14);
-        deck.addCard(15);
-        deck.addCard(16);
-        deck.addCard(17);
-        deck.addCard(18);
-        deck.addCard(19);
-        deck.addCard(20);
-        deck.addCard(21);
-        deck.addCard(22);
-        deck.addCard(23);
-        deck.addCard(24);
-        deck.addCard(25);
-        deck.addCard(26);
-        deck.addCard(27);
-        deck.addCard(28);
-        deck.addCard(29);
-        deck.addCard(30);
-        deck.addCard(31);
-        deck.addCard(32);
-        deck.addCard(33);
-        deck.addCard(34);
-        deck.addCard(35);
-        deck.addCard(36);
-        deck.addCard(37);
-        deck.addCard(38);
-        deck.addCard(39);
-        deck.addCard(40);
-        deck.addCard(99);
-        deck.addCard(109);
-        deck.addCard(121);
-        deck.addCard(240);
-        deck.addCard(400);
-        deck.addCard(320);
-        deck.addCard(301);
-        deck.addCard(299);
-        deck.addCard(287);
-        deck.addCard(76);
-        deck.addCard(322);
-        deck.addCard(288);
-        deck.addCard(77);
-        deck.addCard(276);
-        deck.addCard(131);
-        deck.addCard(311);
-        deck.addCard(255);
-        deck.addCard(350);
-        deck.addCard(265);
-        deck.addCard(340);
-        deck.addCard(412);
-        deck.addCard(413);
-        deck.addCard(414);
-        deck.addCard(415);
-        deck.addCard(416);
-        deck.addCard(417);
-        deck.addCard(418);
-        deck.addCard(419);
-        deck.addCard(420);
-        deck.addCard(421);
-        deck.addCard(422);
-        deck.addCard(423);
-        deck.addCard(424);
-        deck.addCard(425);
-        deck.addCard(426);
-        deck.addCard(427);
-        deck.addCard(428);
-        deck.addCard(429);
-        deck.addCard(430);
-        deck.addCard(431);
+        com.afms.cahgame.data.Deck deck = new com.afms.cahgame.data.Deck("allcardsdeck");
+        List<Card> allCards = Database.getCards();
+        for (int i = 0; i < allCards.size(); i++) {
+            deck.addCard(allCards.get(i).getId());
+        }
         Database.addDeck(deck);
     }
 
