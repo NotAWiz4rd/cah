@@ -33,7 +33,6 @@
         android:layout_marginBottom="8dp"
         android:fontFamily="@font/helveticaneuebold"
         android:justificationMode="inter_word"
-        android:text="@string/loremIpsum"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/cardIcon"

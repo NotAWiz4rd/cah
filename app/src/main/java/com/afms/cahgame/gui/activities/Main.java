@@ -28,7 +28,6 @@ public class Main extends AppCompatActivity {
     private Button btn_create_lobby;
     private Button btn_search_lobby;
     private Button btn_explore_decks;
-    private Button btn_piatest;
     private ImageButton btn_settings;
 
     private SharedPreferences settings;
@@ -67,8 +66,6 @@ public class Main extends AppCompatActivity {
         btn_search_lobby = findViewById(R.id.btn_main_searchLobby);
         btn_explore_decks = findViewById(R.id.btn_main_exploreDecks);
         btn_settings = findViewById(R.id.btn_main_settings);
-        btn_piatest = findViewById(R.id.btn_main_piatest);
-
 
         settingsDialog = new SettingsDialog();
         messageDialog = MessageDialog.create(getResources().getString(R.string.title_quit), new ArrayList<>(Arrays.asList("Ok", "Cancel")));
@@ -89,9 +86,7 @@ public class Main extends AppCompatActivity {
             Intent intent = new Intent(this, SearchLobby.class);
             startActivity(intent);
         });
-        btn_piatest.setOnClickListener(event -> {
 
-        });
         btn_explore_decks.setOnClickListener(event -> {
             Toast.makeText(this, "clicked " + btn_explore_decks.toString(), Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(this, ExploreDecks.class);
@@ -109,16 +104,15 @@ public class Main extends AppCompatActivity {
             if (playerNameView.getText().toString().equals("")) {
                 playerName = Util.getRandomName();
                 Util.saveName(settings, playerName);
-            } else if (playerNameView.getText().toString().equals("#godmode#")){
-                if(Util.godMode){
+            } else if (playerNameView.getText().toString().equals("#godmode#")) {
+                if (Util.godMode) {
                     Util.setGodMode(false);
                     Toast.makeText(this, "Disabled god mode", Toast.LENGTH_SHORT).show();
                 } else {
                     Util.setGodMode(true);
                     Toast.makeText(this, "Enabled god mode", Toast.LENGTH_SHORT).show();
                 }
-            }
-            else {
+            } else {
                 playerName = playerNameView.getText().toString();
                 Util.saveName(settings, playerName);
             }

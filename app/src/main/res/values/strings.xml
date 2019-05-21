@@ -1,16 +1,8 @@
 <resources>
     <string name="app_name">CAH - Game</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
-    <string name="loremIpsum">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.</string>
     <string name="selectCardHint">Select the card your want to play.</string>
     <string name="gameName">Cards Against Humanity</string>
     <string name="close">Close</string>
-    <string-array name="sample_card_texts">
-        <item>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.</item>
-        <item>At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</item>
-        <item>Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assum. </item>
-        <item>Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.</item>
-    </string-array>
     <string name="title_activity_game_screen">GameScreen</string>
     <string name="title_activity_lobby">LobbyActivity</string>
     <string name="delete">Delete</string>
