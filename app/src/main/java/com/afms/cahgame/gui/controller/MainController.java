@@ -21,7 +21,7 @@ public class MainController {
     private Activity mainActivity;
     private FrameLayout mainFrame;
 
-    // user img_card_white selection
+    // user card selection
     private ListView userSelectionListView;
     private int selectedListViewPosition;
     private CardListAdapter userSelectionListAdapter;
@@ -60,19 +60,19 @@ public class MainController {
             selectedListViewPosition = position;
             Toast.makeText(mainActivity, String.valueOf(selectedListViewPosition), Toast.LENGTH_SHORT).show();
             Card card = (Card) parent.getItemAtPosition(selectedListViewPosition);
-            //mainFrame.addView(getFullSizeCardInstance(img_card_white));
+            //mainFrame.addView(getFullSizeCardInstance(card));
         });
     }
 
     // get instances
 
 /*
-    public FullSizeCard getFullSizeCardInstance(Card img_card_white) {
+    public FullSizeCard getFullSizeCardInstance(Card card) {
         Log.d("Test", "Test");
-        if (fullSizeCardList.stream().anyMatch(f -> f.getCard().equals(img_card_white))) {
-            return fullSizeCardList.stream().filter(f -> f.getCard().equals(img_card_white)).findFirst().get();
+        if (fullSizeCardList.stream().anyMatch(f -> f.getCard().equals(card))) {
+            return fullSizeCardList.stream().filter(f -> f.getCard().equals(card)).findFirst().get();
         } else {
-            FullSizeCard returnValue = new FullSizeCard(mainActivity, this, img_card_white);
+            FullSizeCard returnValue = new FullSizeCard(mainActivity, this, card);
             fullSizeCardList.add(returnValue);
             return returnValue;
         }
