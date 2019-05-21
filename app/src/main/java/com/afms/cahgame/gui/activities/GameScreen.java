@@ -428,7 +428,7 @@ public class GameScreen extends AppCompatActivity {
     private void onRoundEndGamestate() {
         playedCardsAreShown = false;
         showPlayedCardsAllowed = false;
-        navigationBarText.setText(R.string.waiting_for_others);
+        navigationBarText.setText(R.string.label_nothost);
         setPlayerReady();
         // todo notify player of winning card (only if player is not cardszar)
 
@@ -540,6 +540,7 @@ public class GameScreen extends AppCompatActivity {
                         player = new Player(playerName);
                         game = dataSnapshot.getValue(Game.class);
                         game.addPlayer(player);
+                        navigationBarText.setText(R.string.label_nothost);
                         updatePlayer();
                         submitGame();
                     }
