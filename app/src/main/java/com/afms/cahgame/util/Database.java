@@ -159,6 +159,9 @@ public class Database {
     public static void removeLobby(String lobbyId) {
         lobbies.remove(lobbyId);
         lobbiesReference.setValue(lobbies);
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference gameReference = database.getReference(lobbyId + "-game");
+        gameReference.removeValue();
     }
 
     public static String joinLobby(String lobbyId, String playername) {
