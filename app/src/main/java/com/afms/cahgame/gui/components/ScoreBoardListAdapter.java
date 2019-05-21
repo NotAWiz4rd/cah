@@ -33,7 +33,7 @@ public class ScoreBoardListAdapter extends ArrayAdapter<Player> {
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         Player player = getItem(position);
         if (convertView == null) {
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_game_player, parent, false);
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_list_game_player, parent, false);
         }
 
         TextView playerName = convertView.findViewById(R.id.score_board_player_name);

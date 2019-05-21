@@ -28,7 +28,7 @@ public class DeckListAdapter extends ArrayAdapter<Deck> {
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         Deck deck = getItem(position);
         if (convertView == null) {
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_deckselector, parent, false);
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_list_deck, parent, false);
         }
 
         TextView item_deckselector_name = convertView.findViewById(R.id.item_deckselector_name);

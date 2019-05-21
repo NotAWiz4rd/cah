@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_height="wrap_content"
-    android:background="@drawable/transparent_white_background"
+    android:background="@drawable/bg_white_transparent_radius_10dp"
     android:layout_width="match_parent">
 
     <View
@@ -49,7 +49,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:background="@drawable/input_background_black"
+        android:background="@drawable/bg_input_black_radius_10dp"
         android:fontFamily="@font/helveticaneuelight"
         android:gravity="center"
         android:padding="10dp"
@@ -66,7 +66,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:background="@drawable/button_random_black"
+        android:background="@drawable/button_icon_random_radius_10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/input_settings_playername"
         app:layout_constraintTop_toTopOf="@+id/input_settings_playername" />
@@ -80,7 +80,7 @@
         android:layout_marginTop="32dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        android:background="@drawable/button_background_black"
+        android:background="@drawable/bg_black_radius_10dp"
         android:padding="10dp"
         android:text="@string/label_save"
         android:textColor="@android:color/white"

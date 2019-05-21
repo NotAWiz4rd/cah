@@ -7,12 +7,12 @@
         </shape>
     </item>
     <item
-        android:drawable="@drawable/ic_group_white_24dp"
-        android:top="5dp"
-        android:bottom="5dp"
-        android:left="5dp"
-        android:right="5dp"
-        android:height="35dp"
-        android:width="35dp">
+        android:drawable="@drawable/vector_settings_24dp"
+        android:top="10dp"
+        android:bottom="10dp"
+        android:left="10dp"
+        android:right="10dp"
+        android:height="45dp"
+        android:width="45dp">
     </item>
 </layer-list>

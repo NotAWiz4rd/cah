@@ -173,7 +173,7 @@ public class Database {
     //............................Cards and Decks..................................................
 
     /**
-     * Adds the specified card to the deck.
+     * Adds the specified img_card_white to the deck.
      *
      * @param cardId   CardId.
      * @param deckName Name of the deck.
@@ -188,32 +188,32 @@ public class Database {
     }
 
     /**
-     * Updates text of the specified card.
+     * Updates text of the specified img_card_white.
      *
      * @param cardId      CardId.
-     * @param updatedText The new text of the card.
+     * @param updatedText The new text of the img_card_white.
      */
     public static void updateCard(Integer cardId, String updatedText) {
         updateCard(cardId, updatedText, null);
     }
 
     /**
-     * Updates colour of the specified card.
+     * Updates colour of the specified img_card_white.
      *
      * @param cardId        CardId.
-     * @param updatedColour The new colour of the card.
+     * @param updatedColour The new colour of the img_card_white.
      */
     public static void updateCard(Integer cardId, Colour updatedColour) {
         updateCard(cardId, null, updatedColour);
     }
 
     /**
-     * Updates a card with new values. Adds a new card with the given values if the cardId doesnt
+     * Updates a img_card_white with new values. Adds a new img_card_white with the given values if the cardId doesnt
      * exist.
      *
      * @param cardId        CardId.
-     * @param updatedText   The new text for the card.
-     * @param updatedColour The new colour of the card.
+     * @param updatedText   The new text for the img_card_white.
+     * @param updatedColour The new colour of the img_card_white.
      */
     public static void updateCard(Integer cardId, String updatedText, Colour updatedColour) {
         Card card = Util.getDataCardFromId(cardId);
@@ -234,9 +234,9 @@ public class Database {
     }
 
     /**
-     * Deletes a card.
+     * Deletes a img_card_white.
      *
-     * @param cardId CardId of the card which is to be deleted.
+     * @param cardId CardId of the img_card_white which is to be deleted.
      */
     public static void deleteCard(Integer cardId) {
         Card card = Util.getDataCardFromId(cardId);
@@ -247,10 +247,10 @@ public class Database {
     }
 
     /**
-     * Creates a new card.
+     * Creates a new img_card_white.
      *
-     * @param text   Text of the card.
-     * @param colour Colour of the card.
+     * @param text   Text of the img_card_white.
+     * @param colour Colour of the img_card_white.
      */
     public static Card createNewCard(String text, Colour colour) {
         boolean cardExists = cards.stream().anyMatch(card -> card.getText().equals(text));
@@ -265,10 +265,10 @@ public class Database {
     }
 
     /**
-     * Removes the given card from the given deck.
+     * Removes the given img_card_white from the given deck.
      *
      * @param deckName Name of the deck.
-     * @param cardId   CardId of the card which is to be removed.
+     * @param cardId   CardId of the img_card_white which is to be removed.
      */
     public static void removeCardFromDeck(String deckName, Integer cardId) {
         Deck deck = Util.getDataDeckFromName(deckName);
@@ -358,7 +358,7 @@ public class Database {
     }
 
     /**
-     * Setter card.
+     * Setter img_card_white.
      *
      * @param cards Cards.
      */

@@ -42,7 +42,7 @@ public class LobbyListAdapter extends ArrayAdapter<Lobby> {
         settings = getContext().getSharedPreferences("Preferences", MODE_PRIVATE);
         Lobby lobby = getItem(position);
         if (convertView == null) {
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_lobby_select, parent, false);
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_list_lobby, parent, false);
         }
 
         ImageView item_lobby_select_lock = convertView.findViewById(R.id.item_lobby_select_lock);

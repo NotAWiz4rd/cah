@@ -2,7 +2,7 @@
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@drawable/card_background_small_black"
+    android:background="@drawable/bg_card_black_radius_10dp"
     android:layout_height="wrap_content"
     android:layout_margin="16dp">
 
@@ -11,7 +11,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:src="@drawable/cardblack"
+        android:src="@drawable/img_card_black"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/blackCardText" />
 

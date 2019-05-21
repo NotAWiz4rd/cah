@@ -55,7 +55,7 @@ public class ScoreBoardDialog extends DialogFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.component_dialog_score_board, container);
+        return inflater.inflate(R.layout.dialog_score_board, container);
     }
 
     public ListView getPlayerList() {

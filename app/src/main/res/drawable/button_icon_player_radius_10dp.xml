@@ -7,12 +7,12 @@
         </shape>
     </item>
     <item
-        android:drawable="@drawable/ic_autorenew_black_24dp"
-        android:top="10dp"
-        android:bottom="10dp"
-        android:left="10dp"
-        android:right="10dp"
-        android:height="32dp"
-        android:width="32dp">
+        android:drawable="@drawable/vector_group_24dp"
+        android:top="5dp"
+        android:bottom="5dp"
+        android:left="5dp"
+        android:right="5dp"
+        android:height="35dp"
+        android:width="35dp">
     </item>
 </layer-list>

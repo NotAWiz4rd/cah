@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<android.support.constraint.ConstraintLayout xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/score_board_layout"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/layout_dialog_deckselector"
-    android:layout_height="match_parent"
-    android:background="@drawable/transparent_white_background"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:padding="8dp"
-    android:layout_width="match_parent">
+    android:background="@drawable/bg_white_transparent_radius_10dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <View
-        android:id="@+id/view"
         android:layout_width="wrap_content"
         android:layout_height="1dp"
         android:layout_gravity="fill_horizontal"
@@ -19,13 +17,13 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/label_dialog_deckselector_title"
+        android:id="@+id/score_board_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:text="@string/title_deck_select"
+        android:text="@string/score_board"
         android:textSize="18sp"
         android:gravity="center"
         android:textColor="@color/cardTextColorWhite"
@@ -34,19 +32,26 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-
     <ListView
-        android:id="@+id/list_dialog_deckselector"
+        android:id="@+id/score_board_list"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/label_dialog_deckselector_title" />
+        app:layout_constraintTop_toBottomOf="@+id/score_board_title" />
 
+    <Button
+        android:id="@+id/score_board_button_close"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_black_radius_10dp"
+        android:fontFamily="@font/helveticaneuebold"
+        android:text="@string/close"
+        android:textColor="@android:color/white"
+        app:layout_constraintTop_toBottomOf="@id/score_board_list"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

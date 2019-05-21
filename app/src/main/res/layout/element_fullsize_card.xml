@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:id="@+id/fullSizeCardLayout"
     android:clickable="true"
-    android:background="@drawable/card_background_white"
+    android:background="@drawable/bg_card_white_radius_20dp"
     android:orientation="horizontal">
 
     <android.support.constraint.ConstraintLayout

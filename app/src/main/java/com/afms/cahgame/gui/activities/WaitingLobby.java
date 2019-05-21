@@ -139,10 +139,10 @@ public class WaitingLobby extends AppCompatActivity {
 
         if (currentLobby.getHost().equals(playerName)) {
             btn_waiting_lobby_ready.setText(getString(R.string.label_hoststartgame));
-            btn_waiting_lobby_ready.setBackgroundResource(R.drawable.button_background_black);
+            btn_waiting_lobby_ready.setBackgroundResource(R.drawable.bg_black_radius_10dp);
         } else {
             btn_waiting_lobby_ready.setText(getString(R.string.label_nothost));
-            btn_waiting_lobby_ready.setBackgroundResource(R.drawable.button_background_black_disabled);
+            btn_waiting_lobby_ready.setBackgroundResource(R.drawable.bg_grey_radius_10dp);
         }
     }
 

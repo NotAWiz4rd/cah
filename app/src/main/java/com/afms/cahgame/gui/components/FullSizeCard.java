@@ -70,7 +70,7 @@ public class FullSizeCard extends ConstraintLayout {
     }
 
     public void addOptionButton(String label, OnClickListener onClickListener) {
-        Button btn = (Button) LayoutInflater.from(getContext()).inflate(R.layout.component_dialog_selector_button, null);
+        Button btn = (Button) LayoutInflater.from(getContext()).inflate(R.layout.dialog_selector_button, null);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         params.setMargins(6, 6, 6, 6);
         btn.setLayoutParams(params);
@@ -88,13 +88,13 @@ public class FullSizeCard extends ConstraintLayout {
         swipeStates = new ArrayList<>();
         swipeStates.add(SWIPE_DISABLE);
 
-        LayoutInflater.from(context).inflate(R.layout.fullsize_card_options, this);
+        LayoutInflater.from(context).inflate(R.layout.element_fullsize_card_buttonbar, this);
         setOnClickListener(v -> {
         });
         constraintLayout = findViewById(R.id.optionsBackground);
         fullSizeCardOptionLayout = findViewById(R.id.optionLayout);
         fullSizeCardLayout = findViewById(R.id.fullSizeCardLayout);
-        fullSizeCardLayout.setBackgroundResource(card.getColour() == Colour.WHITE ? R.drawable.card_background_white : R.drawable.card_background_black);
+        fullSizeCardLayout.setBackgroundResource(card.getColour() == Colour.WHITE ? R.drawable.bg_card_white_radius_20dp : R.drawable.bg_card_black_radius_20dp);
         fullSizeCardText = findViewById(R.id.fullSizeCardText);
         fullSizeCardText.setTextColor(card.getColour() == Colour.WHITE ? ContextCompat.getColor(context, R.color.cardTextColorWhite) : Color.WHITE);
         fullSizeCardText.setText(card.getText());

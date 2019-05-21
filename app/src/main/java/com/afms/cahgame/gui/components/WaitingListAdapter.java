@@ -31,7 +31,7 @@ public class WaitingListAdapter extends ArrayAdapter<String> {
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         String player = getItem(position);
         if (convertView == null) {
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_waiting_players, parent, false);
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_list_lobby_player, parent, false);
         }
 
         ImageView img_item_waiting_players_host = convertView.findViewById(R.id.img_item_waiting_players_host);

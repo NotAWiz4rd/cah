@@ -46,7 +46,7 @@ public class Util {
     }};
 
     /**
-     * Converts a dataDeck to a GameDeck by getting all the card data from the database.
+     * Converts a dataDeck to a GameDeck by getting all the img_card_white data from the database.
      *
      * @param dataDeck The dataDeck.
      * @return The newly created GameDeck.

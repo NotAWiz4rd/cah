@@ -27,7 +27,7 @@
         android:layout_height="match_parent"
         android:id="@+id/mainFrame">
 
-        <include layout="@layout/list_card_select" />
+        <include layout="@layout/element_list_card_select" />
 
     </FrameLayout>
 

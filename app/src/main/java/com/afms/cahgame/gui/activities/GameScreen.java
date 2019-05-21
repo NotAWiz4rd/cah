@@ -117,9 +117,9 @@ public class GameScreen extends AppCompatActivity {
         playedBlackCardText.setText("");
 
         playedWhiteCard = new FullSizeCard(this, new Card(Colour.WHITE, "test"));
-        userSelectionLayout = (ConstraintLayout) getLayoutInflater().inflate(R.layout.list_card_select, gameScreenLayout, false);
+        userSelectionLayout = (ConstraintLayout) getLayoutInflater().inflate(R.layout.element_list_card_select, gameScreenLayout, false);
         userSelectionListView = userSelectionLayout.findViewById(R.id.cardSelectList);
-        waitingScreen = (ConstraintLayout) getLayoutInflater().inflate(R.layout.waiting_screen, gameScreenLayout, false);
+        waitingScreen = (ConstraintLayout) getLayoutInflater().inflate(R.layout.element_waiting_screen, gameScreenLayout, false);
         blackCardIcon = waitingScreen.findViewById(R.id.waiting_screen_blackCard);
         whiteCardIcon = waitingScreen.findViewById(R.id.waiting_screen_whiteCard);
 
@@ -424,7 +424,7 @@ public class GameScreen extends AppCompatActivity {
         showPlayedCardsAllowed = false;
         navigationBarText.setText(R.string.waiting_for_others);
         setPlayerReady();
-        // todo notify player of winning card (only if player is not cardszar), show updated scores
+        // todo notify player of winning img_card_white (only if player is not cardszar), show updated scores
 
         if (currentPlayerIsCardSzar() && game.allPlayersReady()) {
             if (!doneRoundEnd) {
@@ -635,7 +635,7 @@ public class GameScreen extends AppCompatActivity {
     }
 
     /**
-     * Submits a card.
+     * Submits a img_card_white.
      *
      * @param card Card to sumbit.
      */

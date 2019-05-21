@@ -36,7 +36,7 @@ public class MessageDialog extends DialogFragment {
         label_dialog_message_text.setText(getArguments().getString("message"));
 
         getArguments().getStringArrayList("values").forEach(value -> {
-            Button btn = (Button) getLayoutInflater().inflate(R.layout.component_dialog_selector_button, null);
+            Button btn = (Button) getLayoutInflater().inflate(R.layout.dialog_selector_button, null);
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             params.setMargins(6, 6, 6, 6);
             btn.setLayoutParams(params);
@@ -53,7 +53,7 @@ public class MessageDialog extends DialogFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.component_dialog_message, container);
+        return inflater.inflate(R.layout.dialog_message, container);
     }
 
     @NonNull

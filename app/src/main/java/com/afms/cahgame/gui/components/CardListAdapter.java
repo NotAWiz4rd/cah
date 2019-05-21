@@ -27,13 +27,13 @@ public class CardListAdapter extends ArrayAdapter<Card> {
 
     private Map<Colour, HashMap<String, Integer>> colorMap = new HashMap<Colour, HashMap<String, Integer>>() {{
         put(Colour.BLACK, new HashMap<String, Integer>() {{
-            put("icon", R.drawable.cardblack);
-            put("background", R.drawable.card_background_small_black);
+            put("icon", R.drawable.img_card_black);
+            put("background", R.drawable.bg_card_black_radius_10dp);
             put("textcolor", Color.WHITE);
         }});
         put(Colour.WHITE, new HashMap<String, Integer>() {{
-            put("icon", R.drawable.card);
-            put("background", R.drawable.card_background_small_white);
+            put("icon", R.drawable.img_card_white);
+            put("background", R.drawable.bg_card_white_radius_10dp);
             put("textcolor", Color.BLACK);
         }});
     }};
@@ -49,7 +49,7 @@ public class CardListAdapter extends ArrayAdapter<Card> {
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         Card card = getItem(position);
         if (convertView == null) {
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_card_select, parent, false);
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_list_card, parent, false);
         }
 
         ImageView cardIcon = convertView.findViewById(R.id.cardIcon);

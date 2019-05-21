@@ -11,7 +11,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:padding="16dp"
-        android:background="@drawable/transparent_black_background"
+        android:background="@drawable/bg_black_transparent_radius_10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -24,7 +24,7 @@
             android:layout_marginEnd="4dp"
             android:layout_toStartOf="@+id/item_deckselector_countBlack"
             android:layout_centerVertical="true"
-            app:srcCompat="@drawable/cardblack" />
+            app:srcCompat="@drawable/img_card_black" />
 
         <TextView
             android:id="@+id/item_deckselector_countBlack"
@@ -46,7 +46,7 @@
             android:layout_marginEnd="4dp"
             android:layout_toStartOf="@+id/item_deckselector_countWhite"
             android:layout_centerVertical="true"
-            app:srcCompat="@drawable/card"/>
+            app:srcCompat="@drawable/img_card_white"/>
 
         <TextView
             android:id="@+id/item_deckselector_countWhite"
