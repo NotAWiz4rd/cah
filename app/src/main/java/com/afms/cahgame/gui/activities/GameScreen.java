@@ -244,7 +244,7 @@ public class GameScreen extends AppCompatActivity {
     private void showWaitingScreen() {
         playerIsWaiting = true;
         lowerFrameLayout.addView(waitingScreen);
-        waitingScreenAnimation(whiteCardIcon, blackCardIcon);
+        new Thread(() -> waitingScreenAnimation(whiteCardIcon, blackCardIcon));
     }
 
     private void waitingScreenAnimation(ImageView whiteCard, ImageView blackCard) {
@@ -374,7 +374,7 @@ public class GameScreen extends AppCompatActivity {
     }
 
     private void onRoundStartGamestate() {
-        removeWaitingScreen();
+        //removeWaitingScreen();
         doneRoundEnd = false;
         showHandCardList();
         setPlayerReady();
@@ -399,12 +399,14 @@ public class GameScreen extends AppCompatActivity {
         } else {
             setPlayerReady();
             navigationBarText.setText(R.string.waiting_for_others);
+            //showWaitingScreen();
         }
         showHandCardList();
 
         if (currentPlayerIsCardSzar() && game.allPlayersReady()) {
             advanceGamestate();
             navigationBarText.setText(R.string.choose_winning_card);
+            removeWaitingScreen();
         }
         // then wait for input
     }
