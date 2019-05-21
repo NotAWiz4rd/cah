@@ -75,7 +75,7 @@ public class LobbyListAdapter extends ArrayAdapter<Lobby> {
                             Util.saveName(settings, playerName);
 
                             Intent intent = new Intent(getContext(), WaitingLobby.class);
-                            intent.putExtra("lobbyId", lobby.getId());
+                            intent.putExtra(getContext().getString(R.string.lobbyId), lobby.getId());
                             getContext().startActivity(intent);
                             ((AppCompatActivity) getContext()).finish();
                         } else {
@@ -93,7 +93,7 @@ public class LobbyListAdapter extends ArrayAdapter<Lobby> {
                 Util.saveName(settings, playerName);
 
                 Intent intent = new Intent(getContext(), WaitingLobby.class);
-                intent.putExtra(getContext().getString(R.string.cantGetLobbies), lobby.getId());
+                intent.putExtra(getContext().getString(R.string.lobbyId), lobby.getId());
                 getContext().startActivity(intent);
             }
 

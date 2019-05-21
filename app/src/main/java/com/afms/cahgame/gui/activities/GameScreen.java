@@ -513,7 +513,7 @@ public class GameScreen extends AppCompatActivity {
             player = new Player(playerName);
         }
 
-        lobbyId = settings.getString("lobbyId", "");
+        lobbyId = settings.getString(getString(R.string.lobbyId), "");
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         gameReference = database.getReference(lobbyId + "-game");
@@ -631,7 +631,7 @@ public class GameScreen extends AppCompatActivity {
 
     private void saveInfo() {
         SharedPreferences.Editor editor = settings.edit();
-        editor.putString("lobbyId", lobbyId);
+        editor.putString(getString(R.string.lobbyId), lobbyId);
 
         editor.apply();
     }

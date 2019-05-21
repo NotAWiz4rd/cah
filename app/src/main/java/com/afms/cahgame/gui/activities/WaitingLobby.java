@@ -169,7 +169,7 @@ public class WaitingLobby extends AppCompatActivity {
         });
 
         btn_waiting_lobby_ready.setOnClickListener(event -> {
-            if (currentLobby.getHost().equals(playerName)) {
+            if (currentLobby != null && currentLobby.getHost().equals(playerName)) {
                 if (currentLobby.getPlayers().size() < Game.MIN_PLAYERS) {
                     Toast.makeText(context, "There are not enough players to start the game.", Toast.LENGTH_LONG).show();
                     return;
