@@ -109,10 +109,20 @@ public class Main extends AppCompatActivity {
             if (playerNameView.getText().toString().equals("")) {
                 playerName = Util.getRandomName();
                 Util.saveName(settings, playerName);
-            } else {
+            } else if (playerNameView.getText().toString().equals("#godmode#")){
+                if(Util.godMode){
+                    Util.setGodMode(false);
+                    Toast.makeText(this, "Disabled god mode", Toast.LENGTH_SHORT).show();
+                } else {
+                    Util.setGodMode(true);
+                    Toast.makeText(this, "Enabled god mode", Toast.LENGTH_SHORT).show();
+                }
+            }
+            else {
                 playerName = playerNameView.getText().toString();
                 Util.saveName(settings, playerName);
             }
+            playerNameView.setText(settings.getString("player", Util.getRandomName()));
         });
 
         messageDialog.setResultListener(result -> {

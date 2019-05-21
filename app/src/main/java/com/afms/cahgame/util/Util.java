@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Optional;
 
 public class Util {
+    public static boolean godMode = false;
+
     private static List<String> randomNames = new ArrayList<String>() {{
         add("Giesela");
         add("Hans-Werner");
@@ -116,4 +118,14 @@ public class Util {
         editor.putString("player", newName);
         editor.apply();
     }
+
+    /**
+     * Enables god-mode
+     *
+     * @param godMode
+     */
+    public static void setGodMode(boolean godMode) {
+        Util.godMode = godMode;
+    }
+
 }
