@@ -51,7 +51,7 @@
     <string name="title_deck_select">Select the deck to play</string>
     <string name="label_deck">Deck:</string>
     <string name="label_hoststartgame">Start game</string>
-    <string name="label_nothost">Waiting for host.</string>
+    <string name="label_nothost">Waiting for host</string>
     <string name="score_board">Score Board</string>
     <string name="play_card">Play a card.</string>
     <string name="waiting_for_others">Waiting for the other players to choose a card.</string>
