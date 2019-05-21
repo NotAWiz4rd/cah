@@ -168,7 +168,7 @@ public class Game implements Serializable {
     }
 
     public void removePlayer(Player player) {
-        playedCards.addAll(player.getHand());
+        discardPile.addAll(player.getHand());
         players.remove(player.getName());
     }
 

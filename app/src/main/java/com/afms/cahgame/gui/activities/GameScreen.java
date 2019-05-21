@@ -533,6 +533,7 @@ public class GameScreen extends AppCompatActivity {
 
                     // add player if it doesnt exist in game
                     if (!game.containsPlayerWithName(player.getName())) {
+                        player = new Player(playerName);
                         game = dataSnapshot.getValue(Game.class);
                         game.addPlayer(player);
                         updatePlayer();
@@ -588,11 +589,11 @@ public class GameScreen extends AppCompatActivity {
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     protected void onStop() {
         super.onStop();
+        gameReference.removeEventListener(gameListener);
+        blackCardTextReference.removeEventListener(blackCardListener);
         if (currentPlayerIsCardSzar()) {
             gameReference.removeValue();
             Database.removeLobby(lobbyId);
-            gameReference.removeEventListener(gameListener);
-            blackCardTextReference.removeEventListener(blackCardListener);
             finish();
         }
     }
@@ -622,6 +623,7 @@ public class GameScreen extends AppCompatActivity {
         if (game != null) {
             game.removePlayer(player);
             submitGame();
+            Database.removePlayerFromLobby(lobbyId, player.getName());
         }
         Intent intent = new Intent(this, Main.class);
         intent.putExtra("message", message.length() > 0 ? message : getString(R.string.cantFindLobby));
@@ -637,7 +639,7 @@ public class GameScreen extends AppCompatActivity {
     }
 
     /**
-     * Submits a img_card_white.
+     * Submits a card.
      *
      * @param card Card to sumbit.
      */
