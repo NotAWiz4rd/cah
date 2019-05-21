@@ -164,6 +164,13 @@ public class Database {
         gameReference.removeValue();
     }
 
+    /**
+     * Joins the given lobby.
+     *
+     * @param lobbyId    The lobbyId.
+     * @param playername The playername.
+     * @return playername the player joined with, "" if lobby couldn't be joined.
+     */
     public static String joinLobby(String lobbyId, String playername) {
         if (lobbies.get(lobbyId) != null) {
             String playerName = Objects.requireNonNull(lobbies.get(lobbyId)).addPlayer(playername);
