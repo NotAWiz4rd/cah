@@ -29,12 +29,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".gui.activities.Test"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="@string/title_activity_test"
-            android:screenOrientation="portrait"
-            android:theme="@style/cahLayout" />
-        <activity
             android:name=".gui.activities.CreateLobby"
             android:label="@string/title_activity_lobby"
             android:screenOrientation="portrait"
