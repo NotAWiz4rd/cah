@@ -86,6 +86,7 @@ public class GameScreen extends AppCompatActivity {
     private boolean doneRoundEnd = false;
 
     private Gamestate lastGamestate;
+    private boolean playedCardsAreShown = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,9 +133,7 @@ public class GameScreen extends AppCompatActivity {
         });
 
         playedBlackCard.setOnClickListener(event -> {
-            if (showPlayedCardsAllowed) {
-                showPlayedCards(currentPlayerIsCardSzar());
-            }
+            showPlayedCards(currentPlayerIsCardSzar());
         });
         waitingScreen.setOnClickListener(event -> {
         });
@@ -161,6 +160,10 @@ public class GameScreen extends AppCompatActivity {
     }
 
     private void showPlayedCards(boolean allowCardSzarSubmit) {
+        if (playedCardsAreShown || !showPlayedCardsAllowed) {
+            return;
+        }
+        playedCardsAreShown = true;
         deleteAllViewsFromLowerFrameLayout();
         playedWhiteCardList = getPlayedCards(allowCardSzarSubmit);
         if (playedWhiteCardList.size() > 0) {
@@ -423,10 +426,11 @@ public class GameScreen extends AppCompatActivity {
     }
 
     private void onRoundEndGamestate() {
+        playedCardsAreShown = false;
         showPlayedCardsAllowed = false;
         navigationBarText.setText(R.string.waiting_for_others);
         setPlayerReady();
-        // todo notify player of winning img_card_white (only if player is not cardszar), show updated scores
+        // todo notify player of winning card (only if player is not cardszar)
 
         if (currentPlayerIsCardSzar() && game.allPlayersReady()) {
             if (!doneRoundEnd) {
