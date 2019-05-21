@@ -14,7 +14,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 public class Game implements Serializable {
-    public static final int MIN_PLAYERS = 2;
+    public static final int MIN_PLAYERS = 3;
 
     public Map<String, Player> players;
     private Deck deck;
