@@ -66,7 +66,7 @@ public class SettingsDialog extends DialogFragment {
         Window window = dialog.getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-        //window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+        window.getDecorView().setSystemUiVisibility(View.GONE);
         window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         return dialog;
     }

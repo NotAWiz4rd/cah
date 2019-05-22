@@ -58,4 +58,5 @@
     <string name="cantGetLobbies">Failed to get lobbies from server.</string>
     <string name="lobbyNameExists">A lobby with this name already exists</string>
     <string name="missingLobbyname">Please enter a lobbyname to proceed.</string>
+    <string name="label_nolobbies">There are currently no available lobbies.</string>
 </resources>
