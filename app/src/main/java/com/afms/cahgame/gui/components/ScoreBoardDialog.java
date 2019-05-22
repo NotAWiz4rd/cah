@@ -34,9 +34,9 @@ public class ScoreBoardDialog extends DialogFragment {
         if (game != null && game.getPlayers() != null) {
             ScoreBoardListAdapter scoreBoardListAdapter;
             Player roundWin = (Player) getArguments().getSerializable("player");
-            if(roundWin != null){
+            if (roundWin != null) {
                 scoreBoardListAdapter = new ScoreBoardListAdapter(getContext(), new ArrayList<>(game.getPlayers().values()), roundWin);
-            }else {
+            } else {
                 scoreBoardListAdapter = new ScoreBoardListAdapter(getContext(), new ArrayList<>(game.getPlayers().values()));
             }
             playerList.setAdapter(scoreBoardListAdapter);
@@ -52,10 +52,10 @@ public class ScoreBoardDialog extends DialogFragment {
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         Dialog dialog = super.onCreateDialog(savedInstanceState);
-                dialog.setCanceledOnTouchOutside(true);
-                Window window = dialog.getWindow();
-                //window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-                window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.setCanceledOnTouchOutside(true);
+        Window window = dialog.getWindow();
+        //window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         return dialog;
     }
 

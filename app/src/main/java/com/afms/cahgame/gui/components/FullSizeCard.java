@@ -30,14 +30,14 @@ import static java.lang.Math.min;
 
 public class FullSizeCard extends ConstraintLayout {
 
-    public static int SWIPE_DISABLE = 0;
-    public static int SWIPE_ALL_DIRECTION = 1;
-    public static int SWIPE_Y_AXIS = 2;
-    public static int SWIPE_X_AXIS = 3;
-    public static int SWIPE_LEFT = 4;
-    public static int SWIPE_RIGHT = 5;
-    public static int SWIPE_UP = 6;
-    public static int SWIPE_DOWN = 7;
+    public static final int SWIPE_DISABLE = 0;
+    public static final int SWIPE_ALL_DIRECTION = 1;
+    public static final int SWIPE_Y_AXIS = 2;
+    public static final int SWIPE_X_AXIS = 3;
+    public static final int SWIPE_LEFT = 4;
+    public static final int SWIPE_RIGHT = 5;
+    public static final int SWIPE_UP = 6;
+    public static final int SWIPE_DOWN = 7;
 
 
     private EditText fullSizeCardText;
@@ -152,13 +152,13 @@ public class FullSizeCard extends ConstraintLayout {
                             v.setY(viewPosDownY);
                             v.setX(viewPosDownX);
                         } else if (v.getY() < (viewPosDownY - (v.getHeight() * yAxisHeightFactor))) {
-                            generateAnimation(v, "translationY", -v.getHeight(), (int) (v.getHeight() * yAxisHeightFactor), 0);
+                            generateAnimation(v, "translationY", -v.getHeight(), (int) (v.getHeight() * yAxisHeightFactor), SWIPE_UP);
                         } else if (v.getY() > (viewPosDownY + (v.getHeight() * yAxisHeightFactor))) {
-                            generateAnimation(v, "translationY", v.getHeight(), (int) (v.getHeight() * yAxisHeightFactor), 1);
+                            generateAnimation(v, "translationY", v.getHeight(), (int) (v.getHeight() * yAxisHeightFactor), SWIPE_DOWN);
                         } else if (v.getX() < (viewPosDownX - (v.getWidth() * xAxisWidthFactor))) {
-                            generateAnimation(v, "translationX", -v.getWidth(), (int) (v.getWidth() * xAxisWidthFactor), 2);
+                            generateAnimation(v, "translationX", -v.getWidth(), (int) (v.getWidth() * xAxisWidthFactor), SWIPE_LEFT);
                         } else if (v.getX() > (viewPosDownX + (v.getWidth() * xAxisWidthFactor))) {
-                            generateAnimation(v, "translationX", v.getWidth(), (int) (v.getWidth() * xAxisWidthFactor), 3);
+                            generateAnimation(v, "translationX", v.getWidth(), (int) (v.getWidth() * xAxisWidthFactor), SWIPE_RIGHT);
                         }
                         break;
                 }
@@ -186,16 +186,16 @@ public class FullSizeCard extends ConstraintLayout {
                 v.setY(viewPosDownY);
                 if (swipeResultListener != null) {
                     switch (direction) {
-                        case 0:
+                        case SWIPE_UP:
                             swipeResultListener.onSwipeUp();
                             break;
-                        case 1:
+                        case SWIPE_DOWN:
                             swipeResultListener.onSwipeDown();
                             break;
-                        case 2:
+                        case SWIPE_LEFT:
                             swipeResultListener.onSwipeLeft();
                             break;
-                        case 3:
+                        case SWIPE_RIGHT:
                             swipeResultListener.onSwipeRight();
                             break;
                     }
@@ -203,6 +203,26 @@ public class FullSizeCard extends ConstraintLayout {
             }
         });
         animation.start();
+    }
+
+    public void doSwipe(int swipe){
+        viewPosDownX = fullSizeCardLayout.getX();
+        viewPosDownY = fullSizeCardLayout.getY();
+        LinearLayout v = fullSizeCardLayout;
+        switch (swipe){
+            case SWIPE_UP:
+                generateAnimation(v, "translationY", -v.getHeight(), (int) (v.getHeight() * yAxisHeightFactor), SWIPE_UP);
+                break;
+            case SWIPE_DOWN:
+                generateAnimation(v, "translationY", v.getHeight(), (int) (v.getHeight() * yAxisHeightFactor), SWIPE_DOWN);
+                break;
+            case SWIPE_LEFT:
+                generateAnimation(v, "translationX", -v.getWidth(), (int) (v.getWidth() * xAxisWidthFactor), SWIPE_LEFT);
+                break;
+            case SWIPE_RIGHT:
+                generateAnimation(v, "translationX", v.getWidth(), (int) (v.getWidth() * xAxisWidthFactor), SWIPE_RIGHT);
+                break;
+        }
     }
 
     public Card getCard() {
