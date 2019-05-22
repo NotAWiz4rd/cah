@@ -73,6 +73,9 @@ public class CreateLobby extends AppCompatActivity {
         value_handcard_count.observe(this, integer -> input_handcard_count.setText(String.valueOf(integer)));
         value_player_count.setValue(DEFAULT_PLAYER_COUNT);
         value_player_count.observe(this, integer -> input_player_count.setText(String.valueOf(integer)));
+
+        input_lobby_name.setSelection(input_lobby_name.getText().length());
+        input_create_lobby_password.setSelection(input_create_lobby_password.getText().length());
     }
 
     private void initializeUIElements() {

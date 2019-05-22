@@ -56,6 +56,8 @@ public class SettingsDialog extends DialogFragment {
             }
             getDialog().dismiss();
         });
+
+        playerNameView.setSelection(playerNameView.getText().length());
     }
 
     @NonNull
