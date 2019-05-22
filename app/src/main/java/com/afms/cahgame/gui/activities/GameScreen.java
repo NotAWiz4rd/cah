@@ -15,6 +15,7 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -82,6 +83,7 @@ public class GameScreen extends AppCompatActivity {
     private List<FullSizeCard> fullSizeCardList = new ArrayList<>();
     private ScoreBoardDialog scoreBoard;
 
+    private boolean showUpdatedScore;
     private boolean doneRoundStart = false;
     private boolean doneRoundEnd = false;
 
@@ -136,6 +138,17 @@ public class GameScreen extends AppCompatActivity {
             showPlayedCards(currentPlayerIsCardSzar());
         });
         waitingScreen.setOnClickListener(event -> {
+        });
+        lowerFrameLayout.setOnHierarchyChangeListener(new ViewGroup.OnHierarchyChangeListener() {
+            @Override
+            public void onChildViewAdded(View parent, View child) {
+
+            }
+
+            @Override
+            public void onChildViewRemoved(View parent, View child) {
+
+            }
         });
     }
 
@@ -247,7 +260,7 @@ public class GameScreen extends AppCompatActivity {
     private void showWaitingScreen() {
         playerIsWaiting = true;
         lowerFrameLayout.addView(waitingScreen);
-        new Thread(() -> waitingScreenAnimation(whiteCardIcon, blackCardIcon));
+        lowerFrameLayout.post(() -> waitingScreenAnimation(whiteCardIcon, blackCardIcon));
     }
 
     private void waitingScreenAnimation(ImageView whiteCard, ImageView blackCard) {
@@ -359,6 +372,7 @@ public class GameScreen extends AppCompatActivity {
         }
         switch (game.getGamestate()) {
             case ROUNDSTART:
+                showUpdatedScore = true;
                 onRoundStartGamestate();
                 break;
             case SUBMIT:
@@ -377,7 +391,6 @@ public class GameScreen extends AppCompatActivity {
     }
 
     private void onRoundStartGamestate() {
-        //removeWaitingScreen();
         doneRoundEnd = false;
         showHandCardList();
         setPlayerReady();
@@ -426,11 +439,15 @@ public class GameScreen extends AppCompatActivity {
     }
 
     private void onRoundEndGamestate() {
+        if(showUpdatedScore){
+            scoreBoard = ScoreBoardDialog.create(game, game.getWinningCard().getOwner());
+            scoreBoard.show(getSupportFragmentManager(), "playerOverview");
+            showUpdatedScore = false;
+        }
         playedCardsAreShown = false;
         showPlayedCardsAllowed = false;
         navigationBarText.setText(R.string.label_nothost);
         setPlayerReady();
-        // todo notify player of winning card (only if player is not cardszar)
 
         if (currentPlayerIsCardSzar() && game.allPlayersReady()) {
             if (!doneRoundEnd) {

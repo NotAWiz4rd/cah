@@ -21,7 +21,13 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class ScoreBoardListAdapter extends ArrayAdapter<Player> {
 
+    private Player roundWinner;
     private SharedPreferences settings;
+
+    public ScoreBoardListAdapter(@NonNull Context context, ArrayList<Player> players, Player roundWin) {
+        super(context, 0, players);
+        roundWinner = roundWin;
+    }
 
     public ScoreBoardListAdapter(@NonNull Context context, ArrayList<Player> players) {
         super(context, 0, players);
@@ -46,6 +52,11 @@ public class ScoreBoardListAdapter extends ArrayAdapter<Player> {
             playerName.setTypeface(ResourcesCompat.getFont(getContext(), R.font.helveticaneuelight));
         }
 
+        if(roundWinner != null && roundWinner.getName().equals(player.getName())){
+            playerName.setTextColor(getContext().getResources().getColor(R.color.pastel_green));
+        }else {
+            playerName.setTextColor(getContext().getResources().getColor(R.color.inputTextColorBlack));
+        }
         playerName.setText(player.getName());
         playerScore.setText(String.valueOf(player.getScore()));
 
