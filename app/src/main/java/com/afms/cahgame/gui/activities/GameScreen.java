@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -68,7 +69,7 @@ public class GameScreen extends AppCompatActivity {
     private ImageView blackCardIcon;
     private ImageView whiteCardIcon;
     private ConstraintLayout gameScreenLayout;
-    private ConstraintLayout playedBlackCard;
+    private LinearLayout playedBlackCard;
     private ConstraintLayout waitingScreen;
     private TextView playedBlackCardText;
     private FullSizeCard playedWhiteCard;
