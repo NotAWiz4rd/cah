@@ -17,6 +17,8 @@
     <color name="inputTextColorBlack">#3A342E</color>
     <color name="pastel_red">#ff6961</color>
     <color name="pastel_green">#77dd77</color>
+    <color name="pastel_red_darker">#813531</color>
+    <color name="pastel_green_darker">#3F753F</color>
     <color name="cardview_dark_background">#FF424242</color>
     <color name="cardview_dark_background_disabled">#777777</color>
     <color name="cardview_light_background">#FFFFFFFF</color>

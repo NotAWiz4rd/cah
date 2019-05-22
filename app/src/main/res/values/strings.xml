@@ -59,4 +59,7 @@
     <string name="lobbyNameExists">A lobby with this name already exists</string>
     <string name="missingLobbyname">Please enter a lobbyname to proceed.</string>
     <string name="label_nolobbies">There are currently no available lobbies.</string>
+    <string name="label_select_deck">Select deck</string>
+    <string name="label_choose_deck">Choose a deck</string>
+    <string name="label_no_deck_selected">No deck selected</string>
 </resources>

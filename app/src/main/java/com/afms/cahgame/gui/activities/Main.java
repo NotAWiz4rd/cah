@@ -2,10 +2,12 @@ package com.afms.cahgame.gui.activities;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -88,7 +90,6 @@ public class Main extends AppCompatActivity {
         });
 
         btn_explore_decks.setOnClickListener(event -> {
-            Toast.makeText(this, "clicked " + btn_explore_decks.toString(), Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(this, ExploreDecks.class);
             startActivity(intent);
         });

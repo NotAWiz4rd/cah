@@ -15,7 +15,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".gui.activities.ExploreDecks"></activity>
         <activity
             android:name=".gui.activities.Main"
             android:configChanges="orientation|keyboardHidden|screenSize"
@@ -47,6 +46,12 @@
             android:theme="@style/cahLayout" />
         <activity
             android:name=".gui.activities.WaitingLobby"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_game_screen"
+            android:screenOrientation="portrait"
+            android:theme="@style/cahLayout" />
+        <activity
+            android:name=".gui.activities.ExploreDecks"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_game_screen"
             android:screenOrientation="portrait"
