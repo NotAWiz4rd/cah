@@ -123,7 +123,8 @@ public class GameScreen extends AppCompatActivity {
         playedWhiteCard = new FullSizeCard(this, new Card(Colour.WHITE, "test"));
         userSelectionLayout = (ConstraintLayout) getLayoutInflater().inflate(R.layout.element_list_card_select, gameScreenLayout, false);
         userSelectionListView = userSelectionLayout.findViewById(R.id.cardSelectList);
-        waitingScreen = (ConstraintLayout) getLayoutInflater().inflate(R.layout.element_waiting_screen, gameScreenLayout, false);
+        waitingScreen = (ConstraintLayout) getLayoutInflater().inflate(R.layout.element_waiting_screen_with_gif, gameScreenLayout, false);
+        //waitingScreen = (ConstraintLayout) getLayoutInflater().inflate(R.layout.element_waiting_screen, gameScreenLayout, false);
         blackCardIcon = waitingScreen.findViewById(R.id.waiting_screen_blackCard);
         whiteCardIcon = waitingScreen.findViewById(R.id.waiting_screen_whiteCard);
 
@@ -260,8 +261,10 @@ public class GameScreen extends AppCompatActivity {
 
     private void showWaitingScreen() {
         playerIsWaiting = true;
-        lowerFrameLayout.addView(waitingScreen);
-        lowerFrameLayout.post(() -> waitingScreenAnimation(whiteCardIcon, blackCardIcon));
+        if(!waitingScreen.isAttachedToWindow()) {
+            lowerFrameLayout.addView(waitingScreen);
+        }
+        //lowerFrameLayout.post(() -> waitingScreenAnimation(whiteCardIcon, blackCardIcon));
     }
 
     private void waitingScreenAnimation(ImageView whiteCard, ImageView blackCard) {
@@ -416,7 +419,7 @@ public class GameScreen extends AppCompatActivity {
         } else {
             setPlayerReady();
             navigationBarText.setText(R.string.waiting_for_others);
-            //showWaitingScreen();
+            showWaitingScreen();
         }
         showHandCardList();
 
@@ -564,6 +567,7 @@ public class GameScreen extends AppCompatActivity {
                     }
 
                     if (!(game.getPlayers().values().size() >= Game.MIN_PLAYERS)) {
+                        showWaitingScreen();
                         // todo show waiting screen
                     }
 
