@@ -55,6 +55,10 @@ public class Util {
         Deck gameDeck = new Deck();
         gameDeck.setName(dataDeck.getName());
 
+        if (dataDeck.getCardIds() == null || dataDeck.getCardIds().size() == 0) {
+            return gameDeck;
+        }
+
         List<com.afms.cahgame.game.Card> blackCards = new ArrayList<>();
         List<com.afms.cahgame.game.Card> whiteCards = new ArrayList<>();
 
