@@ -1,5 +1,7 @@
 package com.afms.cahgame.gui.activities;
 
+import android.arch.lifecycle.Lifecycle;
+import android.arch.lifecycle.OnLifecycleEvent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -211,4 +213,11 @@ public class WaitingLobby extends AppCompatActivity {
                 });
     }
 
+    @Override
+    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    protected void onStop() {
+        super.onStop();
+        lobbyReference.removeEventListener(valueEventListener);
+        currentLobby = null;
+    }
 }
