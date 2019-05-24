@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.afms.cahgame.R;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class MessageDialog extends DialogFragment {
 
@@ -32,22 +33,24 @@ public class MessageDialog extends DialogFragment {
         TextView label_dialog_message_text = view.findViewById(R.id.label_dialog_message_text);
         LinearLayout layout_dialog_message_buttons = view.findViewById(R.id.layout_dialog_message_buttons);
 
-        label_dialog_message_title.setText(getArguments().getString("title"));
-        label_dialog_message_text.setText(getArguments().getString("message"));
+        if (getArguments() != null) {
+            label_dialog_message_title.setText(getArguments().getString("title"));
+            label_dialog_message_text.setText(getArguments().getString("message"));
 
-        getArguments().getStringArrayList("values").forEach(value -> {
-            Button btn = (Button) getLayoutInflater().inflate(R.layout.dialog_selector_button, null);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            params.setMargins(6, 6, 6, 6);
-            btn.setLayoutParams(params);
-            btn.setText(value);
-            btn.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
-            btn.setOnClickListener(event -> {
-                resultListener.onItemClick(String.valueOf(btn.getText()));
-                getDialog().dismiss();
+            Objects.requireNonNull(getArguments().getStringArrayList("values")).forEach(value -> {
+                Button btn = (Button) getLayoutInflater().inflate(R.layout.dialog_selector_button, null);
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                params.setMargins(6, 6, 6, 6);
+                btn.setLayoutParams(params);
+                btn.setText(value);
+                btn.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
+                btn.setOnClickListener(event -> {
+                    resultListener.onItemClick(String.valueOf(btn.getText()));
+                    getDialog().dismiss();
+                });
+                layout_dialog_message_buttons.addView(btn);
             });
-            layout_dialog_message_buttons.addView(btn);
-        });
+        }
     }
 
     @Nullable
@@ -62,8 +65,9 @@ public class MessageDialog extends DialogFragment {
         Dialog dialog = super.onCreateDialog(savedInstanceState);
         dialog.setCanceledOnTouchOutside(true);
         Window window = dialog.getWindow();
-        //window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        if (window != null) {
+            window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        }
         return dialog;
     }
 

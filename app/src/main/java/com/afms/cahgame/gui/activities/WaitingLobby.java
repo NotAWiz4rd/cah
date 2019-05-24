@@ -118,7 +118,7 @@ public class WaitingLobby extends AppCompatActivity {
                         currentLobby = null;
                         lobbyReference.removeEventListener(valueEventListener);
                         Intent intent = new Intent(context, Main.class);
-                        intent.putExtra("message", "The lobby you were trying to reach is not available anymore.");
+                        intent.putExtra("message", R.string.lobbyNotAvailable);
                         startActivity(intent);
                         finish();
                     }
@@ -127,7 +127,7 @@ public class WaitingLobby extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.w("ERROR", "Failed to get lobby from server.", error.toException());
+                Log.w(getString(R.string.errorLog), getString(R.string.failedToGetLobby), error.toException());
             }
         };
 
@@ -173,7 +173,7 @@ public class WaitingLobby extends AppCompatActivity {
         btn_waiting_lobby_ready.setOnClickListener(event -> {
             if (currentLobby != null && currentLobby.getHost().equals(playerName)) {
                 if (currentLobby.getPlayers().size() < Game.MIN_PLAYERS) {
-                    Toast.makeText(context, "There are not enough players to start the game.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, getString(R.string.notEnoughPlayers), Toast.LENGTH_LONG).show();
                     return;
                 }
                 currentLobby.setGameInProgress(true);

@@ -4,7 +4,6 @@ import android.app.Dialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -43,18 +42,18 @@ public class DeckSelectorDialog extends DialogFragment {
         list_dialog_deckselector.setAdapter(deckListAdapter);
         list_dialog_deckselector.setOnItemClickListener((parent, view1, position, id) -> {
             String deckName = ((TextView) view1.findViewById(R.id.item_deckselector_name)).getText().toString();
-            if(Util.godMode){
+            if (Util.godMode) {
                 MessageDialog messageDialog = MessageDialog.create(
                         getContext().getString(R.string.label_choose_action),
-                        new ArrayList<>(Arrays.asList("Select", "Delete", "Cancel"))
+                        new ArrayList<>(Arrays.asList(getString(R.string.select), getString(R.string.delete), getString(R.string.cancel)))
                 );
                 messageDialog.setResultListener(result -> {
-                    if(result.equals("Select")){
+                    if (result.equals(getString(R.string.select))) {
                         resultListener.onItemClick(deckName);
                         dismiss();
-                    } else if (result.equals("Delete")){
+                    } else if (result.equals(getString(R.string.delete))) {
                         Database.removeDeck(deckName);
-                        Toast.makeText(getContext(), String.format("You've deleted %s", deckName), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), String.format(getString(R.string.deletedDeckMessage), deckName), Toast.LENGTH_SHORT).show();
                         dismiss();
                     }
                 });
@@ -78,8 +77,9 @@ public class DeckSelectorDialog extends DialogFragment {
         Dialog dialog = super.onCreateDialog(savedInstanceState);
         dialog.setCanceledOnTouchOutside(true);
         Window window = dialog.getWindow();
-        //window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        if (window != null) {
+            window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        }
         return dialog;
     }
 

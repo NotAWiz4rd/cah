@@ -19,6 +19,7 @@ import com.afms.cahgame.game.Game;
 import com.afms.cahgame.game.Player;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class ScoreBoardDialog extends DialogFragment {
 
@@ -30,14 +31,17 @@ public class ScoreBoardDialog extends DialogFragment {
         super.onViewCreated(view, savedInstanceState);
 
         playerList = view.findViewById(R.id.score_board_list);
-        Game game = (Game) getArguments().getSerializable("game");
+        Game game = null;
+        if (getArguments() != null) {
+            game = (Game) getArguments().getSerializable("game");
+        }
         if (game != null && game.getPlayers() != null) {
             ScoreBoardListAdapter scoreBoardListAdapter;
             Player roundWin = (Player) getArguments().getSerializable("player");
             if (roundWin != null) {
-                scoreBoardListAdapter = new ScoreBoardListAdapter(getContext(), new ArrayList<>(game.getPlayers().values()), roundWin);
+                scoreBoardListAdapter = new ScoreBoardListAdapter(Objects.requireNonNull(getContext()), new ArrayList<>(game.getPlayers().values()), roundWin);
             } else {
-                scoreBoardListAdapter = new ScoreBoardListAdapter(getContext(), new ArrayList<>(game.getPlayers().values()));
+                scoreBoardListAdapter = new ScoreBoardListAdapter(Objects.requireNonNull(getContext()), new ArrayList<>(game.getPlayers().values()));
             }
             playerList.setAdapter(scoreBoardListAdapter);
         }
@@ -54,8 +58,9 @@ public class ScoreBoardDialog extends DialogFragment {
         Dialog dialog = super.onCreateDialog(savedInstanceState);
         dialog.setCanceledOnTouchOutside(true);
         Window window = dialog.getWindow();
-        //window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        if (window != null) {
+            window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        }
         return dialog;
     }
 
@@ -63,10 +68,6 @@ public class ScoreBoardDialog extends DialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.dialog_score_board, container);
-    }
-
-    public ListView getPlayerList() {
-        return playerList;
     }
 
     public static ScoreBoardDialog create(Game game) {

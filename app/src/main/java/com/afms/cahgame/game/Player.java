@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Player implements Serializable {
-    private String name;
+    private String name = "";
     private List<Card> hand = new ArrayList<>();
     private int score;
     private boolean isReady;

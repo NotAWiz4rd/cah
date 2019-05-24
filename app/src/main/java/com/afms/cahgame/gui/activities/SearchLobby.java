@@ -12,7 +12,6 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.afms.cahgame.R;
 import com.afms.cahgame.game.Lobby;
@@ -70,19 +69,19 @@ public class SearchLobby extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.w("ERROR", getString(R.string.cantGetLobbies), databaseError.toException());
+                Log.w(getString(R.string.errorLog), getString(R.string.cantGetLobbies), databaseError.toException());
             }
         });
     }
 
     private void updateLobbyList() {
         lobbyListAdapter = new LobbyListAdapter(context, new ArrayList<>());
-        if(lobbies != null){
+        if (lobbies != null) {
             lobbyListAdapter.addAll(lobbies.values());
         }
         listView.setAdapter(lobbyListAdapter);
 
-        if(lobbyListAdapter.getCount() > 0){
+        if (lobbyListAdapter.getCount() > 0) {
             layout_search_lobby_lobbies.setVisibility(View.VISIBLE);
             layout_search_lobby_no_lobbies.setVisibility(View.INVISIBLE);
             layout_search_lobby_lobbies.bringToFront();
@@ -111,8 +110,6 @@ public class SearchLobby extends AppCompatActivity {
             intent.putExtra("player", settings.getString("player", Util.getRandomName()));
             startActivity(intent);
         });
-        layout_search_lobby_lobbies.setOnClickListener(event -> Toast.makeText(this, "clicked lobbies", Toast.LENGTH_SHORT).show());
-        layout_search_lobby_no_lobbies.setOnClickListener(event -> Toast.makeText(this, "clicked no lobbies", Toast.LENGTH_SHORT).show());
     }
 
     private void hideUI() {

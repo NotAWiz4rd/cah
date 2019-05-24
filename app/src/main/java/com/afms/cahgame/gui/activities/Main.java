@@ -2,12 +2,10 @@ package com.afms.cahgame.gui.activities;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -70,7 +68,7 @@ public class Main extends AppCompatActivity {
         btn_settings = findViewById(R.id.btn_main_settings);
 
         settingsDialog = new SettingsDialog();
-        messageDialog = MessageDialog.create(getResources().getString(R.string.title_quit), new ArrayList<>(Arrays.asList("Ok", "Cancel")));
+        messageDialog = MessageDialog.create(getResources().getString(R.string.title_quit), new ArrayList<>(Arrays.asList(getString(R.string.ok), getString(R.string.cancel))));
     }
 
     @Override
@@ -105,13 +103,13 @@ public class Main extends AppCompatActivity {
             if (playerNameView.getText().toString().equals("")) {
                 playerName = Util.getRandomName();
                 Util.saveName(settings, playerName);
-            } else if (playerNameView.getText().toString().equals("#godmode#")) {
+            } else if (playerNameView.getText().toString().equals(getString(R.string.godmodeCommand))) {
                 if (Util.godMode) {
                     Util.setGodMode(false);
-                    Toast.makeText(this, "Disabled god mode", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getString(R.string.disabledGodmode), Toast.LENGTH_SHORT).show();
                 } else {
                     Util.setGodMode(true);
-                    Toast.makeText(this, "Enabled god mode", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getString(R.string.enabledGodmode), Toast.LENGTH_SHORT).show();
                 }
             } else {
                 playerName = playerNameView.getText().toString();
@@ -121,7 +119,7 @@ public class Main extends AppCompatActivity {
         });
 
         messageDialog.setResultListener(result -> {
-            if (result.equals("Ok")) {
+            if (result.equals(getString(R.string.ok))) {
                 super.onBackPressed();
                 System.exit(0);
             }

@@ -161,7 +161,7 @@ public class GameScreen extends AppCompatActivity {
                 } else if (tempGame == null) {
                     if (Database.getLobby(lobbyId) == null) {
                         game = null;
-                        quitGame("The game you were playing was deleted.");
+                        quitGame(getString(R.string.gameDeleted));
                     }
                 } else if (!gamestateSameOrNewer(tempGame.getGamestate()) && currentPlayerIsCardSzar()) {
                     submitGame();
@@ -170,7 +170,7 @@ public class GameScreen extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.w("ERROR", getString(R.string.getGameFailure), databaseError.toException());
+                Log.w(getString(R.string.errorLog), getString(R.string.getGameFailure), databaseError.toException());
             }
         };
 
@@ -188,7 +188,7 @@ public class GameScreen extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.w("ERROR", getString(R.string.failedGetLastSwipe), databaseError.toException());
+                Log.w(getString(R.string.errorLog), getString(R.string.failedGetLastSwipe), databaseError.toException());
             }
         };
 
@@ -203,7 +203,7 @@ public class GameScreen extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.w("ERROR", getString(R.string.getBlackCardFailure), databaseError.toException());
+                Log.w(getString(R.string.errorLog), getString(R.string.getBlackCardFailure), databaseError.toException());
             }
         };
 
@@ -250,7 +250,7 @@ public class GameScreen extends AppCompatActivity {
 
         playedBlackCardText.setText("");
 
-        playedWhiteCard = new FullSizeCard(this, new Card(Colour.WHITE, "test"));
+        playedWhiteCard = new FullSizeCard(this, new Card(Colour.WHITE, ""));
         userSelectionLayout = (ConstraintLayout) getLayoutInflater().inflate(R.layout.element_list_card_select, gameScreenLayout, false);
         userSelectionListView = userSelectionLayout.findViewById(R.id.cardSelectList);
         waitingScreen = (RelativeLayout) getLayoutInflater().inflate(R.layout.element_waiting_screen_with_gif, gameScreenLayout, false);
@@ -286,7 +286,7 @@ public class GameScreen extends AppCompatActivity {
         if (player != null) {
             deleteAllViewsFromLowerFrameLayout();
             lowerFrameLayout.addView(userSelectionLayout);
-            userSelectionListAdapter = new CardListAdapter(this, new ArrayList<Card>());
+            userSelectionListAdapter = new CardListAdapter(this, new ArrayList<>());
             userSelectionListView.setAdapter(userSelectionListAdapter);
 
             userSelectionListAdapter.addAll(player.getHand());
@@ -316,9 +316,7 @@ public class GameScreen extends AppCompatActivity {
             return fullSizeCardList.stream().filter(f -> f.getCard().equals(card)).findFirst().get();
         } else {
             FullSizeCard fullCard = new FullSizeCard(this, card);
-            fullCard.addOptionButton("Close", v -> {
-                completeFrameLayout.removeView(fullCard);
-            });
+            fullCard.addOptionButton(getString(R.string.close), v -> completeFrameLayout.removeView(fullCard));
             fullCard.setDimBackground(true);
             fullCard.setSwipeResultListener(new SwipeResultListener() {
                 @Override
@@ -634,10 +632,10 @@ public class GameScreen extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         MessageDialog messageDialog = MessageDialog.create(getString(R.string.message_leave_game), new ArrayList<>(Arrays.asList(
-                "Leave", "Cancel"
+                getString(R.string.leave), getString(R.string.cancel)
         )));
         messageDialog.setResultListener(result -> {
-            if (result.equals("Leave")) {
+            if (result.equals(getString(R.string.leave))) {
                 quitGame(getString(R.string.leftLobby));
             }
         });

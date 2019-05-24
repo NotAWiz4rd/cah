@@ -76,9 +76,7 @@ public class FullSizeCard extends ConstraintLayout {
         params.setMargins(6, 6, 6, 6);
         btn.setLayoutParams(params);
         btn.setText(label);
-        btn.setOnClickListener(event -> {
-            onClickListener.onClick(btn);
-        });
+        btn.setOnClickListener(event -> onClickListener.onClick(btn));
         fullSizeCardOptionLayout.addView(btn);
     }
 
@@ -105,7 +103,7 @@ public class FullSizeCard extends ConstraintLayout {
 
         fullSizeCardLayout.getViewTreeObserver().addOnGlobalLayoutListener(
                 () -> {
-                    if(firstTime){
+                    if (firstTime) {
                         fullSizeCardLayout.setScaleX(0.1f);
                         fullSizeCardLayout.setScaleY(0.1f);
                         ObjectAnimator scaleUpX = ObjectAnimator.ofFloat(fullSizeCardLayout, "scaleX", 1f);
@@ -157,13 +155,13 @@ public class FullSizeCard extends ConstraintLayout {
                             v.setY(viewPosDownY);
                             v.setX(viewPosDownX);
                         } else if (v.getY() < (viewPosDownY - (v.getHeight() * yAxisHeightFactor))) {
-                            generateAnimation(v, "translationY", -v.getHeight(), (int) (v.getHeight() * yAxisHeightFactor), SWIPE_UP);
+                            generateAnimation(v, getContext().getString(R.string.translationY), -v.getHeight(), (int) (v.getHeight() * yAxisHeightFactor), SWIPE_UP);
                         } else if (v.getY() > (viewPosDownY + (v.getHeight() * yAxisHeightFactor))) {
-                            generateAnimation(v, "translationY", v.getHeight(), (int) (v.getHeight() * yAxisHeightFactor), SWIPE_DOWN);
+                            generateAnimation(v, getContext().getString(R.string.translationY), v.getHeight(), (int) (v.getHeight() * yAxisHeightFactor), SWIPE_DOWN);
                         } else if (v.getX() < (viewPosDownX - (v.getWidth() * xAxisWidthFactor))) {
-                            generateAnimation(v, "translationX", -v.getWidth(), (int) (v.getWidth() * xAxisWidthFactor), SWIPE_LEFT);
+                            generateAnimation(v, getContext().getString(R.string.translationX), -v.getWidth(), (int) (v.getWidth() * xAxisWidthFactor), SWIPE_LEFT);
                         } else if (v.getX() > (viewPosDownX + (v.getWidth() * xAxisWidthFactor))) {
-                            generateAnimation(v, "translationX", v.getWidth(), (int) (v.getWidth() * xAxisWidthFactor), SWIPE_RIGHT);
+                            generateAnimation(v, getContext().getString(R.string.translationX), v.getWidth(), (int) (v.getWidth() * xAxisWidthFactor), SWIPE_RIGHT);
                         }
                         break;
                 }
@@ -212,22 +210,22 @@ public class FullSizeCard extends ConstraintLayout {
         animation.start();
     }
 
-    public void doSwipe(int swipe){
+    public void doSwipe(int swipe) {
         viewPosDownX = fullSizeCardLayout.getX();
         viewPosDownY = fullSizeCardLayout.getY();
         LinearLayout v = fullSizeCardLayout;
-        switch (swipe){
+        switch (swipe) {
             case SWIPE_UP:
-                generateAnimation(v, "translationY", -v.getHeight(), (int) (v.getHeight() * yAxisHeightFactor), SWIPE_UP);
+                generateAnimation(v, getContext().getString(R.string.translationY), -v.getHeight(), (int) (v.getHeight() * yAxisHeightFactor), SWIPE_UP);
                 break;
             case SWIPE_DOWN:
-                generateAnimation(v, "translationY", v.getHeight(), (int) (v.getHeight() * yAxisHeightFactor), SWIPE_DOWN);
+                generateAnimation(v, getContext().getString(R.string.translationY), v.getHeight(), (int) (v.getHeight() * yAxisHeightFactor), SWIPE_DOWN);
                 break;
             case SWIPE_LEFT:
-                generateAnimation(v, "translationX", -v.getWidth(), (int) (v.getWidth() * xAxisWidthFactor), SWIPE_LEFT);
+                generateAnimation(v, getContext().getString(R.string.translationX), -v.getWidth(), (int) (v.getWidth() * xAxisWidthFactor), SWIPE_LEFT);
                 break;
             case SWIPE_RIGHT:
-                generateAnimation(v, "translationX", v.getWidth(), (int) (v.getWidth() * xAxisWidthFactor), SWIPE_RIGHT);
+                generateAnimation(v, getContext().getString(R.string.translationX), v.getWidth(), (int) (v.getWidth() * xAxisWidthFactor), SWIPE_RIGHT);
                 break;
         }
     }
@@ -249,7 +247,7 @@ public class FullSizeCard extends ConstraintLayout {
         return fullSizeCardText.getText().toString();
     }
 
-    public Colour getColour(){
+    public Colour getColour() {
         return colour;
     }
 }

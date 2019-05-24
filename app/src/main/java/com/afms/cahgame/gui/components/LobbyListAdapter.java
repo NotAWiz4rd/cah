@@ -69,12 +69,15 @@ public class LobbyListAdapter extends ArrayAdapter<Lobby> {
         btn_item_lobby_select_join.setOnClickListener(e -> {
             if (Util.godMode) {
                 FragmentManager fragmentManager = ((AppCompatActivity) getContext()).getSupportFragmentManager();
-                final MessageDialog[] messageDialog = {MessageDialog.create(getContext().getString(R.string.label_choose_action), new ArrayList<>(Arrays.asList("Join", "Delete", "Cancel")))};
+                final MessageDialog[] messageDialog = {MessageDialog.create(getContext().getString(R.string.label_choose_action),
+                        new ArrayList<>(Arrays.asList(getContext().getString(R.string.join),
+                                getContext().getString(R.string.delete),
+                                getContext().getString(R.string.cancel))))};
                 resultListener = result -> {
-                    if (result.equals("Delete")) {
+                    if (result.equals(getContext().getString(R.string.delete))) {
                         Database.removeLobby(lobby.getId());
-                        Toast.makeText(getContext(), String.format("Deleted lobby: %s", lobby.getId()), Toast.LENGTH_SHORT).show();
-                    } else if (result.equals("Join")){
+                        Toast.makeText(getContext(), String.format(getContext().getString(R.string.deletedLobbyMessage), lobby.getId()), Toast.LENGTH_SHORT).show();
+                    } else if (result.equals(getContext().getString(R.string.join))) {
                         String playerName = settings.getString("player", Util.getRandomName());
                         Util.saveName(settings, playerName);
 
@@ -104,11 +107,12 @@ public class LobbyListAdapter extends ArrayAdapter<Lobby> {
         return convertView;
     }
 
-    private void requestPasswordDialog(Lobby lobby){
+    private void requestPasswordDialog(Lobby lobby) {
         FragmentManager fragmentManager = ((AppCompatActivity) getContext()).getSupportFragmentManager();
-        final PasswordDialog[] passwordDialog = {PasswordDialog.create(getContext(), new ArrayList<>(Arrays.asList("Join", "Cancel")))};
+        final PasswordDialog[] passwordDialog = {PasswordDialog.create(getContext(),
+                new ArrayList<>(Arrays.asList(getContext().getString(R.string.join), getContext().getString(R.string.cancel))))};
         resultListener = result -> {
-            if (result.equals("Join")) {
+            if (result.equals(getContext().getString(R.string.join))) {
                 if (passwordDialog[0].getPassword().equals(lobby.getPassword())) {
                     String playerName = settings.getString("player", Util.getRandomName());
                     Util.saveName(settings, playerName);
@@ -119,7 +123,9 @@ public class LobbyListAdapter extends ArrayAdapter<Lobby> {
                     ((AppCompatActivity) getContext()).finish();
                 } else {
                     fragmentManager.beginTransaction().remove(Objects.requireNonNull(fragmentManager.findFragmentByTag("passwordDialog"))).commit();
-                    passwordDialog[0] = PasswordDialog.create(getContext().getResources().getString(R.string.title_password), getContext().getResources().getString(R.string.label_private_lobby_wrong), new ArrayList<>(Arrays.asList("Join", "Cancel")));
+                    passwordDialog[0] = PasswordDialog.create(getContext().getResources().getString(R.string.title_password),
+                            getContext().getResources().getString(R.string.label_private_lobby_wrong),
+                            new ArrayList<>(Arrays.asList(getContext().getString(R.string.join), getContext().getString(R.string.cancel))));
                     passwordDialog[0].setResultListener(resultListener);
                     passwordDialog[0].show(fragmentManager, "passwordDialog");
                 }

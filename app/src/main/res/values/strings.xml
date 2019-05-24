@@ -1,7 +1,8 @@
 <resources>
+    <string name="string_Version">Version alpha-0.9.0</string>
     <string name="app_name">CAH - Game</string>
-    <string name="selectCardHint">Select the card your want to play.</string>
     <string name="gameName">Cards Against Humankind</string>
+    <string name="selectCardHint">Select the card your want to play.</string>
     <string name="close">Close</string>
     <string name="title_activity_game_screen">GameScreen</string>
     <string name="title_activity_lobby">LobbyActivity</string>
@@ -15,7 +16,6 @@
     <string name="hint_DeckSelect">Please select a deck</string>
     <string name="button_SelectDeck">Select Deck</string>
     <string name="button_searchLobby">Search for lobby</string>
-    <string name="string_Version">Version alpha-0.7.2</string>
     <string name="button_exploreDecks">Explore decks</string>
     <string name="title_activity_test">Test</string>
     <string name="select_player_count">Select player count</string>
@@ -33,7 +33,6 @@
     <string name="label_not_ready">Not ready</string>
     <string name="label_currentLobby">You are currently in lobby:</string>
     <string name="title_leave">Do you really want to leave?</string>
-    <string name="message_leave_lobby">You are currently in soon starting lobby!</string>
     <string name="message_leave_game">You are currently in a running match!</string>
     <string name="title_quit">Do you really want to quit the game?</string>
     <string name="label_private_lobby">The selected lobby is private. You need to enter the correct password.</string>
@@ -78,4 +77,28 @@
     <string name="back">back</string>
     <string name="label_playername">Playername:</string>
     <string name="generate_random_name">generate random name</string>
+    <string name="yes">Yes</string>
+    <string name="black">Black</string>
+    <string name="white">White</string>
+    <string name="enterCardText">Enter card text…</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+    <string name="gameDeleted">The game you were playing was deleted.</string>
+    <string name="errorLog">ERROR</string>
+    <string name="leave">Leave</string>
+    <string name="ok">OK</string>
+    <string name="godmodeCommand">#godmode#</string>
+    <string name="disabledGodmode">Disabled god mode</string>
+    <string name="enabledGodmode">Enabled god mode</string>
+    <string name="lobbyNotAvailable">The lobby you were trying to reach is not available anymore.</string>
+    <string name="failedToGetLobby">Failed to get lobby from server.</string>
+    <string name="notEnoughPlayers">There are not enough players to start the game.</string>
+    <string name="deletedDeckMessage">You\'ve deleted %s</string>
+    <string name="select">Select</string>
+    <string name="translationY">translationY</string>
+    <string name="translationX">translationX</string>
+    <string name="join">Join</string>
+    <string name="deletedLobbyMessage">Deleted lobby: %s</string>
+    <string name="failedToGetDecks">Failed to get decks from server.</string>
+    <string name="failedGettingCards">Failed to get cards from server.</string>
 </resources>

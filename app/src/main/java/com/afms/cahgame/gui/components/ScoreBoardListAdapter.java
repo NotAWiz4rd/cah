@@ -46,19 +46,21 @@ public class ScoreBoardListAdapter extends ArrayAdapter<Player> {
         TextView playerScore = convertView.findViewById(R.id.score_board_player_score);
 
         settings = getContext().getSharedPreferences("Preferences", MODE_PRIVATE);
-        if (player.getName().equals(settings.getString("player", ""))) {
-            playerName.setTypeface(ResourcesCompat.getFont(getContext(), R.font.helveticaneuebold));
-        } else {
-            playerName.setTypeface(ResourcesCompat.getFont(getContext(), R.font.helveticaneuelight));
-        }
+        if (player != null) {
+            if (player.getName().equals(settings.getString("player", ""))) {
+                playerName.setTypeface(ResourcesCompat.getFont(getContext(), R.font.helveticaneuebold));
+            } else {
+                playerName.setTypeface(ResourcesCompat.getFont(getContext(), R.font.helveticaneuelight));
+            }
 
-        if(roundWinner != null && roundWinner.getName().equals(player.getName())){
-            playerName.setTextColor(getContext().getResources().getColor(R.color.pastel_green));
-        }else {
-            playerName.setTextColor(getContext().getResources().getColor(R.color.inputTextColorBlack));
+            if (roundWinner != null && roundWinner.getName().equals(player.getName())) {
+                playerName.setTextColor(getContext().getResources().getColor(R.color.pastel_green));
+            } else {
+                playerName.setTextColor(getContext().getResources().getColor(R.color.inputTextColorBlack));
+            }
+            playerName.setText(player.getName());
+            playerScore.setText(String.valueOf(player.getScore()));
         }
-        playerName.setText(player.getName());
-        playerScore.setText(String.valueOf(player.getScore()));
 
         convertView.setEnabled(false);
         convertView.setOnClickListener(null);

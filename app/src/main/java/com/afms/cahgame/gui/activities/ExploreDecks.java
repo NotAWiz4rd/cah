@@ -1,7 +1,6 @@
 package com.afms.cahgame.gui.activities;
 
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -13,8 +12,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.afms.cahgame.R;
 import com.afms.cahgame.data.Colour;
@@ -35,19 +32,14 @@ import java.util.stream.Collectors;
 
 
 public class ExploreDecks extends AppCompatActivity {
-
     private DeckSelectorDialog deckSelectorDialog;
     private FrameLayout layout_explore_decks_frame;
-    private RelativeLayout layout_explore_decks_navigation;
     private ImageButton btn_explore_decks_back;
     private Button btn_explore_decks_select;
     private ImageButton btn_explore_decks_add;
-    private RelativeLayout layout_explore_decks_bottom;
     private ListView list_explore_decks_cards;
     private FrameLayout btn_explore_decks_white_cards;
     private FrameLayout btn_explore_decks_black_cards;
-    private RelativeLayout overlay_explore_decks_white_cards_selected;
-    private RelativeLayout overlay_explore_decks_black_cards_selected;
     private ImageView img_explore_decks_black_cards_selected_icon;
     private ImageView img_explore_decks_white_cards_selected_icon;
     private EditText label_explore_decks_name;
@@ -72,13 +64,13 @@ public class ExploreDecks extends AppCompatActivity {
     private void initializeUIEvents() {
         editTextMode(label_explore_decks_name, false);
         btn_explore_decks_back.setOnClickListener(event -> {
-            if(createCustomDeck){
+            if (createCustomDeck) {
                 MessageDialog messageDialog = MessageDialog.create(
                         getString(R.string.label_leave_deck_create),
                         getString(R.string.label_hint_leave_deck_create),
-                        new ArrayList<>(Arrays.asList("Yes", "Close")));
+                        new ArrayList<>(Arrays.asList(getString(R.string.yes), getString(R.string.close))));
                 messageDialog.setResultListener(result -> {
-                    if(result.equals("Yes")){
+                    if (result.equals(getString(R.string.yes))) {
                         createCustomDeck = false;
                         selectedDeck = null;
                         btn_explore_decks_select.setText(getString(R.string.label_select_deck));
@@ -92,23 +84,23 @@ public class ExploreDecks extends AppCompatActivity {
             }
         });
         btn_explore_decks_add.setOnClickListener(event -> {
-            if(createCustomDeck){
+            if (createCustomDeck) {
                 MessageDialog messageDialog = MessageDialog.create(
                         getString(R.string.title_cardcolor),
                         getString(R.string.label_cardcolor),
-                        new ArrayList<>(Arrays.asList("Black", "White", "Cancel"))
+                        new ArrayList<>(Arrays.asList(getString(R.string.black), getString(R.string.white), getString(R.string.cancel)))
                 );
                 messageDialog.setResultListener(result -> {
-                    if(result.equals("Black")){
-                        customFullSizeCard = new FullSizeCard(this, new Card(Colour.BLACK, "Enter card text..."));
-                    } else if (result.equals("White")){
-                        customFullSizeCard = new FullSizeCard(this, new Card(Colour.WHITE, "Enter card text..."));
+                    if (result.equals(getString(R.string.black))) {
+                        customFullSizeCard = new FullSizeCard(this, new Card(Colour.BLACK, getString(R.string.enterCardText)));
+                    } else if (result.equals(getString(R.string.white))) {
+                        customFullSizeCard = new FullSizeCard(this, new Card(Colour.WHITE, getString(R.string.enterCardText)));
                     } else {
                         return;
                     }
                     customFullSizeCard.setDimBackground(true);
-                    customFullSizeCard.addOptionButton("Save", v -> {
-                        if(customFullSizeCard.getColour().equals(Colour.BLACK)){
+                    customFullSizeCard.addOptionButton(getString(R.string.save), v -> {
+                        if (customFullSizeCard.getColour().equals(Colour.BLACK)) {
                             selectedDeck.addBlackCard(new Card(Colour.BLACK, customFullSizeCard.getFullSizeCardText()));
                         } else {
                             selectedDeck.addWhiteCard(new Card(Colour.WHITE, customFullSizeCard.getFullSizeCardText()));
@@ -116,7 +108,7 @@ public class ExploreDecks extends AppCompatActivity {
                         layout_explore_decks_frame.removeView(customFullSizeCard);
                         updateCardList();
                     });
-                    customFullSizeCard.addOptionButton("Close", v -> {
+                    customFullSizeCard.addOptionButton(getString(R.string.close), v -> {
                         layout_explore_decks_frame.removeView(customFullSizeCard);
                     });
                     customFullSizeCard.editTextMode(true);
@@ -134,18 +126,18 @@ public class ExploreDecks extends AppCompatActivity {
             }
         });
         btn_explore_decks_select.setOnClickListener(event -> {
-            if(createCustomDeck){
+            if (createCustomDeck) {
                 MessageDialog messageDialog = MessageDialog.create(
                         getString(R.string.title_savedeck),
                         getString(R.string.label_savedeck) + label_explore_decks_name.getText().toString(),
-                        new ArrayList<>(Arrays.asList("Save", "Cancel"))
+                        new ArrayList<>(Arrays.asList(getString(R.string.save), getString(R.string.cancel)))
                 );
                 messageDialog.setResultListener(result -> {
-                    if(result.equals("Save")){
+                    if (result.equals(getString(R.string.save))) {
                         List<Card> gameCards = new ArrayList<>();
                         gameCards.addAll(selectedDeck.getBlackCards());
                         gameCards.addAll(selectedDeck.getWhiteCards());
-                        List<Integer> dataCardIds =  gameCards.stream().map(e -> Database.createNewCard(e.getText(), e.getColour()).getId()).collect(Collectors.toList());
+                        List<Integer> dataCardIds = gameCards.stream().map(e -> Database.createNewCard(e.getText(), e.getColour()).getId()).collect(Collectors.toList());
                         gameCards.clear();
                         com.afms.cahgame.data.Deck deck = new com.afms.cahgame.data.Deck();
                         deck.setName(label_explore_decks_name.getText().toString());
@@ -182,7 +174,7 @@ public class ExploreDecks extends AppCompatActivity {
     private FullSizeCard getFullSizeCardInstance(Card card, int position) {
         FullSizeCard fullSizeCard = new FullSizeCard(this, card);
         fullSizeCard.setDimBackground(true);
-        fullSizeCard.addOptionButton("Close", event -> layout_explore_decks_frame.removeView(fullSizeCard));
+        fullSizeCard.addOptionButton(getString(R.string.close), event -> layout_explore_decks_frame.removeView(fullSizeCard));
         fullSizeCard.setSwipeGestures(FullSizeCard.SWIPE_X_AXIS);
         fullSizeCard.setSwipeResultListener(new SwipeResultListener() {
             @Override
@@ -215,16 +207,16 @@ public class ExploreDecks extends AppCompatActivity {
 
     private void initializeUIElements() {
         layout_explore_decks_frame = findViewById(R.id.layout_explore_decks_frame);
-        layout_explore_decks_navigation = findViewById(R.id.layout_explore_decks_navigation);
+        RelativeLayout layout_explore_decks_navigation = findViewById(R.id.layout_explore_decks_navigation);
         btn_explore_decks_back = findViewById(R.id.btn_explore_decks_back);
         btn_explore_decks_select = findViewById(R.id.btn_explore_decks_select);
         btn_explore_decks_add = findViewById(R.id.btn_explore_decks_add);
-        layout_explore_decks_bottom = findViewById(R.id.layout_explore_decks_bottom);
+        RelativeLayout layout_explore_decks_bottom = findViewById(R.id.layout_explore_decks_bottom);
         list_explore_decks_cards = findViewById(R.id.list_explore_decks_cards);
         btn_explore_decks_white_cards = findViewById(R.id.btn_explore_decks_white_cards);
-        overlay_explore_decks_white_cards_selected = findViewById(R.id.overlay_explore_decks_white_cards_selected);
+        RelativeLayout overlay_explore_decks_white_cards_selected = findViewById(R.id.overlay_explore_decks_white_cards_selected);
         btn_explore_decks_black_cards = findViewById(R.id.btn_explore_decks_black_cards);
-        overlay_explore_decks_black_cards_selected = findViewById(R.id.overlay_explore_decks_black_cards_selected);
+        RelativeLayout overlay_explore_decks_black_cards_selected = findViewById(R.id.overlay_explore_decks_black_cards_selected);
         img_explore_decks_black_cards_selected_icon = findViewById(R.id.img_explore_decks_black_cards_selected_icon);
         img_explore_decks_white_cards_selected_icon = findViewById(R.id.img_explore_decks_white_cards_selected_icon);
         label_explore_decks_name = findViewById(R.id.label_explore_decks_name);
@@ -273,7 +265,7 @@ public class ExploreDecks extends AppCompatActivity {
         updateCardList();
     }
 
-    private void setDisplayCardMode(boolean white, boolean black){
+    private void setDisplayCardMode(boolean white, boolean black) {
         selectedBlackCards = black;
         selectedWhiteCards = white;
         if (white) {
