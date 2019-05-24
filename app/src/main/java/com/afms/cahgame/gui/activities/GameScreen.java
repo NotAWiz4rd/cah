@@ -57,8 +57,10 @@ public class GameScreen extends AppCompatActivity {
     private String lobbyId;
     private String blackCardText = "";
     private DatabaseReference gameReference;
+    private DatabaseReference lastCardSzarSwipeReference;
     private DatabaseReference blackCardTextReference;
     ValueEventListener gameListener;
+    ValueEventListener lastCardSzarSwipeListener;
     ValueEventListener blackCardListener;
 
     private SharedPreferences settings;
@@ -261,7 +263,7 @@ public class GameScreen extends AppCompatActivity {
 
     private void showWaitingScreen() {
         playerIsWaiting = true;
-        if(!waitingScreen.isAttachedToWindow()) {
+        if (!waitingScreen.isAttachedToWindow()) {
             lowerFrameLayout.addView(waitingScreen);
         }
         //lowerFrameLayout.post(() -> waitingScreenAnimation(whiteCardIcon, blackCardIcon));
@@ -322,17 +324,23 @@ public class GameScreen extends AppCompatActivity {
             fullCard.setSwipeResultListener(new SwipeResultListener() {
                 @Override
                 public void onSwipeLeft() {
-                    int nextPos = (playedWhiteCardList.indexOf(fullCard) + 1) % playedWhiteCardList.size();
-                    lowerFrameLayout.addView(playedWhiteCardList.get(nextPos));
+                    if (currentPlayerIsCardSzar()) {
+                        int nextPos = (playedWhiteCardList.indexOf(fullCard) + 1) % playedWhiteCardList.size();
+                        lowerFrameLayout.addView(playedWhiteCardList.get(nextPos));
+                        lastCardSzarSwipeReference.setValue(4);
+                    }
                 }
 
                 @Override
                 public void onSwipeRight() {
-                    int nextPos = playedWhiteCardList.indexOf(fullCard) - 1;
-                    if (nextPos < 0) {
-                        nextPos = playedWhiteCardList.size() - 1;
+                    if (currentPlayerIsCardSzar()) {
+                        int nextPos = playedWhiteCardList.indexOf(fullCard) - 1;
+                        if (nextPos < 0) {
+                            nextPos = playedWhiteCardList.size() - 1;
+                        }
+                        lowerFrameLayout.addView(playedWhiteCardList.get(nextPos));
+                        lastCardSzarSwipeReference.setValue(5);
                     }
-                    lowerFrameLayout.addView(playedWhiteCardList.get(nextPos));
                 }
 
                 @Override
@@ -352,7 +360,7 @@ public class GameScreen extends AppCompatActivity {
             if (allowCardSzarSubmit) {
                 fullCard.setSwipeGestures(FullSizeCard.SWIPE_X_AXIS, FullSizeCard.SWIPE_UP);
             } else {
-                fullCard.setSwipeGestures(FullSizeCard.SWIPE_X_AXIS);
+                fullCard.setSwipeGestures(FullSizeCard.SWIPE_DISABLE);
             }
             playedCards.add(fullCard);
         }
@@ -443,7 +451,7 @@ public class GameScreen extends AppCompatActivity {
     }
 
     private void onRoundEndGamestate() {
-        if(showUpdatedScore){
+        if (showUpdatedScore) {
             scoreBoard = ScoreBoardDialog.create(game, game.getWinningCard().getOwner());
             scoreBoard.show(getSupportFragmentManager(), "playerOverview");
             showUpdatedScore = false;
@@ -542,6 +550,7 @@ public class GameScreen extends AppCompatActivity {
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         gameReference = database.getReference(lobbyId + "-game");
+        lastCardSzarSwipeReference = database.getReference(lobbyId + "-game/lastCardSzarSwipe");
         blackCardTextReference = database.getReference(lobbyId + "-game/currentBlackCard/text");
 
         gameListener = new ValueEventListener() {
@@ -568,7 +577,6 @@ public class GameScreen extends AppCompatActivity {
 
                     if (!(game.getPlayers().values().size() >= Game.MIN_PLAYERS)) {
                         showWaitingScreen();
-                        // todo show waiting screen
                     }
 
                     if ((currentPlayerIsCardSzar()
@@ -588,6 +596,21 @@ public class GameScreen extends AppCompatActivity {
             }
         };
 
+        lastCardSzarSwipeListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                int lastSwipe = (int) dataSnapshot.getValue();
+                if (lastSwipe != 0 && !currentPlayerIsCardSzar()) {
+                    playedWhiteCard.doSwipe(lastSwipe);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.w("ERROR", getString(R.string.failedGetLastSwipe), databaseError.toException());
+            }
+        };
+
         blackCardListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -604,6 +627,7 @@ public class GameScreen extends AppCompatActivity {
         };
 
         gameReference.addValueEventListener(gameListener);
+        lastCardSzarSwipeReference.addValueEventListener(lastCardSzarSwipeListener);
         blackCardTextReference.addValueEventListener(blackCardListener);
 
         // initial game submit by host
@@ -617,6 +641,7 @@ public class GameScreen extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         gameReference.removeEventListener(gameListener);
+        lastCardSzarSwipeReference.removeEventListener(lastCardSzarSwipeListener);
         blackCardTextReference.removeEventListener(blackCardListener);
         if (currentPlayerIsCardSzar()) {
             gameReference.removeValue();
@@ -645,6 +670,7 @@ public class GameScreen extends AppCompatActivity {
 
     private void quitGame(String message) {
         gameReference.removeEventListener(gameListener);
+        lastCardSzarSwipeReference.removeEventListener(lastCardSzarSwipeListener);
         blackCardTextReference.removeEventListener(blackCardListener);
 
         if (game != null) {

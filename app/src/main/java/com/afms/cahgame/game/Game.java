@@ -20,6 +20,8 @@ public class Game implements Serializable {
     private Deck deck;
     private int handCardCount;
 
+    private int lastCardSzarSwipe = 0;
+
     private Gamestate gamestate;
 
     private List<Card> blackCardsPile;
