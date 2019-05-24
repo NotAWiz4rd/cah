@@ -286,4 +286,12 @@ public class Game implements Serializable {
     public void setWinningCard(Card winningCard) {
         this.winningCard = winningCard;
     }
+
+    public int getLastCardSzarSwipe() {
+        return lastCardSzarSwipe;
+    }
+
+    public void setLastCardSzarSwipe(int lastCardSzarSwipe) {
+        this.lastCardSzarSwipe = lastCardSzarSwipe;
+    }
 }

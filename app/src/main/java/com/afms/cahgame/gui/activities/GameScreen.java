@@ -600,9 +600,12 @@ public class GameScreen extends AppCompatActivity {
         lastCardSzarSwipeListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                int lastSwipe = (int) dataSnapshot.getValue();
+                if (dataSnapshot.getValue() == null) {
+                    return;
+                }
+                long lastSwipe = (long) dataSnapshot.getValue();
                 if (lastSwipe != 0 && !currentPlayerIsCardSzar()) {
-                    playedWhiteCard.doSwipe(lastSwipe);
+                    playedWhiteCard.doSwipe(Math.toIntExact(lastSwipe));
                 }
             }
 
