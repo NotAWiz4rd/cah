@@ -221,7 +221,7 @@ public class GameScreen extends AppCompatActivity {
                             submitCard(card);
                             allowCardSubmitting = false;
                             showHandCardList();
-                            // todo show waiting screen until next gamestate
+                            showWaitingScreen();
                         }
                     }
                 }
@@ -440,6 +440,7 @@ public class GameScreen extends AppCompatActivity {
     }
 
     private void onWaitingGamestate() {
+        removeWaitingScreen();
         showPlayedCardsAllowed = true;
         allowCardSubmitting = false;
         showPlayedCards(currentPlayerIsCardSzar());
