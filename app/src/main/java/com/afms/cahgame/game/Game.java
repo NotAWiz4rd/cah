@@ -20,6 +20,8 @@ public class Game implements Serializable {
     private Deck deck;
     private int handCardCount;
 
+    private int lastCardSzarSwipe = 0;
+
     private Gamestate gamestate;
 
     private List<Card> blackCardsPile;
@@ -283,5 +285,13 @@ public class Game implements Serializable {
 
     public void setWinningCard(Card winningCard) {
         this.winningCard = winningCard;
+    }
+
+    public int getLastCardSzarSwipe() {
+        return lastCardSzarSwipe;
+    }
+
+    public void setLastCardSzarSwipe(int lastCardSzarSwipe) {
+        this.lastCardSzarSwipe = lastCardSzarSwipe;
     }
 }

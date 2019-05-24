@@ -62,6 +62,7 @@
     <string name="label_select_deck">Select deck</string>
     <string name="label_choose_deck">Choose a deck</string>
     <string name="label_no_deck_selected">No deck selected</string>
+    <string name="failedGetLastSwipe">Failed to get lastCardSzarSwipe.</string>
     <string name="label_save_deck">Save deck</string>
     <string name="label_leave_deck_create">Do you want to quit deck create?</string>
     <string name="label_hint_leave_deck_create">You will lose your custom deck.</string>
