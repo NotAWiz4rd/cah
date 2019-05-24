@@ -459,8 +459,8 @@ public class GameScreen extends AppCompatActivity {
         }
         playedCardsAreShown = false;
         showPlayedCardsAllowed = false;
-        navigationBarText.setText(R.string.label_nothost);
         setPlayerReady();
+        navigationBarText.setText(R.string.waiting_slogan);
 
         if (currentPlayerIsCardSzar() && game.allPlayersReady()) {
             if (!doneRoundEnd) {
@@ -471,6 +471,7 @@ public class GameScreen extends AppCompatActivity {
             advanceGamestate();
         } else if (!currentPlayerIsCardSzar()) {
             doneRoundEnd = true;
+            navigationBarText.setText(R.string.label_nothost);
         }
     }
 
