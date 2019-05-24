@@ -158,6 +158,11 @@ public class GameScreen extends AppCompatActivity {
                         updatePlayer();
                         gameStateLoop();
                     }
+                } else if (tempGame == null) {
+                    if (Database.getLobby(lobbyId) == null) {
+                        game = null;
+                        quitGame("The game you were playing was deleted.");
+                    }
                 }
             }
 
@@ -644,6 +649,7 @@ public class GameScreen extends AppCompatActivity {
             submitGame();
             Database.removePlayerFromLobby(lobbyId, player.getName());
         }
+
         Intent intent = new Intent(this, Main.class);
         intent.putExtra("message", message.length() > 0 ? message : getString(R.string.cantFindLobby));
         startActivity(intent);
