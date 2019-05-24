@@ -69,7 +69,7 @@ public class LobbyListAdapter extends ArrayAdapter<Lobby> {
         btn_item_lobby_select_join.setOnClickListener(e -> {
             if (Util.godMode) {
                 FragmentManager fragmentManager = ((AppCompatActivity) getContext()).getSupportFragmentManager();
-                final MessageDialog[] messageDialog = {MessageDialog.create("Choose an action", new ArrayList<>(Arrays.asList("Join", "Delete", "Cancel")))};
+                final MessageDialog[] messageDialog = {MessageDialog.create(getContext().getString(R.string.label_choose_action), new ArrayList<>(Arrays.asList("Join", "Delete", "Cancel")))};
                 resultListener = result -> {
                     if (result.equals("Delete")) {
                         Database.removeLobby(lobby.getId());

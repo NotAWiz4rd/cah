@@ -39,7 +39,7 @@ public class FullSizeCard extends ConstraintLayout {
     public static final int SWIPE_UP = 6;
     public static final int SWIPE_DOWN = 7;
 
-
+    private Colour colour;
     private EditText fullSizeCardText;
     private LinearLayout fullSizeCardLayout;
     private LinearLayout fullSizeCardOptionLayout;
@@ -56,6 +56,7 @@ public class FullSizeCard extends ConstraintLayout {
     private double xAxisWidthFactor = 0.3;
     private SwipeResultListener swipeResultListener;
     private List<Integer> swipeStates;
+    private boolean firstTime = true;
 
     public void setSwipeResultListener(SwipeResultListener swipeResultListener) {
         this.swipeResultListener = swipeResultListener;
@@ -87,6 +88,7 @@ public class FullSizeCard extends ConstraintLayout {
         this.card = card;
         swipeStates = new ArrayList<>();
         swipeStates.add(SWIPE_DISABLE);
+        colour = card.getColour();
 
         LayoutInflater.from(context).inflate(R.layout.element_fullsize_card_buttonbar, this);
         setOnClickListener(v -> {
@@ -103,19 +105,22 @@ public class FullSizeCard extends ConstraintLayout {
 
         fullSizeCardLayout.getViewTreeObserver().addOnGlobalLayoutListener(
                 () -> {
-                    fullSizeCardLayout.setScaleX(0.1f);
-                    fullSizeCardLayout.setScaleY(0.1f);
-                    ObjectAnimator scaleUpX = ObjectAnimator.ofFloat(fullSizeCardLayout, "scaleX", 1f);
-                    ObjectAnimator scaleUpY = ObjectAnimator.ofFloat(fullSizeCardLayout, "scaleY", 1f);
-                    scaleUpX.setDuration(700);
-                    scaleUpY.setDuration(700);
-                    AnimatorSet scaleUp = new AnimatorSet();
-                    scaleUp.play(scaleUpX).with(scaleUpY);
-                    scaleUp.start();
+                    if(firstTime){
+                        fullSizeCardLayout.setScaleX(0.1f);
+                        fullSizeCardLayout.setScaleY(0.1f);
+                        ObjectAnimator scaleUpX = ObjectAnimator.ofFloat(fullSizeCardLayout, "scaleX", 1f);
+                        ObjectAnimator scaleUpY = ObjectAnimator.ofFloat(fullSizeCardLayout, "scaleY", 1f);
+                        scaleUpX.setDuration(700);
+                        scaleUpY.setDuration(700);
+                        AnimatorSet scaleUp = new AnimatorSet();
+                        scaleUp.play(scaleUpX).with(scaleUpY);
+                        scaleUp.start();
+                        firstTime = false;
+                    }
                 }
         );
 
-        editTextMode(fullSizeCardText, false);
+        editTextMode(false);
 
         fullSizeCardLayout.setOnTouchListener((v, event) -> {
             if (!swipeStates.contains(SWIPE_DISABLE)) {
@@ -229,14 +234,20 @@ public class FullSizeCard extends ConstraintLayout {
         return card;
     }
 
-    public void editTextMode(EditText o, boolean state) {
-        o.setClickable(state);
-        o.setLongClickable(state);
-        o.setLinksClickable(state);
-        o.setFocusable(state);
-        o.setFocusableInTouchMode(state);
-        o.setEnabled(state);
+    public void editTextMode(boolean state) {
+        fullSizeCardText.setClickable(state);
+        fullSizeCardText.setLongClickable(state);
+        fullSizeCardText.setLinksClickable(state);
+        fullSizeCardText.setFocusable(state);
+        fullSizeCardText.setFocusableInTouchMode(state);
+        fullSizeCardText.setEnabled(state);
     }
 
+    public String getFullSizeCardText() {
+        return fullSizeCardText.getText().toString();
+    }
 
+    public Colour getColour(){
+        return colour;
+    }
 }

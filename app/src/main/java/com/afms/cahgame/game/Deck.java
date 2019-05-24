@@ -1,6 +1,7 @@
 package com.afms.cahgame.game;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Deck implements Serializable {
@@ -9,6 +10,8 @@ public class Deck implements Serializable {
     private List<Card> blackCards;
 
     public Deck() {
+        whiteCards = new ArrayList<>();
+        blackCards = new ArrayList<>();
     }
 
     public Deck(String name, List<Card> whiteCards, List<Card> blackCards) {

@@ -1,6 +1,7 @@
 package com.afms.cahgame.gui.activities;
 
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afms.cahgame.R;
+import com.afms.cahgame.data.Colour;
 import com.afms.cahgame.game.Card;
 import com.afms.cahgame.game.Deck;
 import com.afms.cahgame.gui.components.CardListAdapter;
@@ -23,11 +25,13 @@ import com.afms.cahgame.gui.components.DeckSelectorDialog;
 import com.afms.cahgame.gui.components.FullSizeCard;
 import com.afms.cahgame.gui.components.MessageDialog;
 import com.afms.cahgame.gui.components.SwipeResultListener;
+import com.afms.cahgame.util.Database;
 import com.afms.cahgame.util.Util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class ExploreDecks extends AppCompatActivity {
@@ -50,10 +54,10 @@ public class ExploreDecks extends AppCompatActivity {
 
     private CardListAdapter cardListAdapter;
     private Deck selectedDeck;
+    private FullSizeCard customFullSizeCard;
 
     private boolean selectedWhiteCards = false;
     private boolean selectedBlackCards = false;
-
     private boolean createCustomDeck = false;
 
     @Override
@@ -78,6 +82,7 @@ public class ExploreDecks extends AppCompatActivity {
                         createCustomDeck = false;
                         selectedDeck = null;
                         btn_explore_decks_select.setText(getString(R.string.label_select_deck));
+                        editTextMode(label_explore_decks_name, false);
                         updateCardList();
                     }
                 });
@@ -87,13 +92,73 @@ public class ExploreDecks extends AppCompatActivity {
             }
         });
         btn_explore_decks_add.setOnClickListener(event -> {
-            selectedDeck = new Deck();
-            createCustomDeck = true;
-            btn_explore_decks_select.setText(getString(R.string.label_save_deck));
+            if(createCustomDeck){
+                MessageDialog messageDialog = MessageDialog.create(
+                        getString(R.string.title_cardcolor),
+                        getString(R.string.label_cardcolor),
+                        new ArrayList<>(Arrays.asList("Black", "White", "Cancel"))
+                );
+                messageDialog.setResultListener(result -> {
+                    if(result.equals("Black")){
+                        customFullSizeCard = new FullSizeCard(this, new Card(Colour.BLACK, "Enter card text..."));
+                    } else if (result.equals("White")){
+                        customFullSizeCard = new FullSizeCard(this, new Card(Colour.WHITE, "Enter card text..."));
+                    } else {
+                        return;
+                    }
+                    customFullSizeCard.setDimBackground(true);
+                    customFullSizeCard.addOptionButton("Save", v -> {
+                        if(customFullSizeCard.getColour().equals(Colour.BLACK)){
+                            selectedDeck.addBlackCard(new Card(Colour.BLACK, customFullSizeCard.getFullSizeCardText()));
+                        } else {
+                            selectedDeck.addWhiteCard(new Card(Colour.WHITE, customFullSizeCard.getFullSizeCardText()));
+                        }
+                        layout_explore_decks_frame.removeView(customFullSizeCard);
+                        updateCardList();
+                    });
+                    customFullSizeCard.addOptionButton("Close", v -> {
+                        layout_explore_decks_frame.removeView(customFullSizeCard);
+                    });
+                    customFullSizeCard.editTextMode(true);
+                    layout_explore_decks_frame.addView(customFullSizeCard);
+                });
+                messageDialog.show(getSupportFragmentManager(), "addCardMessage");
+            } else {
+                selectedDeck = new Deck();
+                createCustomDeck = true;
+                editTextMode(label_explore_decks_name, true);
+                btn_explore_decks_select.setText(getString(R.string.label_save_deck));
+                setDisplayCardMode(true, true);
+                label_explore_decks_name.setText(getString(R.string.label_enter_deck_name));
+                label_explore_decks_name.setSelection(label_explore_decks_name.getText().length());
+            }
         });
         btn_explore_decks_select.setOnClickListener(event -> {
             if(createCustomDeck){
-                Toast.makeText(this, "Save", Toast.LENGTH_SHORT).show();
+                MessageDialog messageDialog = MessageDialog.create(
+                        getString(R.string.title_savedeck),
+                        getString(R.string.label_savedeck) + label_explore_decks_name.getText().toString(),
+                        new ArrayList<>(Arrays.asList("Save", "Cancel"))
+                );
+                messageDialog.setResultListener(result -> {
+                    if(result.equals("Save")){
+                        List<Card> gameCards = new ArrayList<>();
+                        gameCards.addAll(selectedDeck.getBlackCards());
+                        gameCards.addAll(selectedDeck.getWhiteCards());
+                        List<Integer> dataCardIds =  gameCards.stream().map(e -> Database.createNewCard(e.getText(), e.getColour()).getId()).collect(Collectors.toList());
+                        gameCards.clear();
+                        com.afms.cahgame.data.Deck deck = new com.afms.cahgame.data.Deck();
+                        deck.setName(label_explore_decks_name.getText().toString());
+                        deck.setCardIds(dataCardIds);
+                        Database.addDeck(deck);
+                        createCustomDeck = false;
+                        editTextMode(label_explore_decks_name, false);
+                        btn_explore_decks_select.setText(getString(R.string.label_select_deck));
+                        selectedDeck = Database.getDeck(deck.getName());
+                        updateCardList();
+                    }
+                });
+                messageDialog.show(getSupportFragmentManager(), "saveCustomDeck");
             } else {
                 deckSelectorDialog.show(getSupportFragmentManager(), "chooseDeckExplore");
             }
@@ -101,7 +166,6 @@ public class ExploreDecks extends AppCompatActivity {
 
         deckSelectorDialog.setResultListener(result -> {
             selectedDeck = Util.convertDataDeckToPlayDeck(Util.getDataDeckFromName(result));
-            label_explore_decks_name.setText(selectedDeck.getName());
             updateCardList();
         });
 
@@ -173,6 +237,7 @@ public class ExploreDecks extends AppCompatActivity {
 
     private void updateCardList() {
         cardListAdapter.clear();
+        label_explore_decks_name.setText(selectedDeck.getName());
         if (selectedDeck != null) {
             List<Card> cards = new ArrayList<>();
             if (selectedBlackCards) {
@@ -205,6 +270,24 @@ public class ExploreDecks extends AppCompatActivity {
                 img_explore_decks_black_cards_selected_icon.setImageDrawable(getDrawable(R.drawable.vector_x_circle_24dp));
                 DrawableCompat.setTint(img_explore_decks_black_cards_selected_icon.getDrawable(), ContextCompat.getColor(this, R.color.pastel_red));
             }
+        }
+        updateCardList();
+    }
+
+    private void setDisplayCardMode(boolean white, boolean black){
+        if (white) {
+            img_explore_decks_white_cards_selected_icon.setImageDrawable(getDrawable(R.drawable.vector_tick_circle_24dp));
+            DrawableCompat.setTint(img_explore_decks_white_cards_selected_icon.getDrawable(), ContextCompat.getColor(this, R.color.pastel_green));
+        } else {
+            img_explore_decks_white_cards_selected_icon.setImageDrawable(getDrawable(R.drawable.vector_x_circle_24dp));
+            DrawableCompat.setTint(img_explore_decks_white_cards_selected_icon.getDrawable(), ContextCompat.getColor(this, R.color.pastel_red));
+        }
+        if (black) {
+            img_explore_decks_black_cards_selected_icon.setImageDrawable(getDrawable(R.drawable.vector_tick_circle_24dp));
+            DrawableCompat.setTint(img_explore_decks_black_cards_selected_icon.getDrawable(), ContextCompat.getColor(this, R.color.pastel_green));
+        } else {
+            img_explore_decks_black_cards_selected_icon.setImageDrawable(getDrawable(R.drawable.vector_x_circle_24dp));
+            DrawableCompat.setTint(img_explore_decks_black_cards_selected_icon.getDrawable(), ContextCompat.getColor(this, R.color.pastel_red));
         }
         updateCardList();
     }

@@ -4,21 +4,25 @@ import android.app.Dialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.afms.cahgame.R;
 import com.afms.cahgame.util.Database;
 import com.afms.cahgame.util.Util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -38,8 +42,26 @@ public class DeckSelectorDialog extends DialogFragment {
         deckListAdapter.addAll(Database.getDecks().stream().map(Util::convertDataDeckToPlayDeck).collect(Collectors.toList()));
         list_dialog_deckselector.setAdapter(deckListAdapter);
         list_dialog_deckselector.setOnItemClickListener((parent, view1, position, id) -> {
-            resultListener.onItemClick(((TextView) view1.findViewById(R.id.item_deckselector_name)).getText().toString());
-            dismiss();
+            String deckName = ((TextView) view1.findViewById(R.id.item_deckselector_name)).getText().toString();
+            if(Util.godMode){
+                MessageDialog messageDialog = MessageDialog.create(
+                        getContext().getString(R.string.label_choose_action),
+                        new ArrayList<>(Arrays.asList("Select", "Delete", "Cancel"))
+                );
+                messageDialog.setResultListener(result -> {
+                    if(result.equals("Select")){
+                        resultListener.onItemClick(deckName);
+                        dismiss();
+                    } else if (result.equals("Delete")){
+                        Database.removeDeck(deckName);
+                        Toast.makeText(getContext(), String.format("You've deleted %s", deckName), Toast.LENGTH_SHORT).show();
+                    }
+                });
+                messageDialog.show(((AppCompatActivity) getContext()).getSupportFragmentManager(), "godmodeDeck");
+            } else {
+                resultListener.onItemClick(deckName);
+                dismiss();
+            }
         });
     }
 
