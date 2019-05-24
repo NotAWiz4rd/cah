@@ -62,4 +62,5 @@
     <string name="label_select_deck">Select deck</string>
     <string name="label_choose_deck">Choose a deck</string>
     <string name="label_no_deck_selected">No deck selected</string>
+    <string name="label_save_deck">Save deck</string>
 </resources>

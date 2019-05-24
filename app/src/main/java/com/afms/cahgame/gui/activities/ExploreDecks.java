@@ -6,6 +6,7 @@ import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -43,13 +44,15 @@ public class ExploreDecks extends AppCompatActivity {
     private RelativeLayout overlay_explore_decks_black_cards_selected;
     private ImageView img_explore_decks_black_cards_selected_icon;
     private ImageView img_explore_decks_white_cards_selected_icon;
-    private TextView label_explore_decks_name;
+    private EditText label_explore_decks_name;
 
     private CardListAdapter cardListAdapter;
     private Deck selectedDeck;
 
     private boolean selectedWhiteCards = false;
     private boolean selectedBlackCards = false;
+
+    private boolean createCustomDeck = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,10 +64,19 @@ public class ExploreDecks extends AppCompatActivity {
     }
 
     private void initializeUIEvents() {
+        editTextMode(label_explore_decks_name, false);
         btn_explore_decks_back.setOnClickListener(event -> finish());
-        btn_explore_decks_add.setOnClickListener(event -> Toast.makeText(this, "clicked: add", Toast.LENGTH_SHORT).show());
+        btn_explore_decks_add.setOnClickListener(event -> {
+            selectedDeck = new Deck();
+            createCustomDeck = true;
+            btn_explore_decks_select.setText(getString(R.string.label_save_deck));
+        });
         btn_explore_decks_select.setOnClickListener(event -> {
-            deckSelectorDialog.show(getSupportFragmentManager(), "chooseDeckExplore");
+            if(createCustomDeck){
+                Toast.makeText(this, "Save", Toast.LENGTH_SHORT).show();
+            } else {
+                deckSelectorDialog.show(getSupportFragmentManager(), "chooseDeckExplore");
+            }
         });
 
         deckSelectorDialog.setResultListener(result -> {
@@ -177,6 +189,15 @@ public class ExploreDecks extends AppCompatActivity {
         updateCardList();
     }
 
+
+    public void editTextMode(EditText o, boolean state) {
+        o.setClickable(state);
+        o.setLongClickable(state);
+        o.setLinksClickable(state);
+        o.setFocusable(state);
+        o.setFocusableInTouchMode(state);
+        o.setEnabled(state);
+    }
 
     private void hideUI() {
         final int flags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
