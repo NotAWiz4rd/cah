@@ -176,8 +176,6 @@ public class GameScreen extends AppCompatActivity {
                 long lastSwipe = (long) dataSnapshot.getValue();
                 if (lastSwipe != 0 && !currentPlayerIsCardSzar()) {
                     playedWhiteCard.doSwipe(Math.toIntExact(lastSwipe));
-                } else if (currentPlayerIsCardSzar()) {
-                    lastCardSzarSwipeReference.setValue(0);
                 }
             }
 
@@ -227,7 +225,6 @@ public class GameScreen extends AppCompatActivity {
         lastCardSzarSwipeReference.removeEventListener(lastCardSzarSwipeListener);
         blackCardTextReference.removeEventListener(blackCardListener);
         if (currentPlayerIsCardSzar()) {
-            gameReference.removeValue();
             Database.removeLobby(lobbyId);
             finish();
         }
@@ -394,19 +391,29 @@ public class GameScreen extends AppCompatActivity {
             fullCard.setSwipeResultListener(new SwipeResultListener() {
                 @Override
                 public void onSwipeLeft() {
+                    if (currentPlayerIsCardSzar()) {
+                        lastCardSzarSwipeReference.setValue(0);
+                        lastCardSzarSwipeReference.setValue(4);
+                    }
+
                     int nextPos = (playedWhiteCardList.indexOf(fullCard) + 1) % playedWhiteCardList.size();
-                    lowerFrameLayout.addView(playedWhiteCardList.get(nextPos));
-                    lastCardSzarSwipeReference.setValue(4);
+                    playedWhiteCard = playedWhiteCardList.get(nextPos);
+                    lowerFrameLayout.addView(playedWhiteCard);
                 }
 
                 @Override
                 public void onSwipeRight() {
+                    if (currentPlayerIsCardSzar()) {
+                        lastCardSzarSwipeReference.setValue(0);
+                        lastCardSzarSwipeReference.setValue(5);
+                    }
+
                     int nextPos = playedWhiteCardList.indexOf(fullCard) - 1;
                     if (nextPos < 0) {
                         nextPos = playedWhiteCardList.size() - 1;
                     }
-                    lowerFrameLayout.addView(playedWhiteCardList.get(nextPos));
-                    lastCardSzarSwipeReference.setValue(5);
+                    playedWhiteCard = playedWhiteCardList.get(nextPos);
+                    lowerFrameLayout.addView(playedWhiteCard);
                 }
 
                 @Override
