@@ -218,6 +218,7 @@ public class GameScreen extends AppCompatActivity {
                 public void onSwipeUp() {
                     if (!currentPlayerIsCardSzar()) {
                         if (allowCardSubmitting) {
+                            navigationBarText.setText(R.string.waiting_for_others);
                             submitCard(card);
                             allowCardSubmitting = false;
                             showHandCardList();
