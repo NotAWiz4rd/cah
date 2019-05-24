@@ -146,11 +146,13 @@ public class GameScreen extends AppCompatActivity {
                         submitGame();
                     }
 
+                    // wait for more players if there arent enough anymore
                     if (!(game.getPlayers().values().size() >= Game.MIN_PLAYERS)) {
                         showWaitingScreen();
                         return;
                     }
 
+                    // only do the gamestateLoop if bigger things changed
                     if ((currentPlayerIsCardSzar()
                             || (!game.getGamestate().equals(lastGamestate) && !currentPlayerIsCardSzar())
                             || !game.getPlayer(player.getName()).isReady())
@@ -160,12 +162,13 @@ public class GameScreen extends AppCompatActivity {
                         gameStateLoop();
                     }
                 } else if (tempGame == null) {
+                    // quit game if game and lobby dont exist anymore
                     if (Database.getLobby(lobbyId) == null) {
                         game = null;
                         quitGame(getString(R.string.gameDeleted));
                     }
                 } else if (!gamestateSameOrNewer(tempGame.getGamestate()) && currentPlayerIsCardSzar()) {
-                    submitGame();
+                    submitGame(); // submit game again if someone changed it incorrectly
                 }
             }
 
