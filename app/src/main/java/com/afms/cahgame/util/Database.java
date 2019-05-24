@@ -290,6 +290,19 @@ public class Database {
     }
 
     /**
+     * Removes the given deck.
+     *
+     * @param deckName The name of the deck.
+     */
+    public static void removeDeck(String deckName) {
+        Deck deck = Util.getDataDeckFromName(deckName);
+        if (deck != null) {
+            decks.remove(deck);
+            decksReference.setValue(decks);
+        }
+    }
+
+    /**
      * Adds a new deck to the list of decks.
      *
      * @param deckName The name of the new deck.
