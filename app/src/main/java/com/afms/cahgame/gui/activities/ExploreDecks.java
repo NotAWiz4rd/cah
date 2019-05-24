@@ -237,7 +237,6 @@ public class ExploreDecks extends AppCompatActivity {
 
     private void updateCardList() {
         cardListAdapter.clear();
-        label_explore_decks_name.setText(selectedDeck.getName());
         if (selectedDeck != null) {
             List<Card> cards = new ArrayList<>();
             if (selectedBlackCards) {
@@ -275,6 +274,8 @@ public class ExploreDecks extends AppCompatActivity {
     }
 
     private void setDisplayCardMode(boolean white, boolean black){
+        selectedBlackCards = black;
+        selectedWhiteCards = white;
         if (white) {
             img_explore_decks_white_cards_selected_icon.setImageDrawable(getDrawable(R.drawable.vector_tick_circle_24dp));
             DrawableCompat.setTint(img_explore_decks_white_cards_selected_icon.getDrawable(), ContextCompat.getColor(this, R.color.pastel_green));

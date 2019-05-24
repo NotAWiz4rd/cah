@@ -55,6 +55,7 @@ public class DeckSelectorDialog extends DialogFragment {
                     } else if (result.equals("Delete")){
                         Database.removeDeck(deckName);
                         Toast.makeText(getContext(), String.format("You've deleted %s", deckName), Toast.LENGTH_SHORT).show();
+                        dismiss();
                     }
                 });
                 messageDialog.show(((AppCompatActivity) getContext()).getSupportFragmentManager(), "godmodeDeck");
