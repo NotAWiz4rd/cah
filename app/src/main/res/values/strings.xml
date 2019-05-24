@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">CAH - Game</string>
     <string name="selectCardHint">Select the card your want to play.</string>
-    <string name="gameName">Cards Against Humanity</string>
+    <string name="gameName">Cards Against Humankind</string>
     <string name="close">Close</string>
     <string name="title_activity_game_screen">GameScreen</string>
     <string name="title_activity_lobby">LobbyActivity</string>

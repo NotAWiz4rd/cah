@@ -534,7 +534,7 @@ public class CreateLobby extends AppCompatActivity {
         Database.createNewCard("Tom Cruise.", Colour.WHITE);
         Database.createNewCard("Anal beads.", Colour.WHITE);
         Database.createNewCard("Drinking alone.", Colour.WHITE);
-        Database.createNewCard("Cards Against Humanity.", Colour.WHITE);
+        Database.createNewCard("Cards Against Humankind.", Colour.WHITE);
         Database.createNewCard("Coat hanger abortions.", Colour.WHITE);
         Database.createNewCard("Used panties.", Colour.WHITE);
         Database.createNewCard("Cuddling.", Colour.WHITE);
