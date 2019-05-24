@@ -352,6 +352,7 @@ public class GameScreen extends AppCompatActivity {
             if (!doneRoundStart) {
                 game.startNewRound();
                 submitGame();
+                blackCardTextReference.setValue(game.getCurrentBlackCard().getText());
                 doneRoundStart = true;
             }
             advanceGamestate();
