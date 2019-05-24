@@ -21,10 +21,12 @@ import com.afms.cahgame.game.Deck;
 import com.afms.cahgame.gui.components.CardListAdapter;
 import com.afms.cahgame.gui.components.DeckSelectorDialog;
 import com.afms.cahgame.gui.components.FullSizeCard;
+import com.afms.cahgame.gui.components.MessageDialog;
 import com.afms.cahgame.gui.components.SwipeResultListener;
 import com.afms.cahgame.util.Util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -65,7 +67,25 @@ public class ExploreDecks extends AppCompatActivity {
 
     private void initializeUIEvents() {
         editTextMode(label_explore_decks_name, false);
-        btn_explore_decks_back.setOnClickListener(event -> finish());
+        btn_explore_decks_back.setOnClickListener(event -> {
+            if(createCustomDeck){
+                MessageDialog messageDialog = MessageDialog.create(
+                        getString(R.string.label_leave_deck_create),
+                        getString(R.string.label_hint_leave_deck_create),
+                        new ArrayList<>(Arrays.asList("Yes", "Close")));
+                messageDialog.setResultListener(result -> {
+                    if(result.equals("Yes")){
+                        createCustomDeck = false;
+                        selectedDeck = null;
+                        btn_explore_decks_select.setText(getString(R.string.label_select_deck));
+                        updateCardList();
+                    }
+                });
+                messageDialog.show(getSupportFragmentManager(), "leaveCustomDeck");
+            } else {
+                finish();
+            }
+        });
         btn_explore_decks_add.setOnClickListener(event -> {
             selectedDeck = new Deck();
             createCustomDeck = true;
@@ -152,8 +172,8 @@ public class ExploreDecks extends AppCompatActivity {
     }
 
     private void updateCardList() {
+        cardListAdapter.clear();
         if (selectedDeck != null) {
-            cardListAdapter.clear();
             List<Card> cards = new ArrayList<>();
             if (selectedBlackCards) {
                 cards.addAll(selectedDeck.getBlackCards());
