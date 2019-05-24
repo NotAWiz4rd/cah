@@ -118,7 +118,7 @@ public class WaitingLobby extends AppCompatActivity {
                         currentLobby = null;
                         lobbyReference.removeEventListener(valueEventListener);
                         Intent intent = new Intent(context, Main.class);
-                        intent.putExtra("message", R.string.lobbyNotAvailable);
+                        intent.putExtra("message", getString(R.string.lobbyNotAvailable));
                         startActivity(intent);
                         finish();
                     }
