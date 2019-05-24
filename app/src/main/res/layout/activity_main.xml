@@ -78,7 +78,8 @@
             android:layout_marginBottom="16dp"
             android:background="@drawable/button_icon_settings_radius_10dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            android:contentDescription="@string/label_settings" />
 
         <TextView
             android:id="@+id/text_main_version"

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <color name="colorPrimary">#FF424242</color>
-    <color name="colorPrimaryDark">#601a1816</color>
-    <color name="colorAccent">#ff6961</color>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <color name="colorPrimary">#008577</color>
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorAccent">#D81B60</color>
 
     <color name="black_overlay">#66000000</color>
     <color name="cardBackgroundColorWhite">#ead8b9</color>
@@ -13,15 +13,15 @@
     <color name="cardTransparentBackgroundColorBlack">#801A1816</color>
     <color name="cardTextColorWhite">#494138</color>
     <color name="inputBackgroundColorBlack">#601a1816</color>
-    <color name="inputBackgroundColorWhite">#EDFFFFFF</color>
+    <color name="inputBackgroundColorWhite">#DEFFFFFF</color>
     <color name="inputTextColorBlack">#3A342E</color>
     <color name="pastel_red">#ff6961</color>
     <color name="pastel_green">#77dd77</color>
     <color name="pastel_red_darker">#813531</color>
     <color name="pastel_green_darker">#3F753F</color>
-    <color name="cardview_dark_background">#FF424242</color>
+    <color name="cardview_dark_background" tools:ignore="PrivateResource">#FF424242</color>
     <color name="cardview_dark_background_disabled">#777777</color>
-    <color name="cardview_light_background">#FFFFFFFF</color>
-    <color name="cardview_shadow_end_color">#03000000</color>
-    <color name="cardview_shadow_start_color">#37000000</color>
+    <color name="cardview_light_background" tools:ignore="PrivateResource">#FFFFFFFF</color>
+    <color name="cardview_shadow_end_color" tools:ignore="PrivateResource">#03000000</color>
+    <color name="cardview_shadow_start_color" tools:ignore="PrivateResource">#37000000</color>
 </resources>

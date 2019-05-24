@@ -74,4 +74,8 @@
     <string name="label_choose_action">Choose an action</string>
     <string name="label_enter_deck_name">Enter deck name...</string>
     <string name="notEnoughCards">The selected deck doesn\'t contain enough cards.</string>
+    <string name="show_score_board">show score board</string>
+    <string name="back">back</string>
+    <string name="label_playername">Playername:</string>
+    <string name="generate_random_name">generate random name</string>
 </resources>

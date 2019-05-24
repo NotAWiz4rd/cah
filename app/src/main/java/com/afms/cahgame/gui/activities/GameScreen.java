@@ -18,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.afms.cahgame.R;
 import com.afms.cahgame.data.Colour;
@@ -265,23 +266,19 @@ public class GameScreen extends AppCompatActivity {
             fullCard.setSwipeResultListener(new SwipeResultListener() {
                 @Override
                 public void onSwipeLeft() {
-                    if (currentPlayerIsCardSzar()) {
                         int nextPos = (playedWhiteCardList.indexOf(fullCard) + 1) % playedWhiteCardList.size();
                         lowerFrameLayout.addView(playedWhiteCardList.get(nextPos));
                         lastCardSzarSwipeReference.setValue(4);
-                    }
                 }
 
                 @Override
                 public void onSwipeRight() {
-                    if (currentPlayerIsCardSzar()) {
                         int nextPos = playedWhiteCardList.indexOf(fullCard) - 1;
                         if (nextPos < 0) {
                             nextPos = playedWhiteCardList.size() - 1;
                         }
                         lowerFrameLayout.addView(playedWhiteCardList.get(nextPos));
                         lastCardSzarSwipeReference.setValue(5);
-                    }
                 }
 
                 @Override
@@ -547,6 +544,8 @@ public class GameScreen extends AppCompatActivity {
                 long lastSwipe = (long) dataSnapshot.getValue();
                 if (lastSwipe != 0 && !currentPlayerIsCardSzar()) {
                     playedWhiteCard.doSwipe(Math.toIntExact(lastSwipe));
+                }else if(currentPlayerIsCardSzar()){
+                    lastCardSzarSwipeReference.setValue(0);
                 }
             }
 

@@ -186,23 +186,25 @@ public class FullSizeCard extends ConstraintLayout {
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
-                ((ViewManager) v.getParent().getParent().getParent()).removeView(((View) v.getParent().getParent()));
-                v.setX(viewPosDownX);
-                v.setY(viewPosDownY);
-                if (swipeResultListener != null) {
-                    switch (direction) {
-                        case SWIPE_UP:
-                            swipeResultListener.onSwipeUp();
-                            break;
-                        case SWIPE_DOWN:
-                            swipeResultListener.onSwipeDown();
-                            break;
-                        case SWIPE_LEFT:
-                            swipeResultListener.onSwipeLeft();
-                            break;
-                        case SWIPE_RIGHT:
-                            swipeResultListener.onSwipeRight();
-                            break;
+                if (v.getParent().getParent().getParent() != null) {
+                    ((ViewManager) v.getParent().getParent().getParent()).removeView(((View) v.getParent().getParent()));
+                    v.setX(viewPosDownX);
+                    v.setY(viewPosDownY);
+                    if (swipeResultListener != null) {
+                        switch (direction) {
+                            case SWIPE_UP:
+                                swipeResultListener.onSwipeUp();
+                                break;
+                            case SWIPE_DOWN:
+                                swipeResultListener.onSwipeDown();
+                                break;
+                            case SWIPE_LEFT:
+                                swipeResultListener.onSwipeLeft();
+                                break;
+                            case SWIPE_RIGHT:
+                                swipeResultListener.onSwipeRight();
+                                break;
+                        }
                     }
                 }
             }

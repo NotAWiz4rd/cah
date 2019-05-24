@@ -5,5 +5,4 @@
     android:textColor="@android:color/white"
     android:textSize="26sp"
     android:layout_margin="16dp"
-    android:text="1"
     xmlns:android="http://schemas.android.com/apk/res/android" />
