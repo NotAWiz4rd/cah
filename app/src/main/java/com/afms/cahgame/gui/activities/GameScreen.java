@@ -148,6 +148,7 @@ public class GameScreen extends AppCompatActivity {
 
                     if (!(game.getPlayers().values().size() >= Game.MIN_PLAYERS)) {
                         showWaitingScreen();
+                        return;
                     }
 
                     if ((currentPlayerIsCardSzar()
