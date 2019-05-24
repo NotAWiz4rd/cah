@@ -163,6 +163,8 @@ public class GameScreen extends AppCompatActivity {
                         game = null;
                         quitGame("The game you were playing was deleted.");
                     }
+                } else if (!gamestateSameOrNewer(tempGame.getGamestate()) && currentPlayerIsCardSzar()) {
+                    submitGame();
                 }
             }
 
@@ -496,6 +498,9 @@ public class GameScreen extends AppCompatActivity {
             advanceGamestate();
         } else if (!currentPlayerIsCardSzar()) {
             doneRoundStart = true;
+            navigationBarText.setText(R.string.label_nothost);
+        } else if (currentPlayerIsCardSzar()) {
+            navigationBarText.setText(R.string.waiting_slogan);
         }
     }
 
