@@ -21,6 +21,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.afms.cahgame.R;
@@ -72,7 +73,7 @@ public class GameScreen extends AppCompatActivity {
     private ImageView whiteCardIcon;
     private ConstraintLayout gameScreenLayout;
     private LinearLayout playedBlackCard;
-    private ConstraintLayout waitingScreen;
+    private RelativeLayout waitingScreen;
     private TextView playedBlackCardText;
     private FullSizeCard playedWhiteCard;
     private FrameLayout lowerFrameLayout;
@@ -125,11 +126,9 @@ public class GameScreen extends AppCompatActivity {
         playedWhiteCard = new FullSizeCard(this, new Card(Colour.WHITE, "test"));
         userSelectionLayout = (ConstraintLayout) getLayoutInflater().inflate(R.layout.element_list_card_select, gameScreenLayout, false);
         userSelectionListView = userSelectionLayout.findViewById(R.id.cardSelectList);
-        waitingScreen = (ConstraintLayout) getLayoutInflater().inflate(R.layout.element_waiting_screen_with_gif, gameScreenLayout, false);
-        //waitingScreen = (ConstraintLayout) getLayoutInflater().inflate(R.layout.element_waiting_screen, gameScreenLayout, false);
+        waitingScreen = (RelativeLayout) getLayoutInflater().inflate(R.layout.element_waiting_screen_with_gif, gameScreenLayout, false);
         blackCardIcon = waitingScreen.findViewById(R.id.waiting_screen_blackCard);
         whiteCardIcon = waitingScreen.findViewById(R.id.waiting_screen_whiteCard);
-
     }
 
     private void initializeUIEvents() {
@@ -269,52 +268,6 @@ public class GameScreen extends AppCompatActivity {
         }
         //lowerFrameLayout.post(() -> waitingScreenAnimation(whiteCardIcon, blackCardIcon));
     }
-
-    private void waitingScreenAnimation(ImageView whiteCard, ImageView blackCard) {
-        while (playerIsWaiting) {
-            ObjectAnimator transOutBlack = ObjectAnimator.ofFloat(blackCard, "translationX", -100f).setDuration(700);
-            ObjectAnimator transOutWhite = ObjectAnimator.ofFloat(whiteCard, "translationX", 100f).setDuration(700);
-            AnimatorSet transOut = new AnimatorSet();
-            transOut.play(transOutBlack).with(transOutWhite);
-            transOut.start();
-            transOut.addListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    super.onAnimationEnd(animation);
-                    whiteCard.bringToFront();
-                    ObjectAnimator scaleDownX = ObjectAnimator.ofFloat(blackCard, "scaleX", 0.5f).setDuration(700);
-                    ObjectAnimator scaleDownY = ObjectAnimator.ofFloat(blackCard, "scaleY", 0.5f).setDuration(700);
-                    ObjectAnimator scaleUpX = ObjectAnimator.ofFloat(whiteCard, "scaleX", 2f).setDuration(700);
-                    ObjectAnimator scaleUpY = ObjectAnimator.ofFloat(whiteCard, "scaleY", 2f).setDuration(700);
-                    ObjectAnimator transInBlack = ObjectAnimator.ofFloat(blackCard, "translationX", 0f).setDuration(700);
-                    ObjectAnimator transInWhite = ObjectAnimator.ofFloat(whiteCard, "translationX", 0f).setDuration(700);
-                    ObjectAnimator scaleBackX = ObjectAnimator.ofFloat(blackCard, "scaleX", 1f).setDuration(700);
-                    ObjectAnimator scaleBackY = ObjectAnimator.ofFloat(blackCard, "scaleY", 1f).setDuration(700);
-                    ObjectAnimator scaleBack2X = ObjectAnimator.ofFloat(whiteCard, "scaleX", 1f).setDuration(700);
-                    ObjectAnimator scaleBack2Y = ObjectAnimator.ofFloat(whiteCard, "scaleY", 1f).setDuration(700);
-                    AnimatorSet scale = new AnimatorSet();
-                    AnimatorSet transIn = new AnimatorSet();
-                    AnimatorSet scaleBack = new AnimatorSet();
-                    scaleBack.play(scaleBackX).with(scaleBackY).with(scaleBack2X).with(scaleBack2Y);
-                    transIn.play(transInBlack).with(transInWhite).before(scaleBack);
-                    scale.play(scaleDownX).with(scaleDownY).with(scaleUpX).with(scaleUpY).before(transIn);
-                    scale.start();
-                    scale.addListener(new AnimatorListenerAdapter() {
-                        @Override
-                        public void onAnimationEnd(Animator animation) {
-                            super.onAnimationEnd(animation);
-                            waitingScreenAnimation(blackCard, whiteCard);
-                        }
-                    });
-                }
-            });
-        }
-    }
-
-    private void removeWaitingScreen() {
-        playerIsWaiting = false;
-        lowerFrameLayout.removeView(waitingScreen);
-    }
     //<--------------------------------------------------------------------------------------------------------------------------->
 
     private List<FullSizeCard> getPlayedCards(boolean allowCardSzarSubmit) {
@@ -435,13 +388,11 @@ public class GameScreen extends AppCompatActivity {
         if (currentPlayerIsCardSzar() && game.allPlayersReady()) {
             advanceGamestate();
             navigationBarText.setText(R.string.choose_winning_card);
-            removeWaitingScreen();
         }
         // then wait for input
     }
 
     private void onWaitingGamestate() {
-        removeWaitingScreen();
         showPlayedCardsAllowed = true;
         allowCardSubmitting = false;
         showPlayedCards(currentPlayerIsCardSzar());

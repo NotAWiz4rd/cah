@@ -66,4 +66,5 @@
     <string name="label_save_deck">Save deck</string>
     <string name="label_leave_deck_create">Do you want to quit deck create?</string>
     <string name="label_hint_leave_deck_create">You will lose your custom deck.</string>
+    <string name="waiting_screen_text">waiting for other players...</string>
 </resources>
