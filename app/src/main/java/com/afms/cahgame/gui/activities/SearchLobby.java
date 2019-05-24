@@ -107,7 +107,6 @@ public class SearchLobby extends AppCompatActivity {
     private void initializeUIEvents() {
         btn_search_lobby_back.setOnClickListener(event -> finish());
         btn_search_lobby_create.setOnClickListener(event -> {
-            Toast.makeText(this, "TEST", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(this, CreateLobby.class);
             intent.putExtra("player", settings.getString("player", Util.getRandomName()));
             startActivity(intent);
