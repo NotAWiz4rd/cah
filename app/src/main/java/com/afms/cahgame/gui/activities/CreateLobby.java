@@ -110,6 +110,8 @@ public class CreateLobby extends AppCompatActivity {
         btn_create_lobby.setOnClickListener(event -> {
             String lobbyId = input_lobby_name.getText().toString();
             String deckName = input_select_deck.getText().toString().equals("") ? "allcardsdeck" : input_select_deck.getText().toString();
+            int playerCount = Integer.parseInt(input_player_count.getText().toString());
+            int handCardCount = Integer.parseInt(input_handcard_count.getText().toString());
 
             if (Database.getLobbies().containsKey(lobbyId)) {
                 Toast.makeText(this, getString(R.string.lobbyNameExists), Toast.LENGTH_LONG).show();
@@ -120,6 +122,11 @@ public class CreateLobby extends AppCompatActivity {
                 return;
             }
 
+            if (Database.getDeck(deckName).getBlackCards().size() < 5 || Database.getDeck(deckName).getWhiteCards().size() <= handCardCount * playerCount) {
+                Toast.makeText(this, getString(R.string.notEnoughCards), Toast.LENGTH_LONG).show();
+                return;
+            }
+
             String playerName = settings.getString("player", Util.getRandomName());
             Util.saveName(settings, playerName);
             Database.addLobby(lobbyId, new Lobby(
@@ -127,8 +134,8 @@ public class CreateLobby extends AppCompatActivity {
                     playerName,
                     input_create_lobby_password.getText().toString(),
                     deckName,
-                    Integer.parseInt(input_handcard_count.getText().toString()),
-                    Integer.parseInt(input_player_count.getText().toString())));
+                    handCardCount,
+                    playerCount));
 
             Intent intent = new Intent(this, WaitingLobby.class);
             intent.putExtra(getString(R.string.lobbyId), lobbyId);
