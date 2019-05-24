@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -62,11 +61,7 @@ public class GameScreen extends AppCompatActivity {
 
     private SharedPreferences settings;
 
-    private boolean playerIsWaiting = false;
-
     private ImageButton playerOverview;
-    private ImageView blackCardIcon;
-    private ImageView whiteCardIcon;
     private ConstraintLayout gameScreenLayout;
     private LinearLayout playedBlackCard;
     private RelativeLayout waitingScreen;
@@ -123,8 +118,6 @@ public class GameScreen extends AppCompatActivity {
         userSelectionLayout = (ConstraintLayout) getLayoutInflater().inflate(R.layout.element_list_card_select, gameScreenLayout, false);
         userSelectionListView = userSelectionLayout.findViewById(R.id.cardSelectList);
         waitingScreen = (RelativeLayout) getLayoutInflater().inflate(R.layout.element_waiting_screen_with_gif, gameScreenLayout, false);
-        blackCardIcon = waitingScreen.findViewById(R.id.waiting_screen_blackCard);
-        whiteCardIcon = waitingScreen.findViewById(R.id.waiting_screen_whiteCard);
     }
 
     private void initializeUIEvents() {
@@ -258,11 +251,9 @@ public class GameScreen extends AppCompatActivity {
     }
 
     private void showWaitingScreen() {
-        playerIsWaiting = true;
         if (!waitingScreen.isAttachedToWindow()) {
             lowerFrameLayout.addView(waitingScreen);
         }
-        //lowerFrameLayout.post(() -> waitingScreenAnimation(whiteCardIcon, blackCardIcon));
     }
     //<--------------------------------------------------------------------------------------------------------------------------->
 
