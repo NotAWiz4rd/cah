@@ -13,7 +13,7 @@
     <color name="cardTransparentBackgroundColorBlack">#801A1816</color>
     <color name="cardTextColorWhite">#494138</color>
     <color name="inputBackgroundColorBlack">#601a1816</color>
-    <color name="inputBackgroundColorWhite">#DEFFFFFF</color>
+    <color name="inputBackgroundColorWhite">#EDFFFFFF</color>
     <color name="inputTextColorBlack">#3A342E</color>
     <color name="pastel_red">#ff6961</color>
     <color name="pastel_green">#77dd77</color>
