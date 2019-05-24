@@ -140,7 +140,6 @@ public class GameScreen extends AppCompatActivity {
                     // add player if it doesnt exist in game
                     if (!game.containsPlayerWithName(player.getName())) {
                         player = new Player(playerName);
-                        game = dataSnapshot.getValue(Game.class);
                         game.addPlayer(player);
                         navigationBarText.setText(R.string.label_nothost);
                         updatePlayer();
