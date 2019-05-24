@@ -53,6 +53,8 @@ public class Database {
                 decks = dataSnapshot.getValue(genericTypeIndicator);
                 if (decks == null) {
                     decks = new ArrayList<>();
+                } else if (decks.size() == 0) {
+                    Util.createAllCardsDeck();
                 }
             }
 
@@ -98,6 +100,9 @@ public class Database {
                 cards = dataSnapshot.getValue(genericTypeIndicator);
                 if (cards == null) {
                     cards = new ArrayList<>();
+                } else if (cards.size() < 400) {
+                    Util.createStandardCards();
+                    Util.createAllCardsDeck();
                 }
             }
 
