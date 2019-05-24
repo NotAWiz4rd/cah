@@ -66,13 +66,13 @@
     <string name="label_save_deck">Save deck</string>
     <string name="label_leave_deck_create">Do you want to quit deck create?</string>
     <string name="label_hint_leave_deck_create">You will lose your custom deck.</string>
-    <string name="waiting_screen_text">waiting for other players...</string>
+    <string name="waiting_screen_text">Waiting for other players…</string>
     <string name="title_cardcolor">What type of card you want to create?</string>
     <string name="label_cardcolor">Select if you want to create a black or a white card.</string>
     <string name="title_savedeck">Do you have finished your deck?</string>
     <string name="label_savedeck">Your deck will have the name: </string>
     <string name="label_choose_action">Choose an action</string>
-    <string name="label_enter_deck_name">Enter deck name...</string>
+    <string name="label_enter_deck_name">Enter deck name…</string>
     <string name="notEnoughCards">The selected deck doesn\'t contain enough cards.</string>
     <string name="show_score_board">show score board</string>
     <string name="back">back</string>
