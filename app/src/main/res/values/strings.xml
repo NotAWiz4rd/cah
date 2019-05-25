@@ -12,13 +12,13 @@
     <string name="hint_lobbyname">Enter lobbyname</string>
     <string name="label_handcardcount">Handcard Count:</string>
     <string name="placeholder_number1">5</string>
-    <string name="label_PlayerCount">Player count:</string>
+    <string name="label_PlayerCount">Max. Player count:</string>
     <string name="hint_DeckSelect">Please select a deck</string>
     <string name="button_SelectDeck">Select Deck</string>
     <string name="button_searchLobby">Search for lobby</string>
     <string name="button_exploreDecks">Explore decks</string>
     <string name="title_activity_test">Test</string>
-    <string name="select_player_count">Select player count</string>
+    <string name="select_player_count">Select max. player count</string>
     <string name="select_handcard_count">Select handcard count</string>
     <string name="start_game">Start Game</string>
     <string name="no_password">No password</string>
