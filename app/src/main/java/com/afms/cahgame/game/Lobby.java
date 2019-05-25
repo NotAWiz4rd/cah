@@ -8,6 +8,7 @@ public class Lobby implements Serializable {
     private String id;
     private String host;
     private List<String> players = new ArrayList<>();
+    private List<String> messages = new ArrayList<>();
     private int handcardCount;
     private int maxPlayers;
     private String deckName = "";
@@ -111,5 +112,17 @@ public class Lobby implements Serializable {
 
     public void setDeckName(String deckName) {
         this.deckName = deckName;
+    }
+
+    public List<String> getMessages() {
+        return messages;
+    }
+
+    public void setMessages(List<String> messages) {
+        this.messages = messages;
+    }
+
+    public void addMessage(String message) {
+        messages.add(message);
     }
 }

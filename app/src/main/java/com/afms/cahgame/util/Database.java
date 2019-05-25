@@ -185,6 +185,23 @@ public class Database {
         return "";
     }
 
+    /**
+     * Adds a message to the current list of lobby messages.
+     *
+     * @param lobbyId    The LobbyId.
+     * @param playername The name of the writing player.
+     * @param message    The message (important!).
+     */
+    public static void sendMessageInLobby(String lobbyId, String playername, String message) {
+        Lobby lobby = lobbies.get(lobbyId);
+        if (lobby != null) {
+            String realmessage = playername + ": " + message;
+            lobby.addMessage(realmessage);
+            lobbies.put(lobbyId, lobby);
+            lobbiesReference.setValue(lobbies);
+        }
+    }
+
     //............................Cards and Decks..................................................
 
     /**
