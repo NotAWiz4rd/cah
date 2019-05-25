@@ -104,23 +104,22 @@ public class WaitingLobby extends AppCompatActivity {
                     updatePlayerList();
                     updateLobbyMetadata();
 
-                    if (currentLobby.isGameInProgress() && !currentLobby.getHost().equals(playerName)) {
-                        Intent intent = new Intent(context, GameScreen.class);
-                        intent.putExtra(getString(R.string.lobbyId), lobbyId);
-                        intent.putExtra("host", currentLobby.getHost());
-                        currentLobby = null;
-                        lobbyReference.removeEventListener(valueEventListener);
-                        startActivity(intent);
-                        finish();
-                    }
-                } else if (tempLobby == null) {
-                    if (currentLobby != null && currentLobby.getPlayers().contains(playerName)) {
-                        currentLobby = null;
-                        lobbyReference.removeEventListener(valueEventListener);
-                        Intent intent = new Intent(context, Main.class);
-                        intent.putExtra("message", getString(R.string.lobbyNotAvailable));
-                        startActivity(intent);
-                        finish();
+                    if (!currentLobby.getPlayers().contains(playerName)) {
+                        quit(getString(R.string.playerKicked));
+                    } else {
+                        if (currentLobby.isGameInProgress() && !currentLobby.getHost().equals(playerName)) {
+                            Intent intent = new Intent(context, GameScreen.class);
+                            intent.putExtra(getString(R.string.lobbyId), lobbyId);
+                            intent.putExtra("host", currentLobby.getHost());
+                            currentLobby = null;
+                            lobbyReference.removeEventListener(valueEventListener);
+                            startActivity(intent);
+                            finish();
+                        } else if (tempLobby == null) {
+                            if (currentLobby != null && currentLobby.getPlayers().contains(playerName)) {
+                                quit(getString(R.string.lobbyNotAvailable));
+                            }
+                        }
                     }
                 }
             }
@@ -226,6 +225,15 @@ public class WaitingLobby extends AppCompatActivity {
         lobbyReference.removeEventListener(valueEventListener);
         currentLobby = null;
         Database.removePlayerFromLobby(lobbyId, playerName);
+        finish();
+    }
+
+    private void quit(String message) {
+        currentLobby = null;
+        lobbyReference.removeEventListener(valueEventListener);
+        Intent intent = new Intent(context, Main.class);
+        intent.putExtra("message", message);
+        startActivity(intent);
         finish();
     }
 }
