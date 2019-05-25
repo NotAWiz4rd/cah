@@ -1,5 +1,5 @@
 <resources>
-    <string name="string_Version">Version alpha-0.9.0</string>
+    <string name="string_Version">Version alpha-0.9.1</string>
     <string name="app_name">CAH - Game</string>
     <string name="gameName">Cards Against Humankind</string>
     <string name="selectCardHint">Select the card your want to play.</string>
