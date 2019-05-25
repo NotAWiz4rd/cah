@@ -14,11 +14,13 @@ import java.util.Objects;
 import java.util.Optional;
 
 public class Game implements Serializable {
-    public static final int MIN_PLAYERS = 2;
+    public static final int MIN_PLAYERS = 3;
 
     public Map<String, Player> players;
     private Deck deck;
     private int handCardCount;
+
+    private int lastCardSzarSwipe = 0;
 
     private Gamestate gamestate;
 
@@ -133,7 +135,6 @@ public class Game implements Serializable {
     }
 
     private void drawInitialCards() {
-        // todo check that deck has enough cards for all players
         for (int i = 0; i < handCardCount; i++) {
             for (Player player : players.values()) {
                 player.addCard(newCardsPile.remove(newCardsPile.size() - 1));
@@ -142,7 +143,6 @@ public class Game implements Serializable {
     }
 
     private void drawInitialCards(Player player) {
-        // todo check that deck has enough cards for all players
         for (int i = 0; i < handCardCount; i++) {
             if (newCardsPile.size() > 0) {
                 player.addCard(newCardsPile.remove(newCardsPile.size() - 1));
@@ -168,7 +168,7 @@ public class Game implements Serializable {
     }
 
     public void removePlayer(Player player) {
-        playedCards.addAll(player.getHand());
+        discardPile.addAll(player.getHand());
         players.remove(player.getName());
     }
 
@@ -283,5 +283,13 @@ public class Game implements Serializable {
 
     public void setWinningCard(Card winningCard) {
         this.winningCard = winningCard;
+    }
+
+    public int getLastCardSzarSwipe() {
+        return lastCardSzarSwipe;
+    }
+
+    public void setLastCardSzarSwipe(int lastCardSzarSwipe) {
+        this.lastCardSzarSwipe = lastCardSzarSwipe;
     }
 }

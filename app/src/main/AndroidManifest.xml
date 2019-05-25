@@ -9,17 +9,17 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/img_app_icon"
+        android:roundIcon="@drawable/img_app_icon"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".gui.activities.ExploreDecks"></activity>
         <activity
             android:name=".gui.activities.Main"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name"
+            android:screenOrientation="portrait"
             android:theme="@style/cahLayout">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,23 +28,33 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".gui.activities.Test"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="@string/title_activity_test"
-            android:theme="@style/cahLayout" />
-        <activity
             android:name=".gui.activities.CreateLobby"
             android:label="@string/title_activity_lobby"
+            android:screenOrientation="portrait"
             android:theme="@style/cahLayout" />
         <activity
             android:name=".gui.activities.GameScreen"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_game_screen"
+            android:screenOrientation="portrait"
             android:theme="@style/cahLayout" />
         <activity
             android:name=".gui.activities.SearchLobby"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_game_screen"
+            android:screenOrientation="portrait"
+            android:theme="@style/cahLayout" />
+        <activity
+            android:name=".gui.activities.WaitingLobby"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_game_screen"
+            android:screenOrientation="portrait"
+            android:theme="@style/cahLayout" />
+        <activity
+            android:name=".gui.activities.ExploreDecks"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_game_screen"
+            android:screenOrientation="portrait"
             android:theme="@style/cahLayout" />
     </application>
 

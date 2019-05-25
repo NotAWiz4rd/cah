@@ -1,7 +1,6 @@
 package com.afms.cahgame.gui.components;
 
 import android.app.Dialog;
-import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -19,6 +18,7 @@ import android.widget.TextView;
 import com.afms.cahgame.R;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import cn.lankton.flowlayout.FlowLayout;
 
@@ -32,7 +32,7 @@ public class ValueSelector extends DialogFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.component_dialog_selector, container);
+        return inflater.inflate(R.layout.dialog_selector, container);
     }
 
     @NonNull
@@ -41,8 +41,9 @@ public class ValueSelector extends DialogFragment {
         Dialog dialog = super.onCreateDialog(savedInstanceState);
         dialog.setCanceledOnTouchOutside(true);
         Window window = dialog.getWindow();
-        //window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        if (window != null) {
+            window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        }
         return dialog;
     }
 
@@ -52,22 +53,24 @@ public class ValueSelector extends DialogFragment {
 
         FlowLayout flowLayout = view.findViewById(R.id.component_dialog_selector_flowlayout);
         TextView title = view.findViewById(R.id.component_dialog_selector_title);
-        title.setText(getArguments().getString("title"));
-        getArguments().getStringArrayList("values").forEach(value -> {
-            Button btn = (Button) getLayoutInflater().inflate(R.layout.component_dialog_selector_button, null);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            params.setMargins(6, 6, 6, 6);
-            btn.setLayoutParams(params);
-            btn.setText(value);
-            btn.setOnClickListener(event -> {
-                resultListener.onItemClick(String.valueOf(btn.getText()));
-                getDialog().dismiss();
+        if (getArguments() != null) {
+            title.setText(getArguments().getString("title"));
+            Objects.requireNonNull(getArguments().getStringArrayList("values")).forEach(value -> {
+                Button btn = (Button) getLayoutInflater().inflate(R.layout.dialog_selector_button, null);
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                params.setMargins(6, 6, 6, 6);
+                btn.setLayoutParams(params);
+                btn.setText(value);
+                btn.setOnClickListener(event -> {
+                    resultListener.onItemClick(String.valueOf(btn.getText()));
+                    getDialog().dismiss();
+                });
+                flowLayout.addView(btn);
             });
-            flowLayout.addView(btn);
-        });
+        }
     }
 
-    public static ValueSelector showValueSelector(Context context, String title, ArrayList<String> values) {
+    public static ValueSelector create(String title, ArrayList<String> values) {
         ValueSelector valueSelector = new ValueSelector();
         Bundle args = new Bundle();
         args.putStringArrayList("values", values);

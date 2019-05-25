@@ -1,6 +1,7 @@
 package com.afms.cahgame.game;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Deck implements Serializable {
@@ -9,6 +10,8 @@ public class Deck implements Serializable {
     private List<Card> blackCards;
 
     public Deck() {
+        whiteCards = new ArrayList<>();
+        blackCards = new ArrayList<>();
     }
 
     public Deck(String name, List<Card> whiteCards, List<Card> blackCards) {
@@ -40,4 +43,31 @@ public class Deck implements Serializable {
     public List<Card> getBlackCards() {
         return blackCards;
     }
+
+    public boolean addBlackCard(Card card) {
+        if (blackCards.contains(card)) {
+            return false;
+        }
+        blackCards.add(card);
+        return true;
+    }
+
+    public boolean addWhiteCard(Card card) {
+        if (whiteCards.contains(card)) {
+            return false;
+        }
+        whiteCards.add(card);
+        return true;
+    }
+
+    public boolean removeBlackCard(Card card) {
+        blackCards.remove(card);
+        return true;
+    }
+
+    public boolean removeWhiteCard(Card card) {
+        whiteCards.remove(card);
+        return true;
+    }
+
 }

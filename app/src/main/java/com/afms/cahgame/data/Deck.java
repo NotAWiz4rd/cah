@@ -21,7 +21,9 @@ public class Deck {
     }
 
     public void addCard(int cardId) {
-        cardIds.add(cardId);
+        if (!cardIds.contains(cardId)) {
+            cardIds.add(cardId);
+        }
     }
 
     public void removeCard(Integer cardId) {

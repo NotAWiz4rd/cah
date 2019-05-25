@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/item_lobby_select_layout"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:descendantFocusability="blocksDescendants">
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:background="@drawable/bg_black_transparent_radius_10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <Button
+            android:id="@+id/btn_item_lobby_select_join"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:background="@drawable/bg_black_radius_10dp"
+            android:text="@string/label_join"
+            android:fontFamily="@font/helveticaneuebold"
+            android:textColor="@android:color/white"
+            android:layout_alignParentEnd="true"/>
+
+        <TextView
+            android:id="@+id/item_lobby_select_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/helveticaneuebold"
+            android:text="@string/label_name"
+            android:textSize="22sp" />
+
+        <TextView
+            android:id="@+id/item_lobby_select_host"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/helveticaneuelight"
+            android:text="@string/host"
+            android:textSize="18sp"
+            android:layout_below="@+id/item_lobby_select_name"/>
+
+        <TextView
+            android:id="@+id/item_lobby_select_deck"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/helveticaneuelight"
+            android:text="@string/label_deck"
+            android:textSize="18sp"
+            android:layout_below="@+id/item_lobby_select_host"/>
+
+        <TextView
+            android:id="@+id/item_lobby_select_count_maxplayer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="3dp"
+            android:layout_toStartOf="@+id/item_lobby_select_img_maxplayer"
+            android:fontFamily="@font/helveticaneuelight"
+            android:text="0"
+            android:textSize="18sp"
+            tools:ignore="HardcodedText" />
+
+        <ImageView
+            android:id="@+id/item_lobby_select_img_maxplayer"
+            android:layout_width="14sp"
+            android:layout_height="14sp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="5dp"
+            android:layout_toStartOf="@+id/btn_item_lobby_select_join"
+            android:src="@drawable/vector_group_24dp"
+            android:tint="@android:color/black" />
+
+        <TextView
+            android:id="@+id/item_lobby_select_count_handcard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/item_lobby_select_img_maxplayer"
+            android:layout_marginTop="6dp"
+            android:layout_marginEnd="2dp"
+            android:layout_toStartOf="@+id/item_lobby_select_img_handcard"
+            android:fontFamily="@font/helveticaneuelight"
+            android:text="0"
+            android:textSize="18sp"
+            tools:ignore="HardcodedText" />
+
+        <ImageView
+            android:id="@+id/item_lobby_select_img_handcard"
+            android:layout_width="14sp"
+            android:layout_height="14sp"
+            android:layout_below="@+id/item_lobby_select_img_maxplayer"
+            android:layout_marginTop="9dp"
+            android:layout_marginEnd="6dp"
+            android:layout_toStartOf="@+id/btn_item_lobby_select_join"
+            android:src="@drawable/vector_card_24dp" />
+
+        <ImageView
+            android:id="@+id/item_lobby_select_lock"
+            android:layout_width="13dp"
+            android:layout_height="13dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="5dp"
+            android:src="@drawable/vector_lock_24dp"
+            android:layout_toEndOf="@+id/item_lobby_select_name"/>
+
+
+    </RelativeLayout>
+
+</android.support.constraint.ConstraintLayout>

@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -40,10 +41,13 @@ public class SettingsDialog extends DialogFragment {
         playerNameView = view.findViewById(R.id.input_settings_playername);
 
         String playerString = settings.getString("player", Util.getRandomName());
+        Util.saveName(settings, playerString);
         playerNameView.setText(playerString);
 
         playerName_random.setOnClickListener(v -> {
-            playerNameView.setText(Util.getRandomName());
+            String newPlayerName = Util.getRandomName();
+            playerNameView.setText(newPlayerName);
+            Util.saveName(settings, newPlayerName);
         });
 
         btn_save.setOnClickListener(v -> {
@@ -52,6 +56,8 @@ public class SettingsDialog extends DialogFragment {
             }
             getDialog().dismiss();
         });
+
+        playerNameView.setSelection(playerNameView.getText().length());
     }
 
     @NonNull
@@ -60,15 +66,19 @@ public class SettingsDialog extends DialogFragment {
         Dialog dialog = super.onCreateDialog(savedInstanceState);
         dialog.setCanceledOnTouchOutside(true);
         Window window = dialog.getWindow();
-        //window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        if (window != null) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+            window.getDecorView().setSystemUiVisibility(View.GONE);
+            window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        }
         return dialog;
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.component_dialog_settings, container);
+        return inflater.inflate(R.layout.dialog_settings, container);
     }
 
     public void setOnClickListener(View.OnClickListener onClickListener) {

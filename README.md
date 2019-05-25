@@ -1,6 +1,6 @@
 # MobileSysteme-GruppeX
 
-# Cards against Humanity - Smartphone Game
+# Cards against Humankind - Smartphone Game
 
 ### Installation
 

@@ -7,7 +7,6 @@ import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
@@ -20,8 +19,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.afms.cahgame.R;
-import com.afms.cahgame.game.Card;
 import com.afms.cahgame.data.Colour;
+import com.afms.cahgame.game.Card;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,23 +30,21 @@ import static java.lang.Math.min;
 
 public class FullSizeCard extends ConstraintLayout {
 
-    public static int SWIPE_DISABLE = 0;
-    public static int SWIPE_ALL_DIRECTION = 1;
-    public static int SWIPE_Y_AXIS = 2;
-    public static int SWIPE_X_AXIS = 3;
-    public static int SWIPE_LEFT = 4;
-    public static int SWIPE_RIGHT = 5;
-    public static int SWIPE_UP = 6;
-    public static int SWIPE_DOWN = 7;
+    public static final int SWIPE_DISABLE = 0;
+    public static final int SWIPE_ALL_DIRECTION = 1;
+    public static final int SWIPE_Y_AXIS = 2;
+    public static final int SWIPE_X_AXIS = 3;
+    public static final int SWIPE_LEFT = 4;
+    public static final int SWIPE_RIGHT = 5;
+    public static final int SWIPE_UP = 6;
+    public static final int SWIPE_DOWN = 7;
 
-
+    private Colour colour;
     private EditText fullSizeCardText;
     private LinearLayout fullSizeCardLayout;
     private LinearLayout fullSizeCardOptionLayout;
     private ConstraintLayout constraintLayout;
     private TextView fullSizeGameName;
-    private Button fullSizeCardButton;
-    private Button fullSizeCardButton2;
     private Card card;
     private float downPosY;
     private float downPosX;
@@ -59,13 +56,14 @@ public class FullSizeCard extends ConstraintLayout {
     private double xAxisWidthFactor = 0.3;
     private SwipeResultListener swipeResultListener;
     private List<Integer> swipeStates;
+    private boolean firstTime = true;
 
     public void setSwipeResultListener(SwipeResultListener swipeResultListener) {
         this.swipeResultListener = swipeResultListener;
     }
 
-    public void setDimBackground(boolean value){
-        if(value){
+    public void setDimBackground(boolean value) {
+        if (value) {
             constraintLayout.setBackgroundColor(Color.parseColor("#8D000000"));
         } else {
             constraintLayout.setBackgroundColor(Color.TRANSPARENT);
@@ -73,14 +71,12 @@ public class FullSizeCard extends ConstraintLayout {
     }
 
     public void addOptionButton(String label, OnClickListener onClickListener) {
-        Button btn = (Button) LayoutInflater.from(getContext()).inflate(R.layout.component_dialog_selector_button, null);
+        Button btn = (Button) LayoutInflater.from(getContext()).inflate(R.layout.dialog_selector_button, null);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         params.setMargins(6, 6, 6, 6);
         btn.setLayoutParams(params);
         btn.setText(label);
-        btn.setOnClickListener(event -> {
-            onClickListener.onClick(btn);
-        });
+        btn.setOnClickListener(event -> onClickListener.onClick(btn));
         fullSizeCardOptionLayout.addView(btn);
     }
 
@@ -90,14 +86,15 @@ public class FullSizeCard extends ConstraintLayout {
         this.card = card;
         swipeStates = new ArrayList<>();
         swipeStates.add(SWIPE_DISABLE);
+        colour = card.getColour();
 
-        LayoutInflater.from(context).inflate(R.layout.fullsize_card_options, this);
+        LayoutInflater.from(context).inflate(R.layout.element_fullsize_card_buttonbar, this);
         setOnClickListener(v -> {
         });
         constraintLayout = findViewById(R.id.optionsBackground);
         fullSizeCardOptionLayout = findViewById(R.id.optionLayout);
         fullSizeCardLayout = findViewById(R.id.fullSizeCardLayout);
-        fullSizeCardLayout.setBackgroundResource(card.getColour() == Colour.WHITE ? R.drawable.card_background_white : R.drawable.card_background_black);
+        fullSizeCardLayout.setBackgroundResource(card.getColour() == Colour.WHITE ? R.drawable.bg_card_white_radius_20dp : R.drawable.bg_card_black_radius_20dp);
         fullSizeCardText = findViewById(R.id.fullSizeCardText);
         fullSizeCardText.setTextColor(card.getColour() == Colour.WHITE ? ContextCompat.getColor(context, R.color.cardTextColorWhite) : Color.WHITE);
         fullSizeCardText.setText(card.getText());
@@ -106,19 +103,22 @@ public class FullSizeCard extends ConstraintLayout {
 
         fullSizeCardLayout.getViewTreeObserver().addOnGlobalLayoutListener(
                 () -> {
-                    fullSizeCardLayout.setScaleX(0.1f);
-                    fullSizeCardLayout.setScaleY(0.1f);
-                    ObjectAnimator scaleUpX = ObjectAnimator.ofFloat(fullSizeCardLayout, "scaleX", 1f);
-                    ObjectAnimator scaleUpY = ObjectAnimator.ofFloat(fullSizeCardLayout, "scaleY", 1f);
-                    scaleUpX.setDuration(700);
-                    scaleUpY.setDuration(700);
-                    AnimatorSet scaleUp = new AnimatorSet();
-                    scaleUp.play(scaleUpX).with(scaleUpY);
-                    scaleUp.start();
+                    if (firstTime) {
+                        fullSizeCardLayout.setScaleX(0.1f);
+                        fullSizeCardLayout.setScaleY(0.1f);
+                        ObjectAnimator scaleUpX = ObjectAnimator.ofFloat(fullSizeCardLayout, "scaleX", 1f);
+                        ObjectAnimator scaleUpY = ObjectAnimator.ofFloat(fullSizeCardLayout, "scaleY", 1f);
+                        scaleUpX.setDuration(700);
+                        scaleUpY.setDuration(700);
+                        AnimatorSet scaleUp = new AnimatorSet();
+                        scaleUp.play(scaleUpX).with(scaleUpY);
+                        scaleUp.start();
+                        firstTime = false;
+                    }
                 }
         );
 
-        editTextMode(fullSizeCardText, false);
+        editTextMode(false);
 
         fullSizeCardLayout.setOnTouchListener((v, event) -> {
             if (!swipeStates.contains(SWIPE_DISABLE)) {
@@ -155,13 +155,13 @@ public class FullSizeCard extends ConstraintLayout {
                             v.setY(viewPosDownY);
                             v.setX(viewPosDownX);
                         } else if (v.getY() < (viewPosDownY - (v.getHeight() * yAxisHeightFactor))) {
-                            generateAnimation(v, "translationY", -v.getHeight(), (int) (v.getHeight() * yAxisHeightFactor), 0);
+                            generateAnimation(v, getContext().getString(R.string.translationY), -v.getHeight(), (int) (v.getHeight() * yAxisHeightFactor), SWIPE_UP);
                         } else if (v.getY() > (viewPosDownY + (v.getHeight() * yAxisHeightFactor))) {
-                            generateAnimation(v, "translationY", v.getHeight(), (int) (v.getHeight() * yAxisHeightFactor), 1);
+                            generateAnimation(v, getContext().getString(R.string.translationY), v.getHeight(), (int) (v.getHeight() * yAxisHeightFactor), SWIPE_DOWN);
                         } else if (v.getX() < (viewPosDownX - (v.getWidth() * xAxisWidthFactor))) {
-                            generateAnimation(v, "translationX", -v.getWidth(), (int) (v.getWidth() * xAxisWidthFactor), 2);
+                            generateAnimation(v, getContext().getString(R.string.translationX), -v.getWidth(), (int) (v.getWidth() * xAxisWidthFactor), SWIPE_LEFT);
                         } else if (v.getX() > (viewPosDownX + (v.getWidth() * xAxisWidthFactor))) {
-                            generateAnimation(v, "translationX", v.getWidth(), (int) (v.getWidth() * xAxisWidthFactor), 3);
+                            generateAnimation(v, getContext().getString(R.string.translationX), v.getWidth(), (int) (v.getWidth() * xAxisWidthFactor), SWIPE_RIGHT);
                         }
                         break;
                 }
@@ -184,23 +184,25 @@ public class FullSizeCard extends ConstraintLayout {
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
-                ((ViewManager) v.getParent().getParent().getParent()).removeView(((View) v.getParent().getParent()));
-                v.setX(viewPosDownX);
-                v.setY(viewPosDownY);
-                if (swipeResultListener != null) {
-                    switch (direction) {
-                        case 0:
-                            swipeResultListener.onSwipeUp();
-                            break;
-                        case 1:
-                            swipeResultListener.onSwipeDown();
-                            break;
-                        case 2:
-                            swipeResultListener.onSwipeLeft();
-                            break;
-                        case 3:
-                            swipeResultListener.onSwipeRight();
-                            break;
+                if (v.getParent().getParent().getParent() != null) {
+                    ((ViewManager) v.getParent().getParent().getParent()).removeView(((View) v.getParent().getParent()));
+                    v.setX(viewPosDownX);
+                    v.setY(viewPosDownY);
+                    if (swipeResultListener != null) {
+                        switch (direction) {
+                            case SWIPE_UP:
+                                swipeResultListener.onSwipeUp();
+                                break;
+                            case SWIPE_DOWN:
+                                swipeResultListener.onSwipeDown();
+                                break;
+                            case SWIPE_LEFT:
+                                swipeResultListener.onSwipeLeft();
+                                break;
+                            case SWIPE_RIGHT:
+                                swipeResultListener.onSwipeRight();
+                                break;
+                        }
                     }
                 }
             }
@@ -208,18 +210,44 @@ public class FullSizeCard extends ConstraintLayout {
         animation.start();
     }
 
+    public void doSwipe(int swipe) {
+        viewPosDownX = fullSizeCardLayout.getX();
+        viewPosDownY = fullSizeCardLayout.getY();
+        LinearLayout v = fullSizeCardLayout;
+        switch (swipe) {
+            case SWIPE_UP:
+                generateAnimation(v, getContext().getString(R.string.translationY), -v.getHeight(), (int) (v.getHeight() * yAxisHeightFactor), SWIPE_UP);
+                break;
+            case SWIPE_DOWN:
+                generateAnimation(v, getContext().getString(R.string.translationY), v.getHeight(), (int) (v.getHeight() * yAxisHeightFactor), SWIPE_DOWN);
+                break;
+            case SWIPE_LEFT:
+                generateAnimation(v, getContext().getString(R.string.translationX), -v.getWidth(), (int) (v.getWidth() * xAxisWidthFactor), SWIPE_LEFT);
+                break;
+            case SWIPE_RIGHT:
+                generateAnimation(v, getContext().getString(R.string.translationX), v.getWidth(), (int) (v.getWidth() * xAxisWidthFactor), SWIPE_RIGHT);
+                break;
+        }
+    }
+
     public Card getCard() {
         return card;
     }
 
-    public void editTextMode(EditText o, boolean state) {
-        o.setClickable(state);
-        o.setLongClickable(state);
-        o.setLinksClickable(state);
-        o.setFocusable(state);
-        o.setFocusableInTouchMode(state);
-        o.setEnabled(state);
+    public void editTextMode(boolean state) {
+        fullSizeCardText.setClickable(state);
+        fullSizeCardText.setLongClickable(state);
+        fullSizeCardText.setLinksClickable(state);
+        fullSizeCardText.setFocusable(state);
+        fullSizeCardText.setFocusableInTouchMode(state);
+        fullSizeCardText.setEnabled(state);
     }
 
+    public String getFullSizeCardText() {
+        return fullSizeCardText.getText().toString();
+    }
 
+    public Colour getColour() {
+        return colour;
+    }
 }

@@ -6,19 +6,16 @@ import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.afms.cahgame.R;
-import com.afms.cahgame.game.Card;
 import com.afms.cahgame.data.Colour;
+import com.afms.cahgame.game.Card;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,13 +27,13 @@ public class CardListAdapter extends ArrayAdapter<Card> {
 
     private Map<Colour, HashMap<String, Integer>> colorMap = new HashMap<Colour, HashMap<String, Integer>>() {{
         put(Colour.BLACK, new HashMap<String, Integer>() {{
-            put("icon", R.drawable.cardblack);
-            put("background", R.drawable.card_background_small_black);
+            put("icon", R.drawable.img_card_black);
+            put("background", R.drawable.bg_card_black_radius_10dp);
             put("textcolor", Color.WHITE);
         }});
         put(Colour.WHITE, new HashMap<String, Integer>() {{
-            put("icon", R.drawable.card);
-            put("background", R.drawable.card_background_small_white);
+            put("icon", R.drawable.img_card_white);
+            put("background", R.drawable.bg_card_white_radius_10dp);
             put("textcolor", Color.BLACK);
         }});
     }};
@@ -52,24 +49,17 @@ public class CardListAdapter extends ArrayAdapter<Card> {
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         Card card = getItem(position);
         if (convertView == null) {
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_card_select, parent, false);
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_list_card, parent, false);
         }
 
         ImageView cardIcon = convertView.findViewById(R.id.cardIcon);
         cardIcon.setImageResource(colorMap.getOrDefault(card.getColour(), colorMap.get(Colour.WHITE)).get("icon"));
 
-        ConstraintLayout cardLayout = convertView.findViewById(R.id.innerCardLayout);
-        cardLayout.setBackgroundResource(colorMap.getOrDefault(card.getColour(), colorMap.get(Colour.WHITE)).get("background"));
+        convertView.setBackgroundResource(colorMap.getOrDefault(card.getColour(), colorMap.get(Colour.WHITE)).get("background"));
 
         TextView cardText = convertView.findViewById(R.id.cardText);
         cardText.setTextColor(colorMap.getOrDefault(card.getColour(), colorMap.get(Colour.WHITE)).get("textcolor"));
         cardText.setText(card.getText());
-
-
-        ImageButton deleteButton = convertView.findViewById(R.id.deleteButton);
-        deleteButton.setOnClickListener(v -> {
-            Toast.makeText(mainActivity, String.format("Clicked: deleteButton pos: %d", position), Toast.LENGTH_SHORT).show();
-        });
 
         return convertView;
     }

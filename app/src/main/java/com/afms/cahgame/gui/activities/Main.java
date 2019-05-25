@@ -13,9 +13,13 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.afms.cahgame.R;
+import com.afms.cahgame.gui.components.MessageDialog;
 import com.afms.cahgame.gui.components.SettingsDialog;
 import com.afms.cahgame.util.Database;
 import com.afms.cahgame.util.Util;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Main extends AppCompatActivity {
 
@@ -24,12 +28,12 @@ public class Main extends AppCompatActivity {
     private Button btn_create_lobby;
     private Button btn_search_lobby;
     private Button btn_explore_decks;
-    private Button btn_piatest;
     private ImageButton btn_settings;
 
     private SharedPreferences settings;
 
     private SettingsDialog settingsDialog;
+    private MessageDialog messageDialog;
 
     private String playerName;
 
@@ -45,7 +49,11 @@ public class Main extends AppCompatActivity {
         initializeUIEvents();
         Database.initializeDatabaseConnections();
 
-        playerName = settings.getString("player", Util.getRandomName());
+        playerName = settings.getString("realname", "");
+        if (playerName == null || playerName.equals("")) {
+            playerName = settings.getString("player", Util.getRandomName());
+        }
+        Util.saveName(settings, playerName);
 
         String message = (String) getIntent().getSerializableExtra("message");
         if (message != null) {
@@ -58,10 +66,14 @@ public class Main extends AppCompatActivity {
         btn_search_lobby = findViewById(R.id.btn_main_searchLobby);
         btn_explore_decks = findViewById(R.id.btn_main_exploreDecks);
         btn_settings = findViewById(R.id.btn_main_settings);
-        btn_piatest = findViewById(R.id.btn_main_piatest);
-
 
         settingsDialog = new SettingsDialog();
+        messageDialog = MessageDialog.create(getResources().getString(R.string.title_quit), new ArrayList<>(Arrays.asList(getString(R.string.ok), getString(R.string.cancel))));
+    }
+
+    @Override
+    public void onBackPressed() {
+        messageDialog.show(getSupportFragmentManager(), "quitMessageDialog");
     }
 
     private void initializeUIEvents() {
@@ -74,11 +86,8 @@ public class Main extends AppCompatActivity {
             Intent intent = new Intent(this, SearchLobby.class);
             startActivity(intent);
         });
-        btn_piatest.setOnClickListener(event -> {
 
-        });
         btn_explore_decks.setOnClickListener(event -> {
-            Toast.makeText(this, "clicked " + btn_explore_decks.toString(), Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(this, ExploreDecks.class);
             startActivity(intent);
         });
@@ -93,12 +102,27 @@ public class Main extends AppCompatActivity {
             }
             if (playerNameView.getText().toString().equals("")) {
                 playerName = Util.getRandomName();
+                Util.saveName(settings, playerName);
+            } else if (playerNameView.getText().toString().equals(getString(R.string.godmodeCommand))) {
+                if (Util.godMode) {
+                    Util.setGodMode(false);
+                    Toast.makeText(this, getString(R.string.disabledGodmode), Toast.LENGTH_SHORT).show();
+                } else {
+                    Util.setGodMode(true);
+                    Toast.makeText(this, getString(R.string.enabledGodmode), Toast.LENGTH_SHORT).show();
+                }
             } else {
                 playerName = playerNameView.getText().toString();
+                Util.saveName(settings, playerName);
             }
-            SharedPreferences.Editor editor = settings.edit();
-            editor.putString("player", playerName);
-            editor.apply();
+            playerNameView.setText(settings.getString("player", Util.getRandomName()));
+        });
+
+        messageDialog.setResultListener(result -> {
+            if (result.equals(getString(R.string.ok))) {
+                super.onBackPressed();
+                System.exit(0);
+            }
         });
     }
 

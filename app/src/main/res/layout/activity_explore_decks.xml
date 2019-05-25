@@ -1,9 +1,174 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/layout_explore_decks_frame"
     tools:context=".gui.activities.ExploreDecks">
 
-</android.support.constraint.ConstraintLayout>
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:id="@+id/layout_explore_decks_navigation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/cardview_dark_background"
+            android:padding="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageButton
+                android:id="@+id/btn_explore_decks_back"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_centerVertical="true"
+                android:background="@drawable/vector_back_24dp"
+                android:backgroundTint="@android:color/white"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Button
+                android:id="@+id/btn_explore_decks_select"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_toStartOf="@+id/btn_explore_decks_add"
+                android:background="@drawable/bg_grey_radius_10dp"
+                android:fontFamily="@font/helveticaneuebold"
+                android:paddingHorizontal="10dp"
+                android:text="@string/label_select_deck"
+                android:textColor="@android:color/white"
+                android:textSize="16sp" />
+
+
+            <ImageButton
+                android:id="@+id/btn_explore_decks_add"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/button_icon_add_radius_10dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/layout_explore_decks_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="6dp"
+            app:layout_constraintBottom_toTopOf="@id/layout_explore_decks_selector"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/layout_explore_decks_navigation">
+
+            <ListView
+                android:id="@+id/list_explore_decks_cards"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:dividerHeight="6dp" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/layout_explore_decks_selector"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/bg_black_radius_10dp"
+            android:padding="6dp"
+            android:paddingStart="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:ignore="RtlSymmetry">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/helveticaneuelight"
+                android:text="@string/label_name"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="12sp" />
+
+            <EditText
+                android:id="@+id/label_explore_decks_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:background="@null"
+                android:inputType="text"
+                android:fontFamily="@font/helveticaneuebold"
+                android:text="@string/label_no_deck_selected"
+                android:textColor="@android:color/white"
+                android:textSize="18sp" />
+
+
+            <FrameLayout
+                android:id="@+id/btn_explore_decks_white_cards"
+                android:layout_width="44dp"
+                android:layout_height="60dp"
+                android:layout_marginEnd="6dp"
+                android:layout_toStartOf="@+id/btn_explore_decks_black_cards"
+                android:background="@drawable/img_card_white">
+
+                <RelativeLayout
+                    android:id="@+id/overlay_explore_decks_white_cards_selected"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/cardTransparentBackgroundColorBlack"
+                    android:clickable="false">
+
+                    <ImageView
+                        android:id="@+id/img_explore_decks_white_cards_selected_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:clickable="false"
+                        android:src="@drawable/vector_tick_circle_24dp"
+                        android:tint="@color/pastel_green" />
+
+                </RelativeLayout>
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/btn_explore_decks_black_cards"
+                android:layout_width="44dp"
+                android:layout_height="60dp"
+                android:layout_alignParentEnd="true"
+                android:background="@drawable/img_card_black">
+
+                <RelativeLayout
+                    android:id="@+id/overlay_explore_decks_black_cards_selected"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/cardTransparentBackgroundColorBlack"
+                    android:clickable="false">
+
+                    <ImageView
+                        android:id="@+id/img_explore_decks_black_cards_selected_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:clickable="false"
+                        android:src="@drawable/vector_x_circle_24dp"
+                        android:tint="@color/pastel_red" />
+
+                </RelativeLayout>
+            </FrameLayout>
+
+        </RelativeLayout>
+
+
+    </android.support.constraint.ConstraintLayout>
+
+</FrameLayout>
