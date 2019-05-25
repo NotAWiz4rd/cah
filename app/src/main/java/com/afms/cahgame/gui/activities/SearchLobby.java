@@ -106,8 +106,12 @@ public class SearchLobby extends AppCompatActivity {
     private void initializeUIEvents() {
         btn_search_lobby_back.setOnClickListener(event -> finish());
         btn_search_lobby_create.setOnClickListener(event -> {
+            String playerName = settings.getString("realname", "");
+            if (playerName == null || playerName.equals("")) {
+                playerName = settings.getString("player", Util.getRandomName());
+            }
             Intent intent = new Intent(this, CreateLobby.class);
-            intent.putExtra("player", settings.getString("player", Util.getRandomName()));
+            intent.putExtra("player", playerName);
             startActivity(intent);
         });
     }

@@ -163,12 +163,7 @@ public class WaitingLobby extends AppCompatActivity {
     }
 
     private void initializeUIEvents() {
-        btn_waiting_lobby_back.setOnClickListener(event -> {
-            lobbyReference.removeEventListener(valueEventListener);
-            currentLobby = null;
-            Database.removePlayerFromLobby(lobbyId, playerName);
-            finish();
-        });
+        btn_waiting_lobby_back.setOnClickListener(v -> onBack());
 
         btn_waiting_lobby_ready.setOnClickListener(event -> {
             if (currentLobby != null && currentLobby.getHost().equals(playerName)) {
@@ -219,5 +214,18 @@ public class WaitingLobby extends AppCompatActivity {
         super.onStop();
         lobbyReference.removeEventListener(valueEventListener);
         currentLobby = null;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        onBack();
+    }
+
+    private void onBack() {
+        lobbyReference.removeEventListener(valueEventListener);
+        currentLobby = null;
+        Database.removePlayerFromLobby(lobbyId, playerName);
+        finish();
     }
 }
