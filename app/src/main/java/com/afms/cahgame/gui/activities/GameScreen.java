@@ -43,6 +43,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class GameScreen extends AppCompatActivity {
     private Game game;
@@ -569,6 +570,7 @@ public class GameScreen extends AppCompatActivity {
     private void onRoundEndGamestate() {
         if (showUpdatedScore) {
             if(scoreBoard == null){
+                game.setRoundEndPlayedCards(playedWhiteCardList.stream().map(FullSizeCard::getCard).collect(Collectors.toList()));
                 scoreBoard = ScoreBoardDialog.create(game, game.getWinningCard().getOwner());
                 scoreBoard.setResultListener(new ResultListener() {
                     @Override

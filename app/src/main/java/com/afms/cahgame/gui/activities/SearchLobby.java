@@ -108,6 +108,7 @@ public class SearchLobby extends AppCompatActivity {
     private void disableUserInterface(){
         btn_search_lobby_back.setEnabled(false);
         btn_search_lobby_create.setEnabled(false);
+
         new Handler().postDelayed(() -> {
             btn_search_lobby_back.setEnabled(true);
             btn_search_lobby_create.setEnabled(true);

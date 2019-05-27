@@ -76,7 +76,9 @@
             android:id="@+id/score_board_card_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="6dp"
             android:textColor="@android:color/black"
+            android:background="@drawable/bg_white_transparent"
             android:gravity="center_horizontal"/>
     </RelativeLayout>
 

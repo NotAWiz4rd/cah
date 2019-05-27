@@ -62,10 +62,17 @@ public class ScoreBoardListAdapter extends ArrayAdapter<Player> {
                 playerName.setTypeface(ResourcesCompat.getFont(getContext(), R.font.helveticaneuelight));
             }
             if(roundWinner != null){
-                List<Card> playedCardList = game.getPlayedCards();
+                List<Card> playedCardList = game.getRoundEndPlayedCards();
                 for (Card card: playedCardList) {
                     if(card.getOwner().getName().equals(player.getName())){
                         playedCard.setText(card.getText());
+                    }
+                }
+                if(playedCardList.stream().map(Card::getOwner).noneMatch(p -> p.getName().equals(player.getName()))){
+                    if(game.getCardCzar().equals(player.getName())){
+                        playedCard.setText(getContext().getString(R.string.last_round_czar));
+                    } else {
+                        playedCard.setText(getContext().getString(R.string.no_played_card));
                     }
                 }
             }
@@ -75,7 +82,6 @@ public class ScoreBoardListAdapter extends ArrayAdapter<Player> {
             } else {
                 playerName.setTextColor(getContext().getColor(R.color.inputTextColorBlack));
                 scoreIcon.setBackground(null);
-                playedCard.setText(null);
             }
 
             if(game.getCardCzar().equals(player.getName())){

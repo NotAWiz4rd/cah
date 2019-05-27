@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
@@ -67,6 +68,7 @@ public class LobbyListAdapter extends ArrayAdapter<Lobby> {
         item_lobby_select_count_maxplayer.setText(String.format("%s / %s", currentPlayerCount, String.valueOf(lobby.getMaxPlayers())));
 
         btn_item_lobby_select_join.setOnClickListener(e -> {
+            btn_item_lobby_select_join.setEnabled(false);
             if (Util.godMode) {
                 FragmentManager fragmentManager = ((AppCompatActivity) getContext()).getSupportFragmentManager();
                 final MessageDialog[] messageDialog = {MessageDialog.create(getContext().getString(R.string.label_choose_action),
@@ -110,10 +112,14 @@ public class LobbyListAdapter extends ArrayAdapter<Lobby> {
                     ((AppCompatActivity) getContext()).finish();
                 }
             }
+            new Handler().postDelayed(() -> {
+                btn_item_lobby_select_join.setEnabled(true);
+            }, 250);
         });
 
         return convertView;
     }
+
 
     private void requestPasswordDialog(Lobby lobby) {
         FragmentManager fragmentManager = ((AppCompatActivity) getContext()).getSupportFragmentManager();
