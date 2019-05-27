@@ -48,6 +48,7 @@ public class ExploreDecks extends AppCompatActivity {
     private CardListAdapter cardListAdapter;
     private Deck selectedDeck;
     private FullSizeCard customFullSizeCard;
+    private FullSizeCard fullSizeCard;
 
     private boolean selectedWhiteCards = false;
     private boolean selectedBlackCards = false;
@@ -218,21 +219,27 @@ public class ExploreDecks extends AppCompatActivity {
         btn_explore_decks_white_cards.setOnClickListener(event -> selectDisplayCardMode(true));
 
         list_explore_decks_cards.setOnItemClickListener((parent, view, position, id) -> {
-            layout_explore_decks_frame.addView(getFullSizeCardInstance((Card) parent.getItemAtPosition(position), position));
+            if(fullSizeCard == null){
+                layout_explore_decks_frame.addView(getFullSizeCardInstance((Card) parent.getItemAtPosition(position), position));
+            }
         });
 
         selectDisplayCardMode(true);
     }
 
     private FullSizeCard getFullSizeCardInstance(Card card, int position) {
-        FullSizeCard fullSizeCard = new FullSizeCard(this, card);
+        fullSizeCard = new FullSizeCard(this, card);
         fullSizeCard.setDimBackground(true);
-        fullSizeCard.addOptionButton(getString(R.string.close), event -> layout_explore_decks_frame.removeView(fullSizeCard));
+        fullSizeCard.addOptionButton(getString(R.string.close), event -> {
+            layout_explore_decks_frame.removeView(fullSizeCard);
+            fullSizeCard = null;
+        });
         fullSizeCard.setSwipeGestures(FullSizeCard.SWIPE_X_AXIS);
         fullSizeCard.setSwipeResultListener(new SwipeResultListener() {
             @Override
             public void onSwipeLeft() {
                 int nextPos = (position + 1) % list_explore_decks_cards.getCount();
+                fullSizeCard = null;
                 layout_explore_decks_frame.addView(getFullSizeCardInstance((Card) list_explore_decks_cards.getItemAtPosition(nextPos), nextPos));
             }
 
@@ -242,6 +249,7 @@ public class ExploreDecks extends AppCompatActivity {
                 if (nextPos < 0) {
                     nextPos = list_explore_decks_cards.getCount() - 1;
                 }
+                fullSizeCard = null;
                 layout_explore_decks_frame.addView(getFullSizeCardInstance((Card) list_explore_decks_cards.getItemAtPosition(nextPos), nextPos));
             }
 

@@ -87,6 +87,7 @@ public class GameScreen extends AppCompatActivity {
     private boolean playedCardsAreShown = false;
 
     private MessageDialog messageDialog;
+    private FullSizeCard fullCard;
 
     //<------ LIFECYCLE EVENTS --------------------------------------------------------------------------------------------------------------->
 
@@ -313,7 +314,9 @@ public class GameScreen extends AppCompatActivity {
 
             userSelectionListView.setOnItemClickListener((parent, view, position, id) -> {
                 Card card = (Card) parent.getItemAtPosition(position);
-                completeFrameLayout.addView(getFullSizeCardInstance(card, position));
+                if(fullCard == null){
+                    completeFrameLayout.addView(getFullSizeCardInstance(card, position));
+                }
             });
         }
     }
@@ -335,13 +338,17 @@ public class GameScreen extends AppCompatActivity {
         if (fullSizeCardList.stream().anyMatch(f -> f.getCard().equals(card))) {
             return fullSizeCardList.stream().filter(f -> f.getCard().equals(card)).findFirst().get();
         } else {
-            FullSizeCard fullCard = new FullSizeCard(this, card);
-            fullCard.addOptionButton(getString(R.string.close), v -> completeFrameLayout.removeView(fullCard));
+            fullCard = new FullSizeCard(this, card);
+            fullCard.addOptionButton(getString(R.string.close), v -> {
+                completeFrameLayout.removeView(fullCard);
+                fullCard = null;
+            });
             fullCard.setDimBackground(true);
             fullCard.setSwipeResultListener(new SwipeResultListener() {
                 @Override
                 public void onSwipeLeft() {
                     int nextPos = (selectedPosition + 1) % userSelectionListView.getCount();
+                    fullCard = null;
                     completeFrameLayout.addView(getFullSizeCardInstance((Card) userSelectionListView.getItemAtPosition(nextPos), nextPos));
                 }
 
@@ -351,6 +358,7 @@ public class GameScreen extends AppCompatActivity {
                     if (nextPos < 0) {
                         nextPos = userSelectionListView.getCount() - 1;
                     }
+                    fullCard = null;
                     completeFrameLayout.addView(getFullSizeCardInstance((Card) userSelectionListView.getItemAtPosition(nextPos), nextPos));
                 }
 
@@ -364,6 +372,7 @@ public class GameScreen extends AppCompatActivity {
                             showHandCardList();
                             showWaitingScreen();
                         }
+                        fullCard = null;
                     }
                 }
 
