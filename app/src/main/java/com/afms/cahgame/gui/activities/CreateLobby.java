@@ -4,6 +4,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -135,6 +136,7 @@ public class CreateLobby extends AppCompatActivity {
             intent.putExtra(getString(R.string.lobbyId), lobbyId);
             startActivity(intent);
             finish();
+            disableUserInterface();
         });
         btn_select_deck.setOnClickListener(event -> {
             if(deckSelectorDialog == null){
@@ -155,6 +157,7 @@ public class CreateLobby extends AppCompatActivity {
         });
         btn_back.setOnClickListener(event -> {
             finish();
+            disableUserInterface();
         });
         input_player_count.setOnClickListener(event -> {
             if(value_selector_player_count == null){
@@ -191,6 +194,15 @@ public class CreateLobby extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void disableUserInterface(){
+        btn_create_lobby.setEnabled(false);
+        btn_back.setEnabled(false);
+        new Handler().postDelayed(() -> {
+            btn_create_lobby.setEnabled(true);
+            btn_back.setEnabled(true);
+        }, 250);
     }
 
     private void hideUI() {

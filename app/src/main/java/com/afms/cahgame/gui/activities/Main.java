@@ -3,6 +3,7 @@ package com.afms.cahgame.gui.activities;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -92,20 +93,36 @@ public class Main extends AppCompatActivity {
         }
     }
 
+    private void disableUserInterface(){
+        btn_create_lobby.setEnabled(false);
+        btn_explore_decks.setEnabled(false);
+        btn_search_lobby.setEnabled(false);
+        btn_settings.setEnabled(false);
+        new Handler().postDelayed(() -> {
+            btn_create_lobby.setEnabled(true);
+            btn_explore_decks.setEnabled(true);
+            btn_search_lobby.setEnabled(true);
+            btn_settings.setEnabled(true);
+        }, 250);
+    }
+
     private void initializeUIEvents() {
         btn_create_lobby.setOnClickListener(event -> {
             Intent intent = new Intent(this, CreateLobby.class);
             intent.putExtra("player", playerName);
             startActivity(intent);
+            disableUserInterface();
         });
         btn_search_lobby.setOnClickListener(event -> {
             Intent intent = new Intent(this, SearchLobby.class);
             startActivity(intent);
+            disableUserInterface();
         });
 
         btn_explore_decks.setOnClickListener(event -> {
             Intent intent = new Intent(this, ExploreDecks.class);
             startActivity(intent);
+            disableUserInterface();
         });
         btn_settings.setOnClickListener(event -> {
             if(settingsDialog == null){
@@ -146,6 +163,7 @@ public class Main extends AppCompatActivity {
                     }
                 });
             }
+            disableUserInterface();
         });
     }
 
