@@ -554,8 +554,21 @@ public class GameScreen extends AppCompatActivity {
 
     private void onRoundEndGamestate() {
         if (showUpdatedScore) {
-            scoreBoard = ScoreBoardDialog.create(game, game.getWinningCard().getOwner());
-            scoreBoard.show(getSupportFragmentManager(), "playerOverview");
+            if(scoreBoard == null){
+                scoreBoard = ScoreBoardDialog.create(game, game.getWinningCard().getOwner());
+                scoreBoard.setResultListener(new ResultListener() {
+                    @Override
+                    public void onItemClick(String result) {
+
+                    }
+
+                    @Override
+                    public void clearReference() {
+                        scoreBoard = null;
+                    }
+                });
+                scoreBoard.show(getSupportFragmentManager(), "playerOverview");
+            }
             showUpdatedScore = false;
         }
         playedCardsAreShown = false;
