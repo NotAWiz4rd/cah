@@ -41,9 +41,9 @@ public class ScoreBoardDialog extends DialogFragment {
             ScoreBoardListAdapter scoreBoardListAdapter;
             Player roundWin = (Player) getArguments().getSerializable("player");
             if (roundWin != null) {
-                scoreBoardListAdapter = new ScoreBoardListAdapter(Objects.requireNonNull(getContext()), new ArrayList<>(game.getPlayers().values()), roundWin);
+                scoreBoardListAdapter = new ScoreBoardListAdapter(Objects.requireNonNull(getContext()), new ArrayList<>(game.getPlayers().values()), roundWin, game);
             } else {
-                scoreBoardListAdapter = new ScoreBoardListAdapter(Objects.requireNonNull(getContext()), new ArrayList<>(game.getPlayers().values()));
+                scoreBoardListAdapter = new ScoreBoardListAdapter(Objects.requireNonNull(getContext()), new ArrayList<>(game.getPlayers().values()), game);
             }
             playerList.setAdapter(scoreBoardListAdapter);
         }

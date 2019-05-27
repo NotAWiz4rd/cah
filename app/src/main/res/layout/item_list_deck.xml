@@ -24,7 +24,8 @@
             android:layout_marginEnd="4dp"
             android:layout_toStartOf="@+id/item_deckselector_countBlack"
             android:layout_centerVertical="true"
-            app:srcCompat="@drawable/img_card_black" />
+            app:srcCompat="@drawable/img_card_black"
+            android:contentDescription="@string/black_card" />
 
         <TextView
             android:id="@+id/item_deckselector_countBlack"
@@ -46,7 +47,8 @@
             android:layout_marginEnd="4dp"
             android:layout_toStartOf="@+id/item_deckselector_countWhite"
             android:layout_centerVertical="true"
-            app:srcCompat="@drawable/img_card_white"/>
+            app:srcCompat="@drawable/img_card_white"
+            android:contentDescription="@string/white_card" />
 
         <TextView
             android:id="@+id/item_deckselector_countWhite"
@@ -65,6 +67,8 @@
             android:id="@+id/item_deckselector_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_toStartOf="@id/item_deckselector_img_blackcard"
             android:fontFamily="@font/helveticaneuebold"
             android:text="@string/label_name"
             android:layout_centerVertical="true"
