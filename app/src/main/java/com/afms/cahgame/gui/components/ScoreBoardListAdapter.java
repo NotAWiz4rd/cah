@@ -54,9 +54,9 @@ public class ScoreBoardListAdapter extends ArrayAdapter<Player> {
             }
 
             if (roundWinner != null && roundWinner.getName().equals(player.getName())) {
-                playerName.setTextColor(getContext().getResources().getColor(R.color.pastel_green));
+                playerName.setTextColor(getContext().getColor(R.color.pastel_green));
             } else {
-                playerName.setTextColor(getContext().getResources().getColor(R.color.inputTextColorBlack));
+                playerName.setTextColor(getContext().getColor(R.color.inputTextColorBlack));
             }
             playerName.setText(player.getName());
             playerScore.setText(String.valueOf(player.getScore()));

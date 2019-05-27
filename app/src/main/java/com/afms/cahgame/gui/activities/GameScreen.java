@@ -28,6 +28,7 @@ import com.afms.cahgame.game.Player;
 import com.afms.cahgame.gui.components.CardListAdapter;
 import com.afms.cahgame.gui.components.FullSizeCard;
 import com.afms.cahgame.gui.components.MessageDialog;
+import com.afms.cahgame.gui.components.ResultListener;
 import com.afms.cahgame.gui.components.ScoreBoardDialog;
 import com.afms.cahgame.gui.components.SwipeResultListener;
 import com.afms.cahgame.util.Database;
@@ -84,6 +85,8 @@ public class GameScreen extends AppCompatActivity {
 
     private Gamestate lastGamestate;
     private boolean playedCardsAreShown = false;
+
+    private MessageDialog messageDialog;
 
     //<------ LIFECYCLE EVENTS --------------------------------------------------------------------------------------------------------------->
 
@@ -635,15 +638,25 @@ public class GameScreen extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        MessageDialog messageDialog = MessageDialog.create(getString(R.string.message_leave_game), new ArrayList<>(Arrays.asList(
-                getString(R.string.leave), getString(R.string.cancel)
-        )));
-        messageDialog.setResultListener(result -> {
-            if (result.equals(getString(R.string.leave))) {
-                quitGame(getString(R.string.leftLobby));
-            }
-        });
-        messageDialog.show(getSupportFragmentManager(), "gameLeave");
+        if(messageDialog == null){
+            messageDialog = MessageDialog.create(getString(R.string.message_leave_game), new ArrayList<>(Arrays.asList(
+                    getString(R.string.leave), getString(R.string.cancel)
+            )));
+            messageDialog.setResultListener(new ResultListener() {
+                @Override
+                public void onItemClick(String result) {
+                    if (result.equals(getString(R.string.leave))) {
+                        quitGame(getString(R.string.leftLobby));
+                    }
+                }
+
+                @Override
+                public void clearReference() {
+                    messageDialog = null;
+                }
+            });
+            messageDialog.show(getSupportFragmentManager(), "gameLeave");
+        }
     }
 
     private void quitGame(String message) {

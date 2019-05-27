@@ -1,6 +1,7 @@
 package com.afms.cahgame.gui.components;
 
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -20,6 +21,7 @@ import android.widget.ImageButton;
 import com.afms.cahgame.R;
 import com.afms.cahgame.util.Util;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -28,7 +30,7 @@ public class SettingsDialog extends DialogFragment {
 
     private SharedPreferences settings;
     private EditText playerNameView;
-    private View.OnClickListener onClickListener;
+    private ResultListener resultListener;
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -51,13 +53,21 @@ public class SettingsDialog extends DialogFragment {
         });
 
         btn_save.setOnClickListener(v -> {
-            if (onClickListener != null) {
-                onClickListener.onClick(v);
+            if (resultListener != null) {
+                resultListener.onItemClick("save");
             }
-            getDialog().dismiss();
+            getDialog().cancel();
         });
 
         playerNameView.setSelection(playerNameView.getText().length());
+
+
+    }
+
+    @Override
+    public void onCancel(DialogInterface dialog) {
+        resultListener.clearReference();
+        super.onCancel(dialog);
     }
 
     @NonNull
@@ -81,11 +91,12 @@ public class SettingsDialog extends DialogFragment {
         return inflater.inflate(R.layout.dialog_settings, container);
     }
 
-    public void setOnClickListener(View.OnClickListener onClickListener) {
-        this.onClickListener = onClickListener;
+    public void setResultListener(ResultListener resultListener) {
+        this.resultListener = resultListener;
     }
 
     public EditText getPlayerNameView() {
         return playerNameView;
     }
+
 }

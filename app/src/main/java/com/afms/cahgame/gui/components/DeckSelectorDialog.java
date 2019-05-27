@@ -1,6 +1,7 @@
 package com.afms.cahgame.gui.components;
 
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -47,22 +48,36 @@ public class DeckSelectorDialog extends DialogFragment {
                         getContext().getString(R.string.label_choose_action),
                         new ArrayList<>(Arrays.asList(getString(R.string.select), getString(R.string.delete), getString(R.string.cancel)))
                 );
-                messageDialog.setResultListener(result -> {
-                    if (result.equals(getString(R.string.select))) {
-                        resultListener.onItemClick(deckName);
-                        dismiss();
-                    } else if (result.equals(getString(R.string.delete))) {
-                        Database.removeDeck(deckName);
-                        Toast.makeText(getContext(), String.format(getString(R.string.deletedDeckMessage), deckName), Toast.LENGTH_SHORT).show();
-                        dismiss();
+                messageDialog.setResultListener(new ResultListener() {
+                    @Override
+                    public void onItemClick(String result) {
+                        if (result.equals(getString(R.string.select))) {
+                            resultListener.onItemClick(deckName);
+                            getDialog().cancel();
+                        } else if (result.equals(getString(R.string.delete))) {
+                            Database.removeDeck(deckName);
+                            Toast.makeText(getContext(), String.format(getString(R.string.deletedDeckMessage), deckName), Toast.LENGTH_SHORT).show();
+                            getDialog().cancel();
+                        }
+                    }
+
+                    @Override
+                    public void clearReference() {
+
                     }
                 });
                 messageDialog.show(((AppCompatActivity) getContext()).getSupportFragmentManager(), "godmodeDeck");
             } else {
                 resultListener.onItemClick(deckName);
-                dismiss();
+                getDialog().cancel();
             }
         });
+    }
+
+    @Override
+    public void onCancel(DialogInterface dialog) {
+        resultListener.clearReference();
+        super.onCancel(dialog);
     }
 
     @Nullable

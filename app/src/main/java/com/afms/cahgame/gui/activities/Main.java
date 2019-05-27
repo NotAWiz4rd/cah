@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.afms.cahgame.R;
 import com.afms.cahgame.gui.components.MessageDialog;
+import com.afms.cahgame.gui.components.ResultListener;
 import com.afms.cahgame.gui.components.SettingsDialog;
 import com.afms.cahgame.util.Database;
 import com.afms.cahgame.util.Util;
@@ -67,13 +68,28 @@ public class Main extends AppCompatActivity {
         btn_explore_decks = findViewById(R.id.btn_main_exploreDecks);
         btn_settings = findViewById(R.id.btn_main_settings);
 
-        settingsDialog = new SettingsDialog();
-        messageDialog = MessageDialog.create(getResources().getString(R.string.title_quit), new ArrayList<>(Arrays.asList(getString(R.string.ok), getString(R.string.cancel))));
     }
 
     @Override
     public void onBackPressed() {
-        messageDialog.show(getSupportFragmentManager(), "quitMessageDialog");
+        if(messageDialog == null){
+            messageDialog = MessageDialog.create(getResources().getString(R.string.title_quit), new ArrayList<>(Arrays.asList(getString(R.string.ok), getString(R.string.cancel))));
+            messageDialog.setResultListener(new ResultListener() {
+                @Override
+                public void onItemClick(String result) {
+                    if (result.equals(getString(R.string.ok))) {
+                        ((AppCompatActivity) getApplicationContext()).onBackPressed();
+                        System.exit(0);
+                    }
+                }
+
+                @Override
+                public void clearReference() {
+                    messageDialog = null;
+                }
+            });
+            messageDialog.show(getSupportFragmentManager(), "quitMessageDialog");
+        }
     }
 
     private void initializeUIEvents() {
@@ -92,36 +108,43 @@ public class Main extends AppCompatActivity {
             startActivity(intent);
         });
         btn_settings.setOnClickListener(event -> {
-            settingsDialog.show(getSupportFragmentManager(), "settingsDialog");
-        });
+            if(settingsDialog == null){
 
-        settingsDialog.setOnClickListener(v -> {
-            EditText playerNameView = settingsDialog.getPlayerNameView();
-            if (playerNameView == null) {
-                return;
-            }
-            if (playerNameView.getText().toString().equals("")) {
-                playerName = Util.getRandomName();
-                Util.saveName(settings, playerName);
-            } else if (playerNameView.getText().toString().equals(getString(R.string.godmodeCommand))) {
-                if (Util.godMode) {
-                    Util.setGodMode(false);
-                    Toast.makeText(this, getString(R.string.disabledGodmode), Toast.LENGTH_SHORT).show();
-                } else {
-                    Util.setGodMode(true);
-                    Toast.makeText(this, getString(R.string.enabledGodmode), Toast.LENGTH_SHORT).show();
-                }
-            } else {
-                playerName = playerNameView.getText().toString();
-                Util.saveName(settings, playerName);
-            }
-            playerNameView.setText(settings.getString("player", Util.getRandomName()));
-        });
+                settingsDialog = new SettingsDialog();
+                settingsDialog.show(getSupportFragmentManager(), "settingsDialog");
 
-        messageDialog.setResultListener(result -> {
-            if (result.equals(getString(R.string.ok))) {
-                super.onBackPressed();
-                System.exit(0);
+                settingsDialog.setResultListener(new ResultListener() {
+                    @Override
+                    public void onItemClick(String result) {
+                        if(result.equals("save")) {
+                            EditText playerNameView = settingsDialog.getPlayerNameView();
+                            if (playerNameView == null) {
+                                return;
+                            }
+                            if (playerNameView.getText().toString().equals("")) {
+                                playerName = Util.getRandomName();
+                                Util.saveName(settings, playerName);
+                            } else if (playerNameView.getText().toString().equals(getString(R.string.godmodeCommand))) {
+                                if (Util.godMode) {
+                                    Util.setGodMode(false);
+                                    Toast.makeText(getApplicationContext(), getString(R.string.disabledGodmode), Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Util.setGodMode(true);
+                                    Toast.makeText(getApplicationContext(), getString(R.string.enabledGodmode), Toast.LENGTH_SHORT).show();
+                                }
+                            } else {
+                                playerName = playerNameView.getText().toString();
+                                Util.saveName(settings, playerName);
+                            }
+                            playerNameView.setText(settings.getString("player", Util.getRandomName()));
+                        }
+                    }
+
+                    @Override
+                    public void clearReference() {
+                        settingsDialog = null;
+                    }
+                });
             }
         });
     }

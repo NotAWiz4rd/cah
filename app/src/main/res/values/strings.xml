@@ -101,5 +101,6 @@
     <string name="deletedLobbyMessage">Deleted lobby: %s</string>
     <string name="failedToGetDecks">Failed to get decks from server.</string>
     <string name="failedGettingCards">Failed to get cards from server.</string>
+    <string name="remove">Remove</string>
     <string name="playerKicked">You were kicked from the lobby.</string>
 </resources>
