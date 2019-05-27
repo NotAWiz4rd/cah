@@ -446,12 +446,12 @@ public class GameScreen extends AppCompatActivity {
                     if (currentPlayerIsCardSzar()) {
                         lastCardSzarSwipeReference.setValue(FullSizeCard.SWIPE_DISABLE);
                         lastCardSzarSwipeReference.setValue(FullSizeCard.SWIPE_UP);
-                    }
 
-                    if (game.getGamestate().equals(Gamestate.WAITING)) {
-                        game.submitWinningCard(card);
-                        setPlayerReady();
-                        advanceGamestate();
+                        if (game.getGamestate().equals(Gamestate.WAITING)) {
+                            game.submitWinningCard(card);
+                            setPlayerReady();
+                            advanceGamestate();
+                        }
                     }
                 }
 
