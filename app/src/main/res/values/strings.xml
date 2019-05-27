@@ -103,4 +103,13 @@
     <string name="failedGettingCards">Failed to get cards from server.</string>
     <string name="remove">Remove</string>
     <string name="playerKicked">You were kicked from the lobby.</string>
+    <string name="player_icon">player icon</string>
+    <string name="score_icon">score icon</string>
+    <string name="test_player_name">Player Ölf</string>
+    <string name="score_label">SCORE:</string>
+    <string name="player_count_icon">player count icon</string>
+    <string name="hand_card_count_icon">hand card count icon</string>
+    <string name="password_icon">password icon</string>
+    <string name="white_card">white card</string>
+    <string name="black_card">black card</string>
 </resources>
