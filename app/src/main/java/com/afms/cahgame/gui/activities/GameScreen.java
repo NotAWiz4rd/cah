@@ -417,8 +417,8 @@ public class GameScreen extends AppCompatActivity {
                 @Override
                 public void onSwipeLeft() {
                     if (currentPlayerIsCardSzar()) {
-                        lastCardSzarSwipeReference.setValue(0);
-                        lastCardSzarSwipeReference.setValue(4);
+                        lastCardSzarSwipeReference.setValue(FullSizeCard.SWIPE_DISABLE);
+                        lastCardSzarSwipeReference.setValue(FullSizeCard.SWIPE_LEFT);
                     }
 
                     int nextPos = (playedWhiteCardList.indexOf(fullCard) + 1) % playedWhiteCardList.size();
@@ -429,8 +429,8 @@ public class GameScreen extends AppCompatActivity {
                 @Override
                 public void onSwipeRight() {
                     if (currentPlayerIsCardSzar()) {
-                        lastCardSzarSwipeReference.setValue(0);
-                        lastCardSzarSwipeReference.setValue(5);
+                        lastCardSzarSwipeReference.setValue(FullSizeCard.SWIPE_DISABLE);
+                        lastCardSzarSwipeReference.setValue(FullSizeCard.SWIPE_RIGHT);
                     }
 
                     int nextPos = playedWhiteCardList.indexOf(fullCard) - 1;
@@ -443,6 +443,11 @@ public class GameScreen extends AppCompatActivity {
 
                 @Override
                 public void onSwipeUp() {
+                    if (currentPlayerIsCardSzar()) {
+                        lastCardSzarSwipeReference.setValue(FullSizeCard.SWIPE_DISABLE);
+                        lastCardSzarSwipeReference.setValue(FullSizeCard.SWIPE_UP);
+                    }
+
                     if (game.getGamestate().equals(Gamestate.WAITING)) {
                         game.submitWinningCard(card);
                         setPlayerReady();
