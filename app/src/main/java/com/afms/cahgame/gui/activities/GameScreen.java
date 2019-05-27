@@ -265,8 +265,21 @@ public class GameScreen extends AppCompatActivity {
 
     private void initializeUIEvents() {
         playerOverview.setOnClickListener(event -> {
-            scoreBoard = ScoreBoardDialog.create(game);
-            scoreBoard.show(getSupportFragmentManager(), "playerOverview");
+            if(scoreBoard == null){
+                scoreBoard = ScoreBoardDialog.create(game);
+                scoreBoard.setResultListener(new ResultListener() {
+                    @Override
+                    public void onItemClick(String result) {
+
+                    }
+
+                    @Override
+                    public void clearReference() {
+                        scoreBoard = null;
+                    }
+                });
+                scoreBoard.show(getSupportFragmentManager(), "playerOverview");
+            }
         });
 
         playedBlackCard.setOnClickListener(event -> {
