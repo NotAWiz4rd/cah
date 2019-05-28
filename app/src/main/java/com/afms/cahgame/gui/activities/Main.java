@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -142,9 +143,10 @@ public class Main extends AppCompatActivity {
             disableUserInterface();
         });
         btn_settings.setOnClickListener(event -> {
+            /*
             chatBottomSheet = ChatBottomSheet.create(messages);
             chatBottomSheet.show(getSupportFragmentManager(), "chatBottomSheet");
-            /*
+            */
             if(settingsDialog == null){
 
                 settingsDialog = new SettingsDialog();
@@ -182,7 +184,7 @@ public class Main extends AppCompatActivity {
                         settingsDialog = null;
                     }
                 });
-            }*/
+            }
             disableUserInterface();
         });
     }
