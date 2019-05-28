@@ -33,6 +33,7 @@ public class TaskService extends Service {
 
     @Override
     public void onTaskRemoved(Intent rootIntent) {
+        Log.d("Close", String.format("ID: %d Name: %s", lobbyId, Util.playerName));
         Database.removePlayerFromLobby(lobbyId, Util.playerName);
         stopSelf();
     }
