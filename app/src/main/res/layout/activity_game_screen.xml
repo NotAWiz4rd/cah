@@ -67,15 +67,17 @@
             android:text="@string/waiting_slogan"
             android:textColor="@android:color/white" />
 
+        <View android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1"/>
+
         <ImageButton
             android:id="@+id/game_screen_chat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:src="@drawable/vector_bubble_speech"
+            android:layout_gravity="end|center"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:background="@android:color/transparent"
+            android:background="@drawable/button_icon_chat_radius_10dp"
             android:contentDescription="@string/chat" />
 
     </LinearLayout>
