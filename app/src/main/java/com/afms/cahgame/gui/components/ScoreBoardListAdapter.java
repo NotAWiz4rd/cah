@@ -90,7 +90,7 @@ public class ScoreBoardListAdapter extends ArrayAdapter<Player> {
             }
 
             if(game.getCardCzar().equals(player.getName())){
-                icon.setBackground(getContext().getDrawable(R.drawable.vector_eye_black_24dp));
+                icon.setBackground(getContext().getDrawable(R.drawable.vector_king));
             } else {
                 icon.setBackground(getContext().getDrawable(R.drawable.vector_person_24dp));
             }

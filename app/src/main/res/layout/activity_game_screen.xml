@@ -51,9 +51,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:background="@drawable/button_icon_player_radius_10dp"
+            android:src="@drawable/button_icon_player_radius_10dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
+            android:background="@android:color/transparent"
             android:contentDescription="@string/show_score_board" />
 
         <TextView
@@ -65,6 +66,17 @@
             android:fontFamily="@font/helveticaneuelight"
             android:text="@string/waiting_slogan"
             android:textColor="@android:color/white" />
+
+        <ImageButton
+            android:id="@+id/game_screen_chat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:src="@drawable/vector_bubble_speech"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/chat" />
 
     </LinearLayout>
 

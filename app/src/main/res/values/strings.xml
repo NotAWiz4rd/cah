@@ -117,4 +117,5 @@
     <string name="you_are_cardszar">YOU ARE CARDSZAR</string>
     <string name="enter_a_message">Enter a message...</string>
     <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.</string>
+    <string name="chat">chat</string>
 </resources>
