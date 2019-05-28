@@ -112,6 +112,6 @@
     <string name="password_icon">password icon</string>
     <string name="white_card">white card</string>
     <string name="black_card">black card</string>
-    <string name="last_round_czar">Last rounds CZAR</string>
+    <string name="last_round_czar">CZAR</string>
     <string name="no_played_card">No played card</string>
 </resources>

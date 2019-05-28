@@ -42,7 +42,6 @@
             android:gravity="center"
             android:layout_toEndOf="@+id/score_board_player_name"
             android:contentDescription="@string/score_icon"
-            android:background="@drawable/img_score"
             android:layout_centerVertical="true"
             android:backgroundTint="@color/pastel_green"/>
         <TextView
@@ -65,21 +64,14 @@
             android:layout_alignParentEnd="true"/>
     </RelativeLayout>
     <RelativeLayout
-        android:layout_width="match_parent"
+        android:id="@+id/score_board_card_text_layout"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/score_board_player_layout"
         android:background="@android:color/transparent">
-        <TextView
-            android:id="@+id/score_board_card_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="6dp"
-            android:textColor="@android:color/black"
-            android:background="@drawable/bg_white_transparent"
-            android:gravity="center_horizontal"/>
     </RelativeLayout>
 
 </android.support.constraint.ConstraintLayout>
