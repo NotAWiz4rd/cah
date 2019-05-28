@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:weightSum="100"
+    android:orientation="horizontal"
+    android:layoutDirection="rtl"
+    android:layout_alignParentEnd="true">
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="80"
+        android:background="@drawable/bg_chat_bubble_black_bottom">
+
+        <com.afms.cahgame.gui.utils.JustifiedTextView
+            android:id="@+id/item_message_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:text="@string/lorem_ipsum"
+            android:fontFamily="@font/helveticaneuelight"
+            android:textColor="@android:color/white"
+            android:background="@drawable/bg_chat_bubble_black_top" />
+
+        <TextView
+            android:id="@+id/item_message_owner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/helveticaneuebold"
+            android:textSize="12sp"
+            android:textColor="@android:color/white"
+            android:layout_marginTop="3dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="3dp"
+            android:layout_below="@id/item_message_text"
+            android:text="@string/test_player_name" />
+    </RelativeLayout>
+
+</LinearLayout>

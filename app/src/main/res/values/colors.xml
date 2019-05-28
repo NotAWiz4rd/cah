@@ -25,4 +25,9 @@
     <color name="cardview_shadow_end_color" tools:ignore="PrivateResource">#03000000</color>
     <color name="cardview_shadow_start_color" tools:ignore="PrivateResource">#37000000</color>
     <color name="whiteBackgroundTransparent">#8BC4A573</color>
+
+    <color name="chatBubbleWhiteTop">#ead8b9</color>
+    <color name="chatBubbleWhiteBottom">#C2A981</color>
+    <color name="chatBubbleBlackTop">#838383</color>
+    <color name="chatBubbleBlackBottom">#525252</color>
 </resources>

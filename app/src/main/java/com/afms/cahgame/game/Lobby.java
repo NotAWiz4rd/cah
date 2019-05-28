@@ -1,5 +1,7 @@
 package com.afms.cahgame.game;
 
+import com.afms.cahgame.data.Message;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,7 +10,7 @@ public class Lobby implements Serializable {
     private String id;
     private String host;
     private List<String> players = new ArrayList<>();
-    private List<String> messages = new ArrayList<>();
+    private List<Message> messages = new ArrayList<>();
     private int handcardCount;
     private int maxPlayers;
     private String deckName = "";
@@ -114,15 +116,15 @@ public class Lobby implements Serializable {
         this.deckName = deckName;
     }
 
-    public List<String> getMessages() {
-        return messages;
-    }
-
-    public void setMessages(List<String> messages) {
+    public void setMessages(List<Message> messages) {
         this.messages = messages;
     }
 
-    public void addMessage(String message) {
+    public List<Message> getMessages() {
+        return messages;
+    }
+
+    public void addMessage(Message message) {
         messages.add(message);
     }
 }

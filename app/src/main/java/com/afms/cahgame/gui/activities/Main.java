@@ -14,6 +14,8 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.afms.cahgame.R;
+import com.afms.cahgame.data.Message;
+import com.afms.cahgame.gui.components.ChatBottomSheet;
 import com.afms.cahgame.gui.components.MessageDialog;
 import com.afms.cahgame.gui.components.ResultListener;
 import com.afms.cahgame.gui.components.SettingsDialog;
@@ -22,6 +24,7 @@ import com.afms.cahgame.util.Util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class Main extends AppCompatActivity {
 
@@ -36,8 +39,19 @@ public class Main extends AppCompatActivity {
 
     private SettingsDialog settingsDialog;
     private MessageDialog messageDialog;
+    private ChatBottomSheet chatBottomSheet;
 
     private String playerName;
+
+    private ArrayList<Message> messages = new ArrayList<Message>() {{
+        for (int i = 0; i < 20; i++) {
+            if (i % 2 == 0) {
+                add(new Message(i, "Finn", "DU HURENSOHN"));
+            } else {
+                add(new Message(i, "Poccix", "Du durchaus netter und höflicher Mensch."));
+            }
+        }
+    }};
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -73,7 +87,7 @@ public class Main extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if(messageDialog == null){
+        if (messageDialog == null) {
             messageDialog = MessageDialog.create(getResources().getString(R.string.title_quit), new ArrayList<>(Arrays.asList(getString(R.string.ok), getString(R.string.cancel))));
             messageDialog.setResultListener(new ResultListener() {
                 @Override
@@ -93,11 +107,11 @@ public class Main extends AppCompatActivity {
         }
     }
 
-    private void exitApp(){
+    private void exitApp() {
         super.onBackPressed();
     }
 
-    private void disableUserInterface(){
+    private void disableUserInterface() {
         btn_create_lobby.setEnabled(false);
         btn_explore_decks.setEnabled(false);
         btn_search_lobby.setEnabled(false);
@@ -129,6 +143,10 @@ public class Main extends AppCompatActivity {
             disableUserInterface();
         });
         btn_settings.setOnClickListener(event -> {
+            /*
+            chatBottomSheet = ChatBottomSheet.create(messages);
+            chatBottomSheet.show(getSupportFragmentManager(), "chatBottomSheet");
+            */
             if(settingsDialog == null){
 
                 settingsDialog = new SettingsDialog();

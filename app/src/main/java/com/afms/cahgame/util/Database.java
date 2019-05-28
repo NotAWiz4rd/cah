@@ -6,6 +6,7 @@ import android.util.Log;
 import com.afms.cahgame.data.Card;
 import com.afms.cahgame.data.Colour;
 import com.afms.cahgame.data.Deck;
+import com.afms.cahgame.data.Message;
 import com.afms.cahgame.game.Lobby;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -190,13 +191,14 @@ public class Database {
      *
      * @param lobbyId    The LobbyId.
      * @param playername The name of the writing player.
-     * @param message    The message (important!).
+     * @param messageString    The message (important!).
      */
-    public static void sendMessageInLobby(String lobbyId, String playername, String message) {
+    public static void sendMessageInLobby(String lobbyId, String playername, String messageString) {
         Lobby lobby = lobbies.get(lobbyId);
         if (lobby != null) {
-            String realmessage = playername + ": " + message;
-            lobby.addMessage(realmessage);
+            String realmessage = playername + ": " + messageString;
+            Message message = new Message(lobby.getMessages().size(), playername, messageString);
+            lobby.addMessage(message);
             lobbies.put(lobbyId, lobby);
             lobbiesReference.setValue(lobbies);
         }
