@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -19,6 +21,8 @@ import android.widget.Toast;
 import com.afms.cahgame.R;
 import com.afms.cahgame.game.Game;
 import com.afms.cahgame.game.Lobby;
+import com.afms.cahgame.gui.components.ChatBottomSheet;
+import com.afms.cahgame.gui.components.ResultListener;
 import com.afms.cahgame.gui.components.WaitingListAdapter;
 import com.afms.cahgame.util.Database;
 import com.afms.cahgame.util.Util;
@@ -36,12 +40,14 @@ public class WaitingLobby extends AppCompatActivity {
     private ListView listView;
     private ImageButton btn_waiting_lobby_back;
     private Button btn_waiting_lobby_ready;
+    private ImageButton btn_waiting_lobby_chat;
     private TextView label_waiting_lobby_name;
     private TextView label_waiting_lobby_count_maxplayer;
     private TextView label_waiting_lobby_count_handcard;
     private WaitingListAdapter waitingListAdapter;
 
     private ValueEventListener valueEventListener;
+    private ChatBottomSheet chatBottomSheet;
 
     private String lobbyId = "";
     private String playerName;
@@ -159,10 +165,14 @@ public class WaitingLobby extends AppCompatActivity {
         label_waiting_lobby_name = findViewById(R.id.label_waiting_lobby_name);
         label_waiting_lobby_count_maxplayer = findViewById(R.id.label_waiting_lobby_count_maxplayer);
         label_waiting_lobby_count_handcard = findViewById(R.id.label_waiting_lobby_count_handcard);
+        btn_waiting_lobby_chat = findViewById(R.id.btn_waiting_lobby_chat);
     }
 
     private void initializeUIEvents() {
-        btn_waiting_lobby_back.setOnClickListener(v -> onBack());
+        btn_waiting_lobby_back.setOnClickListener(v -> {
+            onBack();
+            disableUserInterface();
+        });
 
         btn_waiting_lobby_ready.setOnClickListener(event -> {
             if (currentLobby != null && currentLobby.getHost().equals(playerName)) {
@@ -179,9 +189,42 @@ public class WaitingLobby extends AppCompatActivity {
                 intent.putExtra("host", currentLobby.getHost());
                 startActivity(intent);
                 finish();
+                disableUserInterface();
             }
         });
+
+        btn_waiting_lobby_chat.setOnClickListener(event -> {
+            if(chatBottomSheet == null){
+                chatBottomSheet = ChatBottomSheet.create(currentLobby);
+                chatBottomSheet.setResultListener(new ResultListener() {
+                    @Override
+                    public void onItemClick(String result) {
+                        Database.sendMessageInLobby(currentLobby.getId(), playerName, result);
+                    }
+
+                    @Override
+                    public void clearReference() {
+                        chatBottomSheet = null;
+                    }
+                });
+                chatBottomSheet.show(getSupportFragmentManager(), "chatWaitingLobby");
+            }
+            disableUserInterface();
+        });
     }
+
+
+    private void disableUserInterface() {
+        btn_waiting_lobby_ready.setEnabled(false);
+        btn_waiting_lobby_back.setEnabled(false);
+        btn_waiting_lobby_chat.setEnabled(false);
+        new Handler().postDelayed(() -> {
+            btn_waiting_lobby_ready.setEnabled(true);
+            btn_waiting_lobby_back.setEnabled(true);
+            btn_waiting_lobby_chat.setEnabled(true);
+        }, 250);
+    }
+
 
     private void hideUI() {
         final int flags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE

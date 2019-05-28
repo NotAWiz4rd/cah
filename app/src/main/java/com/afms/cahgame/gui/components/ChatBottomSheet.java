@@ -2,6 +2,7 @@ package com.afms.cahgame.gui.components;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -14,20 +15,26 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.afms.cahgame.R;
-import com.afms.cahgame.data.Message;
+import com.afms.cahgame.game.Lobby;
 
 import java.util.ArrayList;
 import java.util.Objects;
 
 public class ChatBottomSheet extends BottomSheetDialogFragment {
 
-    public static ChatBottomSheet create(ArrayList<Message> messages) {
+    private ResultListener resultListener;
+
+    public static ChatBottomSheet create(Lobby lobby) {
         ChatBottomSheet chatBottomSheet = new ChatBottomSheet();
         Bundle bundle = new Bundle();
-        bundle.putParcelableArrayList("messages", messages);
+        bundle.putSerializable("lobby", lobby);
         chatBottomSheet.setArguments(bundle);
         return chatBottomSheet;
     }
@@ -43,33 +50,61 @@ public class ChatBottomSheet extends BottomSheetDialogFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         if (getArguments() != null) {
-            ArrayList<Message> messages = getArguments().getParcelableArrayList("messages");
-            ListView list_chat = view.findViewById(R.id.list_chat);
-            ChatItemAdapter chatItemAdapter = new ChatItemAdapter(view.getContext(), messages);
-            list_chat.setAdapter(chatItemAdapter);
-            list_chat.setSelection(list_chat.getAdapter().getCount() - 1);
-            list_chat.setOnTouchListener((v, event) -> {
-                int action = event.getAction();
-                switch (action) {
-                    case MotionEvent.ACTION_DOWN:
+            Lobby lobby = (Lobby) getArguments().getSerializable("lobby");
+            if (lobby != null) {
 
-                        // Disallow NestedScrollView to intercept touch events.
-                        v.getParent().requestDisallowInterceptTouchEvent(true);
-                        break;
+                EditText input_chat_message = view.findViewById(R.id.input_chat_message);
+                ImageButton btn_chat_send = view.findViewById(R.id.btn_chat_send);
+                RelativeLayout layout_chat_no_messages = view.findViewById(R.id.layout_chat_no_messages);
+                btn_chat_send.setOnClickListener(v -> {
+                    if (input_chat_message.getText().toString().length() > 0) {
+                        resultListener.onItemClick(input_chat_message.getText().toString());
+                    } else {
+                        Toast.makeText(getContext(), getString(R.string.empty_input), Toast.LENGTH_SHORT).show();
+                    }
+                });
+                ListView list_chat = view.findViewById(R.id.list_chat);
+                ChatItemAdapter chatItemAdapter = new ChatItemAdapter(view.getContext(), new ArrayList<>());
+                chatItemAdapter.addAll(lobby.getMessages());
+                list_chat.setAdapter(chatItemAdapter);
+                list_chat.setSelection(list_chat.getAdapter().getCount() - 1);
+                list_chat.setOnTouchListener((v, event) -> {
+                    int action = event.getAction();
+                    switch (action) {
+                        case MotionEvent.ACTION_DOWN:
 
-                    case MotionEvent.ACTION_UP:
-                        // Allow NestedScrollView to intercept touch events.
-                        v.getParent().requestDisallowInterceptTouchEvent(false);
-                        break;
+                            // Disallow NestedScrollView to intercept touch events.
+                            v.getParent().requestDisallowInterceptTouchEvent(true);
+                            break;
+
+                        case MotionEvent.ACTION_UP:
+                            // Allow NestedScrollView to intercept touch events.
+                            v.getParent().requestDisallowInterceptTouchEvent(false);
+                            break;
+                    }
+
+                    // Handle ListView touch events.
+                    v.onTouchEvent(event);
+                    return true;
+                });
+
+                if(chatItemAdapter.isEmpty()){
+                    layout_chat_no_messages.setVisibility(View.VISIBLE);
+                    list_chat.setVisibility(View.INVISIBLE);
+                } else {
+                    layout_chat_no_messages.setVisibility(View.INVISIBLE);
+                    list_chat.setVisibility(View.VISIBLE);
                 }
-
-                // Handle ListView touch events.
-                v.onTouchEvent(event);
-                return true;
-            });
+            }
         }
-
     }
+
+    @Override
+    public void onCancel(DialogInterface dialog) {
+        resultListener.clearReference();
+        super.onCancel(dialog);
+    }
+
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -90,5 +125,9 @@ public class ChatBottomSheet extends BottomSheetDialogFragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         ((View) Objects.requireNonNull(getView()).getParent()).setBackgroundColor(Color.TRANSPARENT);
+    }
+
+    public void setResultListener(ResultListener resultListener) {
+        this.resultListener = resultListener;
     }
 }

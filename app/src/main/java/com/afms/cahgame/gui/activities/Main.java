@@ -24,7 +24,6 @@ import com.afms.cahgame.util.Util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 public class Main extends AppCompatActivity {
 
@@ -39,19 +38,8 @@ public class Main extends AppCompatActivity {
 
     private SettingsDialog settingsDialog;
     private MessageDialog messageDialog;
-    private ChatBottomSheet chatBottomSheet;
 
     private String playerName;
-
-    private ArrayList<Message> messages = new ArrayList<Message>() {{
-        for (int i = 0; i < 20; i++) {
-            if (i % 2 == 0) {
-                add(new Message(i, "Finn", "DU HURENSOHN"));
-            } else {
-                add(new Message(i, "Poccix", "Du durchaus netter und höflicher Mensch."));
-            }
-        }
-    }};
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -143,10 +131,6 @@ public class Main extends AppCompatActivity {
             disableUserInterface();
         });
         btn_settings.setOnClickListener(event -> {
-            /*
-            chatBottomSheet = ChatBottomSheet.create(messages);
-            chatBottomSheet.show(getSupportFragmentManager(), "chatBottomSheet");
-            */
             if(settingsDialog == null){
 
                 settingsDialog = new SettingsDialog();

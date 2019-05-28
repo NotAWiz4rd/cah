@@ -24,13 +24,14 @@ import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static android.content.Context.MODE_PRIVATE;
 
 public class ChatItemAdapter extends ArrayAdapter<Message> {
 
-    public ChatItemAdapter(@NonNull Context context, ArrayList<Message> messages) {
+    public ChatItemAdapter(@NonNull Context context, List<Message> messages) {
         super(context, 0, messages);
     }
 

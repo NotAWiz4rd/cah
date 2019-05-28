@@ -118,4 +118,6 @@
     <string name="enter_a_message">Enter a message...</string>
     <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.</string>
     <string name="chat">chat</string>
+    <string name="empty_input">You need to enter at least one character.</string>
+    <string name="there_are_currently_no_messages_be_the_first_one">There are currently no messages. Be the first one.</string>
 </resources>

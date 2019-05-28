@@ -32,6 +32,12 @@ public class Message implements Parcelable {
         message = source.readString();
     }
 
+    public  Message() {
+        this.id = -1;
+        this.owner = "";
+        this.message = "";
+    }
+
     public int getId() {
         return id;
     }

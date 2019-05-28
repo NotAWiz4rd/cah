@@ -5,14 +5,31 @@
     android:orientation="vertical"
     android:background="@drawable/bg_chat_background_10dp">
 
-    <ListView
-        android:id="@+id/list_chat"
-        android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:layout_marginHorizontal="8dp"
-        android:layout_marginVertical="8dp"
-        android:dividerHeight="4dp">
-    </ListView>
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <RelativeLayout
+            android:id="@+id/layout_chat_no_messages"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/there_are_currently_no_messages_be_the_first_one"
+                android:layout_centerInParent="true"/>
+
+        </RelativeLayout>
+
+        <ListView
+            android:id="@+id/list_chat"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginVertical="8dp"
+            android:dividerHeight="4dp">
+        </ListView>
+    </FrameLayout>
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
