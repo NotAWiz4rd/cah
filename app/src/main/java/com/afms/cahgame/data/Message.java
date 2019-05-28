@@ -20,13 +20,13 @@ public class Message implements Parcelable {
         }
     };
 
-    public Message(int id, String owner, String message){
+    public Message(int id, String owner, String message) {
         this.id = id;
         this.owner = owner;
         this.message = message;
     }
 
-    protected Message(Parcel source){
+    protected Message(Parcel source) {
         id = source.readInt();
         owner = source.readString();
         message = source.readString();
