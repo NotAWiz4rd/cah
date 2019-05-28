@@ -447,6 +447,7 @@ public class GameScreen extends AppCompatActivity {
 
                     int nextPos = (playedWhiteCardList.indexOf(fullCard) + 1) % playedWhiteCardList.size();
                     playedWhiteCard = playedWhiteCardList.get(nextPos);
+                    playedWhiteCard.setFirstTime(true);
                     lowerFrameLayout.addView(playedWhiteCard);
                 }
 
@@ -462,6 +463,7 @@ public class GameScreen extends AppCompatActivity {
                         nextPos = playedWhiteCardList.size() - 1;
                     }
                     playedWhiteCard = playedWhiteCardList.get(nextPos);
+                    playedWhiteCard.setFirstTime(true);
                     lowerFrameLayout.addView(playedWhiteCard);
                 }
 
