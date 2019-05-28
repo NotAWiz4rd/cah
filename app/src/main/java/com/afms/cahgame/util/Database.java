@@ -189,14 +189,13 @@ public class Database {
     /**
      * Adds a message to the current list of lobby messages.
      *
-     * @param lobbyId    The LobbyId.
-     * @param playername The name of the writing player.
-     * @param messageString    The message (important!).
+     * @param lobbyId       The LobbyId.
+     * @param playername    The name of the writing player.
+     * @param messageString The message (important!).
      */
     public static void sendMessageInLobby(String lobbyId, String playername, String messageString) {
         Lobby lobby = lobbies.get(lobbyId);
         if (lobby != null) {
-            String realmessage = playername + ": " + messageString;
             Message message = new Message(lobby.getMessages().size(), playername, messageString);
             lobby.addMessage(message);
             lobbies.put(lobbyId, lobby);

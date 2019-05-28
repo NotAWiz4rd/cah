@@ -3,7 +3,9 @@ package com.afms.cahgame.data;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class Message implements Parcelable {
+import java.io.Serializable;
+
+public class Message implements Parcelable, Serializable {
     private int id;
     private String owner;
     private String message;
@@ -32,7 +34,7 @@ public class Message implements Parcelable {
         message = source.readString();
     }
 
-    public  Message() {
+    public Message() {
         this.id = -1;
         this.owner = "";
         this.message = "";

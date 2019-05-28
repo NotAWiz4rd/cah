@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialogFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -22,14 +23,25 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.afms.cahgame.R;
+import com.afms.cahgame.data.Message;
 import com.afms.cahgame.game.Lobby;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class ChatBottomSheet extends BottomSheetDialogFragment {
-
     private ResultListener resultListener;
+
+    private ChatItemAdapter chatItemAdapter;
+    private ListView list_chat;
+    private List<Message> lastMessages = new ArrayList<>();
 
     public static ChatBottomSheet create(Lobby lobby) {
         ChatBottomSheet chatBottomSheet = new ChatBottomSheet();
@@ -51,8 +63,8 @@ public class ChatBottomSheet extends BottomSheetDialogFragment {
         super.onViewCreated(view, savedInstanceState);
         if (getArguments() != null) {
             Lobby lobby = (Lobby) getArguments().getSerializable("lobby");
-            if (lobby != null) {
 
+            if (lobby != null) {
                 EditText input_chat_message = view.findViewById(R.id.input_chat_message);
                 ImageButton btn_chat_send = view.findViewById(R.id.btn_chat_send);
                 RelativeLayout layout_chat_no_messages = view.findViewById(R.id.layout_chat_no_messages);
@@ -63,8 +75,10 @@ public class ChatBottomSheet extends BottomSheetDialogFragment {
                         Toast.makeText(getContext(), getString(R.string.empty_input), Toast.LENGTH_SHORT).show();
                     }
                 });
-                ListView list_chat = view.findViewById(R.id.list_chat);
-                ChatItemAdapter chatItemAdapter = new ChatItemAdapter(view.getContext(), new ArrayList<>());
+
+                list_chat = view.findViewById(R.id.list_chat);
+
+                chatItemAdapter = new ChatItemAdapter(view.getContext(), new ArrayList<>());
                 chatItemAdapter.addAll(lobby.getMessages());
                 list_chat.setAdapter(chatItemAdapter);
                 list_chat.setSelection(list_chat.getAdapter().getCount() - 1);
@@ -72,7 +86,6 @@ public class ChatBottomSheet extends BottomSheetDialogFragment {
                     int action = event.getAction();
                     switch (action) {
                         case MotionEvent.ACTION_DOWN:
-
                             // Disallow NestedScrollView to intercept touch events.
                             v.getParent().requestDisallowInterceptTouchEvent(true);
                             break;
@@ -88,13 +101,14 @@ public class ChatBottomSheet extends BottomSheetDialogFragment {
                     return true;
                 });
 
-                if(chatItemAdapter.isEmpty()){
+                if (chatItemAdapter.isEmpty()) {
                     layout_chat_no_messages.setVisibility(View.VISIBLE);
                     list_chat.setVisibility(View.INVISIBLE);
                 } else {
                     layout_chat_no_messages.setVisibility(View.INVISIBLE);
                     list_chat.setVisibility(View.VISIBLE);
                 }
+                initializeDatabaseConnection(lobby.getId());
             }
         }
     }
@@ -105,6 +119,31 @@ public class ChatBottomSheet extends BottomSheetDialogFragment {
         super.onCancel(dialog);
     }
 
+    private void initializeDatabaseConnection(String lobbyId) {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference chatReference = database.getReference("lobbies/" + lobbyId + "/messages");
+
+        chatReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                GenericTypeIndicator<ArrayList<Message>> genericTypeIndicator = new GenericTypeIndicator<ArrayList<Message>>() {
+                };
+                List<Message> messages = dataSnapshot.getValue(genericTypeIndicator);
+                if (messages != null) {
+                    for (int i = lastMessages.size(); i < messages.size(); i++) {
+                        chatItemAdapter.add(messages.get(i));
+                    }
+                    lastMessages = messages;
+                    list_chat.setAdapter(chatItemAdapter);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.w(getString(R.string.errorLog), getString(R.string.failedToGetLobby), databaseError.toException());
+            }
+        });
+    }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
