@@ -20,6 +20,7 @@ import com.afms.cahgame.gui.components.MessageDialog;
 import com.afms.cahgame.gui.components.ResultListener;
 import com.afms.cahgame.gui.components.SettingsDialog;
 import com.afms.cahgame.util.Database;
+import com.afms.cahgame.util.TaskService;
 import com.afms.cahgame.util.Util;
 
 import java.util.ArrayList;
@@ -44,7 +45,7 @@ public class Main extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        startService(new Intent(getBaseContext(), TaskService.class));
         settings = getSharedPreferences("Preferences", MODE_PRIVATE);
         setContentView(R.layout.activity_main);
         contentView = findViewById(R.id.layout_main);
@@ -58,6 +59,7 @@ public class Main extends AppCompatActivity {
             playerName = settings.getString("player", Util.getRandomName());
         }
         Util.saveName(settings, playerName);
+        Util.playerName = playerName;
 
         String message = (String) getIntent().getSerializableExtra("message");
         if (message != null) {
@@ -147,6 +149,7 @@ public class Main extends AppCompatActivity {
                             if (playerNameView.getText().toString().equals("")) {
                                 playerName = Util.getRandomName();
                                 Util.saveName(settings, playerName);
+                                Util.playerName = playerName;
                             } else if (playerNameView.getText().toString().equals(getString(R.string.godmodeCommand))) {
                                 if (Util.godMode) {
                                     Util.setGodMode(false);
@@ -158,6 +161,7 @@ public class Main extends AppCompatActivity {
                             } else {
                                 playerName = playerNameView.getText().toString();
                                 Util.saveName(settings, playerName);
+                                Util.playerName = playerName;
                             }
                             playerNameView.setText(settings.getString("player", Util.getRandomName()));
                         }

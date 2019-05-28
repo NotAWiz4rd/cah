@@ -1,6 +1,7 @@
 package com.afms.cahgame.util;
 
 import android.content.SharedPreferences;
+import android.provider.ContactsContract;
 
 import com.afms.cahgame.data.Card;
 import com.afms.cahgame.data.Colour;
@@ -13,6 +14,7 @@ import java.util.Optional;
 
 public class Util {
     public static boolean godMode = false;
+    public static String playerName;
 
     /**
      * Converts a dataDeck to a GameDeck by getting all the card data from the database.
@@ -65,8 +67,11 @@ public class Util {
      * @return The corresponding DataDeck.
      */
     public static com.afms.cahgame.data.Deck getDataDeckFromName(String deckName) {
-        Optional<com.afms.cahgame.data.Deck> deckOptional = Database.getDecks().stream().filter(deck -> deck.getName().equals(deckName)).findFirst();
-        return deckOptional.orElse(null);
+        if(!Database.getDecks().isEmpty()){
+            Optional<com.afms.cahgame.data.Deck> deckOptional = Database.getDecks().stream().filter(deck -> deck.getName().equals(deckName)).findFirst();
+            return deckOptional.orElse(null);
+        }
+        return null;
     }
 
     /**

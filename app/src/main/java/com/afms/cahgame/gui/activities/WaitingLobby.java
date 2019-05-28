@@ -25,6 +25,7 @@ import com.afms.cahgame.gui.components.ChatBottomSheet;
 import com.afms.cahgame.gui.components.ResultListener;
 import com.afms.cahgame.gui.components.WaitingListAdapter;
 import com.afms.cahgame.util.Database;
+import com.afms.cahgame.util.TaskService;
 import com.afms.cahgame.util.Util;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -69,10 +70,13 @@ public class WaitingLobby extends AppCompatActivity {
         initializeUIEvents();
 
         lobbyId = (String) getIntent().getSerializableExtra(getString(R.string.lobbyId));
+        TaskService.setLobbyId(lobbyId);
+
         if (Database.getLobby(lobbyId) != null) {
             playerName = settings.getString("player", Util.getRandomName());
             saveRealname(playerName);
             playerName = Database.joinLobby(lobbyId, playerName);
+            Util.playerName = playerName;
 
             if (playerName.equals("")) {
                 Intent intent = new Intent(context, Main.class);
