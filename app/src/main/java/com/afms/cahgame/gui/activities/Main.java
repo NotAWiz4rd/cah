@@ -79,8 +79,8 @@ public class Main extends AppCompatActivity {
                 @Override
                 public void onItemClick(String result) {
                     if (result.equals(getString(R.string.ok))) {
+                        finishAffinity();
                         ((AppCompatActivity) getApplicationContext()).onBackPressed();
-                        System.exit(0);
                     }
                 }
 
