@@ -67,6 +67,7 @@ public class GameScreen extends AppCompatActivity {
     private ConstraintLayout gameScreenLayout;
     private LinearLayout playedBlackCard;
     private RelativeLayout waitingScreen;
+    private TextView waitingScreenText;
     private TextView playedBlackCardText;
     private FullSizeCard playedWhiteCard;
     private FrameLayout lowerFrameLayout;
@@ -263,6 +264,7 @@ public class GameScreen extends AppCompatActivity {
         userSelectionLayout = (ConstraintLayout) getLayoutInflater().inflate(R.layout.element_list_card_select, gameScreenLayout, false);
         userSelectionListView = userSelectionLayout.findViewById(R.id.cardSelectList);
         waitingScreen = (RelativeLayout) getLayoutInflater().inflate(R.layout.element_waiting_screen_with_gif, gameScreenLayout, false);
+        waitingScreenText = waitingScreen.findViewById(R.id.waiting_screen_is_cszar);
     }
 
     private void initializeUIEvents() {
@@ -272,7 +274,6 @@ public class GameScreen extends AppCompatActivity {
                 scoreBoard.setResultListener(new ResultListener() {
                     @Override
                     public void onItemClick(String result) {
-
                     }
 
                     @Override
@@ -319,6 +320,10 @@ public class GameScreen extends AppCompatActivity {
                     completeFrameLayout.addView(getFullSizeCardInstance(card, position));
                 }
             });
+            if (currentPlayerIsCardSzar()){
+                showWaitingScreen();
+                setWaitingTextCardSzar(true);
+            }
         }
     }
 
@@ -415,6 +420,15 @@ public class GameScreen extends AppCompatActivity {
     private void showWaitingScreen() {
         if (!waitingScreen.isAttachedToWindow()) {
             lowerFrameLayout.addView(waitingScreen);
+            setWaitingTextCardSzar(false);
+        }
+    }
+
+    private void setWaitingTextCardSzar(boolean cardSzar){
+        if(cardSzar){
+            waitingScreenText.setText(getApplicationContext().getString(R.string.you_are_cardszar));
+        } else {
+            waitingScreenText.setText(null);
         }
     }
 
