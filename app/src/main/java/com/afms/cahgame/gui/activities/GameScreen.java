@@ -26,6 +26,7 @@ import com.afms.cahgame.game.Game;
 import com.afms.cahgame.game.Gamestate;
 import com.afms.cahgame.game.Player;
 import com.afms.cahgame.gui.components.CardListAdapter;
+import com.afms.cahgame.gui.components.ChatBottomSheet;
 import com.afms.cahgame.gui.components.FullSizeCard;
 import com.afms.cahgame.gui.components.MessageDialog;
 import com.afms.cahgame.gui.components.ResultListener;
@@ -64,6 +65,7 @@ public class GameScreen extends AppCompatActivity {
     private SharedPreferences settings;
 
     private ImageButton playerOverview;
+    private ImageButton game_screen_chat;
     private ConstraintLayout gameScreenLayout;
     private LinearLayout playedBlackCard;
     private RelativeLayout waitingScreen;
@@ -90,6 +92,8 @@ public class GameScreen extends AppCompatActivity {
 
     private MessageDialog messageDialog;
     private FullSizeCard fullCard;
+
+    private ChatBottomSheet chatBottomSheet;
 
     //<------ LIFECYCLE EVENTS --------------------------------------------------------------------------------------------------------------->
 
@@ -257,7 +261,7 @@ public class GameScreen extends AppCompatActivity {
         lowerFrameLayout = findViewById(R.id.layout_game_screen_lower);
         completeFrameLayout = findViewById(R.id.game_screen_frameLayout);
         navigationBarText = findViewById(R.id.bottom_navigation_bar_text_field);
-
+        game_screen_chat = findViewById(R.id.game_screen_chat);
         playedBlackCardText.setText("");
 
         playedWhiteCard = new FullSizeCard(this, new Card(Colour.WHITE, ""));
@@ -283,6 +287,26 @@ public class GameScreen extends AppCompatActivity {
                 });
                 scoreBoard.show(getSupportFragmentManager(), "playerOverview");
             }
+            disableUserInterface();
+        });
+
+        game_screen_chat.setOnClickListener(event -> {
+            if(chatBottomSheet == null){
+                chatBottomSheet = ChatBottomSheet.create(Database.getLobby(lobbyId));
+                chatBottomSheet.setResultListener(new ResultListener() {
+                    @Override
+                    public void onItemClick(String result) {
+                        Database.sendMessageInLobby(lobbyId, player.getName(), result);
+                    }
+
+                    @Override
+                    public void clearReference() {
+                        chatBottomSheet = null;
+                    }
+                });
+                chatBottomSheet.show(getSupportFragmentManager(), "chatGameScreen");
+            }
+            disableUserInterface();
         });
 
         playedBlackCard.setOnClickListener(event -> {
@@ -300,6 +324,17 @@ public class GameScreen extends AppCompatActivity {
             }
         });
     }
+
+
+    private void disableUserInterface() {
+        playerOverview.setEnabled(false);
+        game_screen_chat.setEnabled(false);
+        new Handler().postDelayed(() -> {
+            playerOverview.setEnabled(true);
+            game_screen_chat.setEnabled(true);
+        }, 250);
+    }
+
 
     private void deleteAllViewsFromLowerFrameLayout() {
         lowerFrameLayout.removeAllViews();
