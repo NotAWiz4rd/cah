@@ -80,7 +80,7 @@ public class Main extends AppCompatActivity {
                 public void onItemClick(String result) {
                     if (result.equals(getString(R.string.ok))) {
                         finishAffinity();
-                        ((AppCompatActivity) getApplicationContext()).onBackPressed();
+                        exitApp();
                     }
                 }
 
@@ -91,6 +91,10 @@ public class Main extends AppCompatActivity {
             });
             messageDialog.show(getSupportFragmentManager(), "quitMessageDialog");
         }
+    }
+
+    private void exitApp(){
+        super.onBackPressed();
     }
 
     private void disableUserInterface(){
