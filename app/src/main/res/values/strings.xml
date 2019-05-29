@@ -45,7 +45,6 @@
     <string name="label_nothost">Waiting for host</string>
     <string name="score_board">Score Board</string>
     <string name="play_card">Play a card.</string>
-    <string name="waiting_for_others">Waiting for the other players to choose a card.</string>
     <string name="choose_winning_card">Choose the winning card.</string>
     <string name="wait_for_winning_card">Waiting for cardszar to choose the winning card.</string>
     <string name="impossibleError">Something went terribly wrong…</string>

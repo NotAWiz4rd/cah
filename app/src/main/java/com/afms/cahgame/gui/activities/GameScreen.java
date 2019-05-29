@@ -407,7 +407,7 @@ public class GameScreen extends AppCompatActivity {
                 public void onSwipeUp() {
                     if (!currentPlayerIsCardSzar()) {
                         if (allowCardSubmitting) {
-                            navigationBarText.setText(R.string.waiting_for_others);
+                            navigationBarText.setText(R.string.waiting_slogan);
                             submitCard(card);
                             allowCardSubmitting = false;
                             showHandCardList();
@@ -595,7 +595,7 @@ public class GameScreen extends AppCompatActivity {
             navigationBarText.setText(R.string.play_card);
         } else {
             setPlayerReady();
-            navigationBarText.setText(R.string.waiting_for_others);
+            navigationBarText.setText(R.string.waiting_slogan);
             showWaitingScreen();
         }
         showHandCardList();
