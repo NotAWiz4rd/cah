@@ -62,7 +62,7 @@ public class WaitingLobby extends AppCompatActivity {
     public DatabaseReference lobbyReference;
 
     public static boolean newChatMessages = false;
-    private List<Message> lastMessages = new ArrayList<>();
+    public static List<Message> lastMessages = new ArrayList<>();
 
     private Context context;
     private MessageDialog messageDialog;
@@ -124,7 +124,7 @@ public class WaitingLobby extends AppCompatActivity {
                     updatePlayerList();
                     updateLobbyMetadata();
 
-                    if (currentLobby.getMessages() != lastMessages) {
+                    if (currentLobby.getMessages() != null && currentLobby.getMessages().size() > lastMessages.size()) {
                         newChatMessages = true;
                         (findViewById(R.id.circle_btn_waiting_lobby_chat)).setVisibility(View.VISIBLE);
                         lastMessages = currentLobby.getMessages();
@@ -248,6 +248,7 @@ public class WaitingLobby extends AppCompatActivity {
 
                     @Override
                     public void clearReference() {
+                        chatBottomSheet.closeDatabaseConnection();
                         chatBottomSheet = null;
                     }
                 });

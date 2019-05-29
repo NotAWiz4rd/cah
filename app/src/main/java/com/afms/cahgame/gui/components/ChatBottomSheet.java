@@ -44,6 +44,9 @@ public class ChatBottomSheet extends BottomSheetDialogFragment {
     private ListView list_chat;
     private RelativeLayout layout_chat_no_messages;
 
+    private DatabaseReference chatReference;
+    private ValueEventListener chatListener;
+
     public static ChatBottomSheet create(Lobby lobby) {
         ChatBottomSheet chatBottomSheet = new ChatBottomSheet();
         Bundle bundle = new Bundle();
@@ -116,6 +119,10 @@ public class ChatBottomSheet extends BottomSheetDialogFragment {
         }
     }
 
+    public void closeDatabaseConnection() {
+        chatReference.removeEventListener(chatListener);
+    }
+
     @Override
     public void onCancel(DialogInterface dialog) {
         resultListener.clearReference();
@@ -124,15 +131,18 @@ public class ChatBottomSheet extends BottomSheetDialogFragment {
 
     private void initializeDatabaseConnection(String lobbyId) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference chatReference = database.getReference("lobbies/" + lobbyId + "/messages");
+        chatReference = database.getReference("lobbies/" + lobbyId + "/messages");
 
-        chatReference.addValueEventListener(new ValueEventListener() {
+        chatListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 GenericTypeIndicator<ArrayList<Message>> genericTypeIndicator = new GenericTypeIndicator<ArrayList<Message>>() {
                 };
                 List<Message> messages = dataSnapshot.getValue(genericTypeIndicator);
                 if (messages != null) {
+                    WaitingLobby.newChatMessages = false;
+                    WaitingLobby.lastMessages = messages;
+
                     chatItemAdapter.clear();
                     chatItemAdapter.addAll(messages);
                     list_chat.setAdapter(chatItemAdapter);
@@ -144,8 +154,6 @@ public class ChatBottomSheet extends BottomSheetDialogFragment {
                         list_chat.setVisibility(View.VISIBLE);
                     }
                     list_chat.setSelection(list_chat.getAdapter().getCount() - 1);
-
-                    WaitingLobby.newChatMessages = false;
                 }
             }
 
@@ -153,7 +161,9 @@ public class ChatBottomSheet extends BottomSheetDialogFragment {
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 Log.w(getString(R.string.errorLog), getString(R.string.failedToGetLobby), databaseError.toException());
             }
-        });
+        };
+
+        chatReference.addValueEventListener(chatListener);
     }
 
     @Override
