@@ -121,6 +121,7 @@ public class WaitingLobby extends AppCompatActivity {
 
                     if (currentLobby.getMessages() != lastMessages) {
                         newChatMessages = true;
+                        (findViewById(R.id.circle_btn_waiting_lobby_chat)).setVisibility(View.VISIBLE);
                         lastMessages = currentLobby.getMessages();
                     }
 
@@ -210,6 +211,7 @@ public class WaitingLobby extends AppCompatActivity {
         btn_waiting_lobby_chat.setOnClickListener(event -> {
             if (chatBottomSheet == null) {
                 newChatMessages = false;
+                (findViewById(R.id.circle_btn_waiting_lobby_chat)).setVisibility(View.INVISIBLE);
                 chatBottomSheet = ChatBottomSheet.create(currentLobby);
                 chatBottomSheet.setResultListener(new ResultListener() {
                     @Override
