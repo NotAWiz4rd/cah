@@ -11,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -21,7 +22,9 @@ import com.afms.cahgame.R;
 import com.afms.cahgame.data.Message;
 import com.afms.cahgame.game.Game;
 import com.afms.cahgame.game.Lobby;
+import com.afms.cahgame.game.Player;
 import com.afms.cahgame.gui.components.ChatBottomSheet;
+import com.afms.cahgame.gui.components.MessageDialog;
 import com.afms.cahgame.gui.components.ResultListener;
 import com.afms.cahgame.gui.components.WaitingListAdapter;
 import com.afms.cahgame.util.Database;
@@ -34,6 +37,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -61,6 +65,7 @@ public class WaitingLobby extends AppCompatActivity {
     private List<Message> lastMessages = new ArrayList<>();
 
     private Context context;
+    private MessageDialog messageDialog;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -170,6 +175,28 @@ public class WaitingLobby extends AppCompatActivity {
 
     private void updatePlayerList() {
         waitingListAdapter = new WaitingListAdapter(this, currentLobby.getPlayers(), currentLobby);
+        listView.setOnItemClickListener((parent, view, position, id) -> {
+            if(currentLobby.getHost().equals(playerName) || Util.godMode){
+                if(messageDialog == null){
+                    String selectedPlayer = (String) parent.getItemAtPosition(position);
+                    messageDialog = MessageDialog.create(getString(R.string.label_choose_action), getString(R.string.kick_player_message), new ArrayList<>(Arrays.asList("Kick", "Cancel")));
+                    messageDialog.setResultListener(new ResultListener() {
+                        @Override
+                        public void onItemClick(String result) {
+                            if(result.equals("Kick")){
+                                Database.removePlayerFromLobby(currentLobby.getId(), selectedPlayer);
+                            }
+                        }
+
+                        @Override
+                        public void clearReference() {
+                            messageDialog = null;
+                        }
+                    });
+                    messageDialog.show(getSupportFragmentManager(), "kickPlayer");
+                }
+            }
+        });
         listView.setAdapter(waitingListAdapter);
     }
 

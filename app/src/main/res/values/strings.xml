@@ -120,4 +120,5 @@
     <string name="chat">chat</string>
     <string name="empty_input">You need to enter at least one character.</string>
     <string name="there_are_currently_no_messages_be_the_first_one">There are currently no messages. Be the first one.</string>
+    <string name="kick_player_message">You can kick the selected player from your lobby!</string>
 </resources>
