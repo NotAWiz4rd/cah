@@ -385,7 +385,6 @@ public class GameScreen extends AppCompatActivity {
     public FullSizeCard getFullSizeCardInstance(Card card, int selectedPosition) {
         fullCard = new FullSizeCard(this, card);
         fullCard.addOptionButton(getString(R.string.close), v -> {
-            Toast.makeText(getApplicationContext(), "hihihii", Toast.LENGTH_SHORT).show();
             completeFrameLayout.removeView(fullCard);
             fullCard = null;
         });
