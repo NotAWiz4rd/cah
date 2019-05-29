@@ -18,7 +18,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.afms.cahgame.R;
 import com.afms.cahgame.data.Colour;
@@ -82,7 +81,6 @@ public class GameScreen extends AppCompatActivity {
     private ListView userSelectionListView;
     private CardListAdapter userSelectionListAdapter;
     private List<FullSizeCard> playedWhiteCardList;
-    private List<FullSizeCard> fullSizeCardList = new ArrayList<>();
     private ScoreBoardDialog scoreBoard;
 
     private boolean showUpdatedScore;
@@ -96,6 +94,8 @@ public class GameScreen extends AppCompatActivity {
     private FullSizeCard fullCard;
 
     private ChatBottomSheet chatBottomSheet;
+    private static TextView newMessageIcon;
+    public static boolean chatIsOpen = false;
 
     //<------ LIFECYCLE EVENTS --------------------------------------------------------------------------------------------------------------->
 
@@ -267,6 +267,9 @@ public class GameScreen extends AppCompatActivity {
         view_game_screen_disable = findViewById(R.id.view_game_screen_disable);
         playedBlackCardText.setText("");
 
+        newMessageIcon = findViewById(R.id.circle_btn_game_screen_chat);
+        showNewMessageIcon(false);
+
         playedWhiteCard = new FullSizeCard(this, new Card(Colour.WHITE, ""));
         userSelectionLayout = (ConstraintLayout) getLayoutInflater().inflate(R.layout.element_list_card_select, gameScreenLayout, false);
         userSelectionListView = userSelectionLayout.findViewById(R.id.cardSelectList);
@@ -276,7 +279,7 @@ public class GameScreen extends AppCompatActivity {
 
     private void initializeUIEvents() {
         playerOverview.setOnClickListener(event -> {
-            if(scoreBoard == null){
+            if (scoreBoard == null) {
                 scoreBoard = ScoreBoardDialog.create(game);
                 scoreBoard.setResultListener(new ResultListener() {
                     @Override
@@ -294,7 +297,9 @@ public class GameScreen extends AppCompatActivity {
         });
 
         game_screen_chat.setOnClickListener(event -> {
-            if(chatBottomSheet == null){
+            if (chatBottomSheet == null) {
+                showNewMessageIcon(false);
+                chatIsOpen = true;
                 chatBottomSheet = ChatBottomSheet.create(Database.getLobby(lobbyId));
                 chatBottomSheet.setResultListener(new ResultListener() {
                     @Override
@@ -305,6 +310,8 @@ public class GameScreen extends AppCompatActivity {
                     @Override
                     public void clearReference() {
                         chatBottomSheet = null;
+                        chatIsOpen = false;
+                        showNewMessageIcon(false);
                     }
                 });
                 chatBottomSheet.show(getSupportFragmentManager(), "chatGameScreen");
@@ -328,6 +335,12 @@ public class GameScreen extends AppCompatActivity {
         });
     }
 
+    public static void showNewMessageIcon(boolean show) {
+        if (newMessageIcon == null) {
+            return;
+        }
+        newMessageIcon.setVisibility(show ? View.VISIBLE : View.INVISIBLE);
+    }
 
     private void disableUserInterface() {
         playerOverview.setEnabled(false);
@@ -357,12 +370,12 @@ public class GameScreen extends AppCompatActivity {
 
             userSelectionListView.setOnItemClickListener((parent, view, position, id) -> {
                 Card card = (Card) parent.getItemAtPosition(position);
-                if(fullCard == null){
+                if (fullCard == null) {
                     RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
                     completeFrameLayout.addView(getFullSizeCardInstance(card, position), params);
                 }
             });
-            if (currentPlayerIsCardSzar()){
+            if (currentPlayerIsCardSzar()) {
                 showWaitingScreen();
                 setWaitingTextCardSzar(true);
             }
@@ -465,8 +478,8 @@ public class GameScreen extends AppCompatActivity {
         }
     }
 
-    private void setWaitingTextCardSzar(boolean cardSzar){
-        if(cardSzar){
+    private void setWaitingTextCardSzar(boolean cardSzar) {
+        if (cardSzar) {
             waitingScreenText.setText(getApplicationContext().getString(R.string.you_are_cardszar));
         } else {
             waitingScreenText.setText(null);
@@ -626,7 +639,7 @@ public class GameScreen extends AppCompatActivity {
 
     private void onRoundEndGamestate() {
         if (showUpdatedScore) {
-            if(scoreBoard == null){
+            if (scoreBoard == null) {
                 game.setRoundEndPlayedCards(playedWhiteCardList.stream().map(FullSizeCard::getCard).collect(Collectors.toList()));
                 scoreBoard = ScoreBoardDialog.create(game, game.getWinningCard().getOwner());
                 scoreBoard.setResultListener(new ResultListener() {
@@ -737,7 +750,7 @@ public class GameScreen extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if(messageDialog == null){
+        if (messageDialog == null) {
             messageDialog = MessageDialog.create(getString(R.string.message_leave_game), new ArrayList<>(Arrays.asList(
                     getString(R.string.leave), getString(R.string.cancel)
             )));

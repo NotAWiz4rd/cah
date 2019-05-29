@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.afms.cahgame.R;
 import com.afms.cahgame.data.Message;
 import com.afms.cahgame.game.Lobby;
+import com.afms.cahgame.gui.activities.GameScreen;
 import com.afms.cahgame.gui.activities.WaitingLobby;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -129,7 +130,7 @@ public class ChatBottomSheet extends BottomSheetDialogFragment {
         super.onCancel(dialog);
     }
 
-    private void initializeDatabaseConnection(String lobbyId) {
+    public void initializeDatabaseConnection(String lobbyId) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         chatReference = database.getReference("lobbies/" + lobbyId + "/messages");
 
@@ -139,8 +140,12 @@ public class ChatBottomSheet extends BottomSheetDialogFragment {
                 GenericTypeIndicator<ArrayList<Message>> genericTypeIndicator = new GenericTypeIndicator<ArrayList<Message>>() {
                 };
                 List<Message> messages = dataSnapshot.getValue(genericTypeIndicator);
-                if (messages != null) {
+                if (messages != null && WaitingLobby.lastMessages.size() != messages.size()) {
                     WaitingLobby.lastMessages = messages;
+
+                    if (!GameScreen.chatIsOpen) {
+                        GameScreen.showNewMessageIcon(true);
+                    }
 
                     chatItemAdapter.clear();
                     chatItemAdapter.addAll(messages);
