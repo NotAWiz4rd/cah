@@ -254,14 +254,14 @@ public class GameScreen extends AppCompatActivity {
     //<------ GUI LOGIC --------------------------------------------------------------------------------------------------------------->
 
     private void initializeUIElements() {
-        playerOverview = findViewById(R.id.player_overview);
+        playerOverview = findViewById(R.id.game_screen_score_board_button);
         gameScreenLayout = findViewById(R.id.game_screen_layout);
         playedBlackCard = findViewById(R.id.layout_game_screen_playedBlackCard);
         playedBlackCardText = findViewById(R.id.blackCardText);
         lowerFrameLayout = findViewById(R.id.layout_game_screen_lower);
         completeFrameLayout = findViewById(R.id.game_screen_frameLayout);
-        navigationBarText = findViewById(R.id.bottom_navigation_bar_text_field);
-        game_screen_chat = findViewById(R.id.game_screen_chat);
+        navigationBarText = findViewById(R.id.game_screen_bottom_navigation_bar_text_field);
+        game_screen_chat = findViewById(R.id.game_screen_chat_button);
         playedBlackCardText.setText("");
 
         playedWhiteCard = new FullSizeCard(this, new Card(Colour.WHITE, ""));

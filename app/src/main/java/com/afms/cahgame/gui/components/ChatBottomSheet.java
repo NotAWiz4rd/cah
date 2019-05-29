@@ -42,6 +42,7 @@ public class ChatBottomSheet extends BottomSheetDialogFragment {
     private ChatItemAdapter chatItemAdapter;
     private ListView list_chat;
     private List<Message> lastMessages = new ArrayList<>();
+    private RelativeLayout layout_chat_no_messages;
 
     public static ChatBottomSheet create(Lobby lobby) {
         ChatBottomSheet chatBottomSheet = new ChatBottomSheet();
@@ -67,10 +68,12 @@ public class ChatBottomSheet extends BottomSheetDialogFragment {
             if (lobby != null) {
                 EditText input_chat_message = view.findViewById(R.id.input_chat_message);
                 ImageButton btn_chat_send = view.findViewById(R.id.btn_chat_send);
-                RelativeLayout layout_chat_no_messages = view.findViewById(R.id.layout_chat_no_messages);
+                layout_chat_no_messages = view.findViewById(R.id.layout_chat_no_messages);
                 btn_chat_send.setOnClickListener(v -> {
-                    if (input_chat_message.getText().toString().length() > 0) {
-                        resultListener.onItemClick(input_chat_message.getText().toString());
+                    String inputText = input_chat_message.getText().toString().trim();
+                    if (inputText.length() > 0) {
+                        resultListener.onItemClick(inputText);
+                        input_chat_message.setText("");
                     } else {
                         Toast.makeText(getContext(), getString(R.string.empty_input), Toast.LENGTH_SHORT).show();
                     }
@@ -130,11 +133,18 @@ public class ChatBottomSheet extends BottomSheetDialogFragment {
                 };
                 List<Message> messages = dataSnapshot.getValue(genericTypeIndicator);
                 if (messages != null) {
-                    for (int i = lastMessages.size(); i < messages.size(); i++) {
-                        chatItemAdapter.add(messages.get(i));
-                    }
+                    chatItemAdapter.clear();
+                    chatItemAdapter.addAll(messages);
                     lastMessages = messages;
                     list_chat.setAdapter(chatItemAdapter);
+                    if (chatItemAdapter.isEmpty()) {
+                        layout_chat_no_messages.setVisibility(View.VISIBLE);
+                        list_chat.setVisibility(View.INVISIBLE);
+                    } else {
+                        layout_chat_no_messages.setVisibility(View.INVISIBLE);
+                        list_chat.setVisibility(View.VISIBLE);
+                    }
+                    list_chat.setSelection(list_chat.getAdapter().getCount()-1);
                 }
             }
 
@@ -169,4 +179,5 @@ public class ChatBottomSheet extends BottomSheetDialogFragment {
     public void setResultListener(ResultListener resultListener) {
         this.resultListener = resultListener;
     }
+
 }

@@ -26,7 +26,7 @@
         android:id="@+id/layout_game_screen_lower"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/bottom_navigation_bar"
+        app:layout_constraintBottom_toTopOf="@id/game_screen_bottom_navigation_bar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -35,7 +35,7 @@
     </FrameLayout>
 
     <LinearLayout
-        android:id="@+id/bottom_navigation_bar"
+        android:id="@+id/game_screen_bottom_navigation_bar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -47,7 +47,7 @@
         tools:ignore="PrivateResource">
 
         <ImageButton
-            android:id="@+id/player_overview"
+            android:id="@+id/game_screen_score_board_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
@@ -58,7 +58,7 @@
             android:contentDescription="@string/show_score_board" />
 
         <TextView
-            android:id="@+id/bottom_navigation_bar_text_field"
+            android:id="@+id/game_screen_bottom_navigation_bar_text_field"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
@@ -70,7 +70,7 @@
         <View android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1"/>
 
         <ImageButton
-            android:id="@+id/game_screen_chat"
+            android:id="@+id/game_screen_chat_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
