@@ -140,7 +140,6 @@ public class ChatBottomSheet extends BottomSheetDialogFragment {
                 };
                 List<Message> messages = dataSnapshot.getValue(genericTypeIndicator);
                 if (messages != null) {
-                    WaitingLobby.newChatMessages = false;
                     WaitingLobby.lastMessages = messages;
 
                     chatItemAdapter.clear();

@@ -11,7 +11,6 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -22,7 +21,6 @@ import com.afms.cahgame.R;
 import com.afms.cahgame.data.Message;
 import com.afms.cahgame.game.Game;
 import com.afms.cahgame.game.Lobby;
-import com.afms.cahgame.game.Player;
 import com.afms.cahgame.gui.components.ChatBottomSheet;
 import com.afms.cahgame.gui.components.MessageDialog;
 import com.afms.cahgame.gui.components.ResultListener;
@@ -61,7 +59,6 @@ public class WaitingLobby extends AppCompatActivity {
     private Lobby currentLobby;
     public DatabaseReference lobbyReference;
 
-    public static boolean newChatMessages = false;
     public static List<Message> lastMessages = new ArrayList<>();
 
     private Context context;
@@ -125,7 +122,6 @@ public class WaitingLobby extends AppCompatActivity {
                     updateLobbyMetadata();
 
                     if (currentLobby.getMessages() != null && currentLobby.getMessages().size() > lastMessages.size()) {
-                        newChatMessages = true;
                         (findViewById(R.id.circle_btn_waiting_lobby_chat)).setVisibility(View.VISIBLE);
                         lastMessages = currentLobby.getMessages();
                     }
@@ -176,14 +172,14 @@ public class WaitingLobby extends AppCompatActivity {
     private void updatePlayerList() {
         waitingListAdapter = new WaitingListAdapter(this, currentLobby.getPlayers(), currentLobby);
         listView.setOnItemClickListener((parent, view, position, id) -> {
-            if(currentLobby.getHost().equals(playerName) || Util.godMode){
-                if(messageDialog == null){
+            if (currentLobby.getHost().equals(playerName) || Util.godMode) {
+                if (messageDialog == null) {
                     String selectedPlayer = (String) parent.getItemAtPosition(position);
                     messageDialog = MessageDialog.create(getString(R.string.label_choose_action), getString(R.string.kick_player_message), new ArrayList<>(Arrays.asList("Kick", "Cancel")));
                     messageDialog.setResultListener(new ResultListener() {
                         @Override
                         public void onItemClick(String result) {
-                            if(result.equals("Kick")){
+                            if (result.equals("Kick")) {
                                 Database.removePlayerFromLobby(currentLobby.getId(), selectedPlayer);
                             }
                         }
@@ -208,6 +204,8 @@ public class WaitingLobby extends AppCompatActivity {
         label_waiting_lobby_count_maxplayer = findViewById(R.id.label_waiting_lobby_count_maxplayer);
         label_waiting_lobby_count_handcard = findViewById(R.id.label_waiting_lobby_count_handcard);
         btn_waiting_lobby_chat = findViewById(R.id.btn_waiting_lobby_chat);
+
+        (findViewById(R.id.circle_btn_waiting_lobby_chat)).setVisibility(View.INVISIBLE);
     }
 
     private void initializeUIEvents() {
@@ -237,7 +235,6 @@ public class WaitingLobby extends AppCompatActivity {
 
         btn_waiting_lobby_chat.setOnClickListener(event -> {
             if (chatBottomSheet == null) {
-                newChatMessages = false;
                 (findViewById(R.id.circle_btn_waiting_lobby_chat)).setVisibility(View.INVISIBLE);
                 chatBottomSheet = ChatBottomSheet.create(currentLobby);
                 chatBottomSheet.setResultListener(new ResultListener() {
