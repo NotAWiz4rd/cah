@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -19,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afms.cahgame.R;
+import com.afms.cahgame.data.Message;
 import com.afms.cahgame.game.Game;
 import com.afms.cahgame.game.Lobby;
 import com.afms.cahgame.gui.components.ChatBottomSheet;
@@ -33,7 +33,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 public class WaitingLobby extends AppCompatActivity {
     private SharedPreferences settings;
@@ -54,6 +56,9 @@ public class WaitingLobby extends AppCompatActivity {
     private String playerName;
     private Lobby currentLobby;
     public DatabaseReference lobbyReference;
+
+    public static boolean newChatMessages = false;
+    private List<Message> lastMessages = new ArrayList<>();
 
     private Context context;
 
@@ -113,6 +118,11 @@ public class WaitingLobby extends AppCompatActivity {
                     currentLobby = tempLobby;
                     updatePlayerList();
                     updateLobbyMetadata();
+
+                    if (currentLobby.getMessages() != lastMessages) {
+                        newChatMessages = true;
+                        lastMessages = currentLobby.getMessages();
+                    }
 
                     if (!currentLobby.getPlayers().contains(playerName)) {
                         quit(getString(R.string.playerKicked));
@@ -198,7 +208,8 @@ public class WaitingLobby extends AppCompatActivity {
         });
 
         btn_waiting_lobby_chat.setOnClickListener(event -> {
-            if(chatBottomSheet == null){
+            if (chatBottomSheet == null) {
+                newChatMessages = false;
                 chatBottomSheet = ChatBottomSheet.create(currentLobby);
                 chatBottomSheet.setResultListener(new ResultListener() {
                     @Override

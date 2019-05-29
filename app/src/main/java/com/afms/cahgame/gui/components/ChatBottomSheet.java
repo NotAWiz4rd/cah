@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.afms.cahgame.R;
 import com.afms.cahgame.data.Message;
 import com.afms.cahgame.game.Lobby;
+import com.afms.cahgame.gui.activities.WaitingLobby;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -41,7 +42,6 @@ public class ChatBottomSheet extends BottomSheetDialogFragment {
 
     private ChatItemAdapter chatItemAdapter;
     private ListView list_chat;
-    private List<Message> lastMessages = new ArrayList<>();
     private RelativeLayout layout_chat_no_messages;
 
     public static ChatBottomSheet create(Lobby lobby) {
@@ -135,7 +135,6 @@ public class ChatBottomSheet extends BottomSheetDialogFragment {
                 if (messages != null) {
                     chatItemAdapter.clear();
                     chatItemAdapter.addAll(messages);
-                    lastMessages = messages;
                     list_chat.setAdapter(chatItemAdapter);
                     if (chatItemAdapter.isEmpty()) {
                         layout_chat_no_messages.setVisibility(View.VISIBLE);
@@ -144,7 +143,9 @@ public class ChatBottomSheet extends BottomSheetDialogFragment {
                         layout_chat_no_messages.setVisibility(View.INVISIBLE);
                         list_chat.setVisibility(View.VISIBLE);
                     }
-                    list_chat.setSelection(list_chat.getAdapter().getCount()-1);
+                    list_chat.setSelection(list_chat.getAdapter().getCount() - 1);
+
+                    WaitingLobby.newChatMessages = false;
                 }
             }
 
