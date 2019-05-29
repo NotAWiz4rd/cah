@@ -298,6 +298,23 @@ public class Database {
     }
 
     /**
+     * Adds a list of cards to the database, giving them proper IDs first.
+     * This is done without checking whether cards like these already exist in the database.
+     *
+     * @param newCards A list of cards without proper IDs.
+     */
+    public static void addNewCards(List<Card> newCards) {
+        int id = cards.size() == 0 ? 0 : cards.get(cards.size() - 1).getId() + 1;
+        for (Card card : newCards) {
+            card.setId(id);
+            id++;
+        }
+
+        cards.addAll(newCards);
+        cardsReference.setValue(cards);
+    }
+
+    /**
      * Removes the given card from the given deck.
      *
      * @param deckName Name of the deck.
