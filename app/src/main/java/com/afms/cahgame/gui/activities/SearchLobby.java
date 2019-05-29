@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -103,8 +104,22 @@ public class SearchLobby extends AppCompatActivity {
         layout_search_lobby_lobbies.getParent().requestLayout();
     }
 
+
+    private void disableUserInterface(){
+        btn_search_lobby_back.setEnabled(false);
+        btn_search_lobby_create.setEnabled(false);
+
+        new Handler().postDelayed(() -> {
+            btn_search_lobby_back.setEnabled(true);
+            btn_search_lobby_create.setEnabled(true);
+        }, 250);
+    }
+
     private void initializeUIEvents() {
-        btn_search_lobby_back.setOnClickListener(event -> finish());
+        btn_search_lobby_back.setOnClickListener(event -> {
+            finish();
+            disableUserInterface();
+        });
         btn_search_lobby_create.setOnClickListener(event -> {
             String playerName = settings.getString("realname", "");
             if (playerName == null || playerName.equals("")) {
@@ -113,6 +128,7 @@ public class SearchLobby extends AppCompatActivity {
             Intent intent = new Intent(this, CreateLobby.class);
             intent.putExtra("player", playerName);
             startActivity(intent);
+            disableUserInterface();
         });
     }
 

@@ -37,7 +37,6 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/score_board_title" />
@@ -46,12 +45,13 @@
         android:id="@+id/score_board_button_close"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:background="@drawable/bg_black_radius_10dp"
         android:fontFamily="@font/helveticaneuebold"
         android:text="@string/close"
         android:textColor="@android:color/white"
-        app:layout_constraintTop_toBottomOf="@id/score_board_list"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/score_board_list" />
 
 </android.support.constraint.ConstraintLayout>

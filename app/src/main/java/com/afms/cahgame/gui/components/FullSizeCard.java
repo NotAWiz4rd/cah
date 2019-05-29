@@ -250,4 +250,8 @@ public class FullSizeCard extends ConstraintLayout {
     public Colour getColour() {
         return colour;
     }
+
+    public void setFirstTime(boolean bool){
+        firstTime = bool;
+    }
 }

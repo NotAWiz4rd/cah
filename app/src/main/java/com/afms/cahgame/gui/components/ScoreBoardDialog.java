@@ -1,6 +1,7 @@
 package com.afms.cahgame.gui.components;
 
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -25,6 +26,7 @@ public class ScoreBoardDialog extends DialogFragment {
 
     private ListView playerList;
     private Button closeButton;
+    private ResultListener resultListener;
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -39,17 +41,23 @@ public class ScoreBoardDialog extends DialogFragment {
             ScoreBoardListAdapter scoreBoardListAdapter;
             Player roundWin = (Player) getArguments().getSerializable("player");
             if (roundWin != null) {
-                scoreBoardListAdapter = new ScoreBoardListAdapter(Objects.requireNonNull(getContext()), new ArrayList<>(game.getPlayers().values()), roundWin);
+                scoreBoardListAdapter = new ScoreBoardListAdapter(Objects.requireNonNull(getContext()), new ArrayList<>(game.getPlayers().values()), roundWin, game);
             } else {
-                scoreBoardListAdapter = new ScoreBoardListAdapter(Objects.requireNonNull(getContext()), new ArrayList<>(game.getPlayers().values()));
+                scoreBoardListAdapter = new ScoreBoardListAdapter(Objects.requireNonNull(getContext()), new ArrayList<>(game.getPlayers().values()), game);
             }
             playerList.setAdapter(scoreBoardListAdapter);
         }
 
         closeButton = view.findViewById(R.id.score_board_button_close);
         closeButton.setOnClickListener(event -> {
-            getDialog().dismiss();
+            getDialog().cancel();
         });
+    }
+
+    @Override
+    public void onCancel(DialogInterface dialog) {
+        resultListener.clearReference();
+        super.onCancel(dialog);
     }
 
     @NonNull
@@ -85,6 +93,10 @@ public class ScoreBoardDialog extends DialogFragment {
         args.putSerializable("player", roundWinner);
         scoreBoardDialog.setArguments(args);
         return scoreBoardDialog;
+    }
+
+    public void setResultListener(ResultListener resultListener) {
+        this.resultListener = resultListener;
     }
 }
 

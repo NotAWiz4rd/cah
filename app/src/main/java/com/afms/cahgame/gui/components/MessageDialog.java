@@ -1,6 +1,7 @@
 package com.afms.cahgame.gui.components;
 
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -46,11 +47,18 @@ public class MessageDialog extends DialogFragment {
                 btn.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
                 btn.setOnClickListener(event -> {
                     resultListener.onItemClick(String.valueOf(btn.getText()));
-                    getDialog().dismiss();
+                    getDialog().cancel();
                 });
                 layout_dialog_message_buttons.addView(btn);
             });
         }
+    }
+
+
+    @Override
+    public void onCancel(DialogInterface dialog) {
+        resultListener.clearReference();
+        super.onCancel(dialog);
     }
 
     @Nullable

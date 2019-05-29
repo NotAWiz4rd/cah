@@ -6,6 +6,7 @@ import android.util.Log;
 import com.afms.cahgame.data.Card;
 import com.afms.cahgame.data.Colour;
 import com.afms.cahgame.data.Deck;
+import com.afms.cahgame.data.Message;
 import com.afms.cahgame.game.Lobby;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -185,6 +186,23 @@ public class Database {
         return "";
     }
 
+    /**
+     * Adds a message to the current list of lobby messages.
+     *
+     * @param lobbyId       The LobbyId.
+     * @param playername    The name of the writing player.
+     * @param messageString The message (important!).
+     */
+    public static void sendMessageInLobby(String lobbyId, String playername, String messageString) {
+        Lobby lobby = lobbies.get(lobbyId);
+        if (lobby != null) {
+            Message message = new Message(lobby.getMessages().size(), playername, messageString);
+            lobby.addMessage(message);
+            lobbies.put(lobbyId, lobby);
+            lobbiesReference.setValue(lobbies);
+        }
+    }
+
     //............................Cards and Decks..................................................
 
     /**
@@ -277,6 +295,23 @@ public class Database {
         cards.add(card);
         cardsReference.setValue(cards);
         return card;
+    }
+
+    /**
+     * Adds a list of cards to the database, giving them proper IDs first.
+     * This is done without checking whether cards like these already exist in the database.
+     *
+     * @param newCards A list of cards without proper IDs.
+     */
+    public static void addNewCards(List<Card> newCards) {
+        int id = cards.size() == 0 ? 0 : cards.get(cards.size() - 1).getId() + 1;
+        for (Card card : newCards) {
+            card.setId(id);
+            id++;
+        }
+
+        cards.addAll(newCards);
+        cardsReference.setValue(cards);
     }
 
     /**

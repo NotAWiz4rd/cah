@@ -6,7 +6,7 @@
     <uses-permission
         android:name="android.permission.INTERNET"
         tools:ignore="ManifestOrder" />
-
+    
     <application
         android:allowBackup="true"
         android:icon="@drawable/img_app_icon"
@@ -15,6 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
+        <service android:name=".util.TaskService" android:stopWithTask="false" />
         <activity
             android:name=".gui.activities.Main"
             android:configChanges="orientation|keyboardHidden|screenSize"

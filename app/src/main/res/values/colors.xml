@@ -13,7 +13,7 @@
     <color name="cardTransparentBackgroundColorBlack">#801A1816</color>
     <color name="cardTextColorWhite">#494138</color>
     <color name="inputBackgroundColorBlack">#601a1816</color>
-    <color name="inputBackgroundColorWhite">#DEFFFFFF</color>
+    <color name="inputBackgroundColorWhite">#FFFFFFFF</color>
     <color name="inputTextColorBlack">#3A342E</color>
     <color name="pastel_red">#ff6961</color>
     <color name="pastel_green">#77dd77</color>
@@ -24,4 +24,10 @@
     <color name="cardview_light_background" tools:ignore="PrivateResource">#FFFFFFFF</color>
     <color name="cardview_shadow_end_color" tools:ignore="PrivateResource">#03000000</color>
     <color name="cardview_shadow_start_color" tools:ignore="PrivateResource">#37000000</color>
+    <color name="whiteBackgroundTransparent">#8BC4A573</color>
+
+    <color name="chatBubbleWhiteTop">#ead8b9</color>
+    <color name="chatBubbleWhiteBottom">#C2A981</color>
+    <color name="chatBubbleBlackTop">#838383</color>
+    <color name="chatBubbleBlackBottom">#525252</color>
 </resources>

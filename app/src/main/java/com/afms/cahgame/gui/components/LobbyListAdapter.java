@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
@@ -67,24 +68,33 @@ public class LobbyListAdapter extends ArrayAdapter<Lobby> {
         item_lobby_select_count_maxplayer.setText(String.format("%s / %s", currentPlayerCount, String.valueOf(lobby.getMaxPlayers())));
 
         btn_item_lobby_select_join.setOnClickListener(e -> {
+            btn_item_lobby_select_join.setEnabled(false);
             if (Util.godMode) {
                 FragmentManager fragmentManager = ((AppCompatActivity) getContext()).getSupportFragmentManager();
                 final MessageDialog[] messageDialog = {MessageDialog.create(getContext().getString(R.string.label_choose_action),
                         new ArrayList<>(Arrays.asList(getContext().getString(R.string.join),
                                 getContext().getString(R.string.delete),
                                 getContext().getString(R.string.cancel))))};
-                resultListener = result -> {
-                    if (result.equals(getContext().getString(R.string.delete))) {
-                        Database.removeLobby(lobby.getId());
-                        Toast.makeText(getContext(), String.format(getContext().getString(R.string.deletedLobbyMessage), lobby.getId()), Toast.LENGTH_SHORT).show();
-                    } else if (result.equals(getContext().getString(R.string.join))) {
-                        String playerName = settings.getString("player", Util.getRandomName());
-                        Util.saveName(settings, playerName);
+                resultListener = new ResultListener() {
+                    @Override
+                    public void onItemClick(String result) {
+                        if (result.equals(getContext().getString(R.string.delete))) {
+                            Database.removeLobby(lobby.getId());
+                            Toast.makeText(getContext(), String.format(getContext().getString(R.string.deletedLobbyMessage), lobby.getId()), Toast.LENGTH_SHORT).show();
+                        } else if (result.equals(getContext().getString(R.string.join))) {
+                            String playerName = settings.getString("player", Util.getRandomName());
+                            Util.saveName(settings, playerName);
 
-                        Intent intent = new Intent(getContext(), WaitingLobby.class);
-                        intent.putExtra(getContext().getString(R.string.lobbyId), lobby.getId());
-                        getContext().startActivity(intent);
-                        ((AppCompatActivity) getContext()).finish();
+                            Intent intent = new Intent(getContext(), WaitingLobby.class);
+                            intent.putExtra(getContext().getString(R.string.lobbyId), lobby.getId());
+                            getContext().startActivity(intent);
+                            ((AppCompatActivity) getContext()).finish();
+                        }
+                    }
+
+                    @Override
+                    public void clearReference() {
+
                     }
                 };
                 messageDialog[0].setResultListener(resultListener);
@@ -102,33 +112,45 @@ public class LobbyListAdapter extends ArrayAdapter<Lobby> {
                     ((AppCompatActivity) getContext()).finish();
                 }
             }
+            new Handler().postDelayed(() -> {
+                btn_item_lobby_select_join.setEnabled(true);
+            }, 250);
         });
 
         return convertView;
     }
 
+
     private void requestPasswordDialog(Lobby lobby) {
         FragmentManager fragmentManager = ((AppCompatActivity) getContext()).getSupportFragmentManager();
         final PasswordDialog[] passwordDialog = {PasswordDialog.create(getContext(),
                 new ArrayList<>(Arrays.asList(getContext().getString(R.string.join), getContext().getString(R.string.cancel))))};
-        resultListener = result -> {
-            if (result.equals(getContext().getString(R.string.join))) {
-                if (passwordDialog[0].getPassword().equals(lobby.getPassword())) {
-                    String playerName = settings.getString("player", Util.getRandomName());
-                    Util.saveName(settings, playerName);
+        resultListener = new ResultListener() {
+            @Override
+            public void onItemClick(String result) {
+                if (result.equals(getContext().getString(R.string.join))) {
+                    if (passwordDialog[0].getPassword().equals(lobby.getPassword())) {
+                        String playerName = settings.getString("player", Util.getRandomName());
+                        Util.saveName(settings, playerName);
 
-                    Intent intent = new Intent(getContext(), WaitingLobby.class);
-                    intent.putExtra(getContext().getString(R.string.lobbyId), lobby.getId());
-                    getContext().startActivity(intent);
-                    ((AppCompatActivity) getContext()).finish();
-                } else {
-                    fragmentManager.beginTransaction().remove(Objects.requireNonNull(fragmentManager.findFragmentByTag("passwordDialog"))).commit();
-                    passwordDialog[0] = PasswordDialog.create(getContext().getResources().getString(R.string.title_password),
-                            getContext().getResources().getString(R.string.label_private_lobby_wrong),
-                            new ArrayList<>(Arrays.asList(getContext().getString(R.string.join), getContext().getString(R.string.cancel))));
-                    passwordDialog[0].setResultListener(resultListener);
-                    passwordDialog[0].show(fragmentManager, "passwordDialog");
+                        Intent intent = new Intent(getContext(), WaitingLobby.class);
+                        intent.putExtra(getContext().getString(R.string.lobbyId), lobby.getId());
+                        getContext().startActivity(intent);
+                        ((AppCompatActivity) getContext()).finish();
+                    } else {
+                        fragmentManager.beginTransaction().remove(Objects.requireNonNull(fragmentManager.findFragmentByTag("passwordDialog"))).commit();
+                        passwordDialog[0] = PasswordDialog.create(getContext().getResources().getString(R.string.title_password),
+                                getContext().getResources().getString(R.string.label_private_lobby_wrong),
+                                new ArrayList<>(Arrays.asList(getContext().getString(R.string.join), getContext().getString(R.string.cancel))));
+                        passwordDialog[0].setResultListener(resultListener);
+                        passwordDialog[0].show(fragmentManager, "passwordDialog");
+                    }
                 }
+            }
+
+            @Override
+            public void clearReference() {
+
             }
         };
         passwordDialog[0].setResultListener(resultListener);

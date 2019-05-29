@@ -1,6 +1,7 @@
 package com.afms.cahgame.gui.components;
 
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -48,6 +49,12 @@ public class ValueSelector extends DialogFragment {
     }
 
     @Override
+    public void onCancel(DialogInterface dialog) {
+        resultListener.clearReference();
+        super.onCancel(dialog);
+    }
+
+    @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
@@ -63,7 +70,7 @@ public class ValueSelector extends DialogFragment {
                 btn.setText(value);
                 btn.setOnClickListener(event -> {
                     resultListener.onItemClick(String.valueOf(btn.getText()));
-                    getDialog().dismiss();
+                    getDialog().cancel();
                 });
                 flowLayout.addView(btn);
             });

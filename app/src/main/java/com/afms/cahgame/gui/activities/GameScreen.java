@@ -26,8 +26,10 @@ import com.afms.cahgame.game.Game;
 import com.afms.cahgame.game.Gamestate;
 import com.afms.cahgame.game.Player;
 import com.afms.cahgame.gui.components.CardListAdapter;
+import com.afms.cahgame.gui.components.ChatBottomSheet;
 import com.afms.cahgame.gui.components.FullSizeCard;
 import com.afms.cahgame.gui.components.MessageDialog;
+import com.afms.cahgame.gui.components.ResultListener;
 import com.afms.cahgame.gui.components.ScoreBoardDialog;
 import com.afms.cahgame.gui.components.SwipeResultListener;
 import com.afms.cahgame.util.Database;
@@ -42,6 +44,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class GameScreen extends AppCompatActivity {
     private Game game;
@@ -62,20 +65,22 @@ public class GameScreen extends AppCompatActivity {
     private SharedPreferences settings;
 
     private ImageButton playerOverview;
+    private ImageButton game_screen_chat;
     private ConstraintLayout gameScreenLayout;
     private LinearLayout playedBlackCard;
     private RelativeLayout waitingScreen;
+    private TextView waitingScreenText;
     private TextView playedBlackCardText;
     private FullSizeCard playedWhiteCard;
     private FrameLayout lowerFrameLayout;
-    private FrameLayout completeFrameLayout;
+    private RelativeLayout completeFrameLayout;
     private TextView navigationBarText;
+    private FrameLayout view_game_screen_disable;
 
     private ConstraintLayout userSelectionLayout;
     private ListView userSelectionListView;
     private CardListAdapter userSelectionListAdapter;
     private List<FullSizeCard> playedWhiteCardList;
-    private List<FullSizeCard> fullSizeCardList = new ArrayList<>();
     private ScoreBoardDialog scoreBoard;
 
     private boolean showUpdatedScore;
@@ -84,6 +89,13 @@ public class GameScreen extends AppCompatActivity {
 
     private Gamestate lastGamestate;
     private boolean playedCardsAreShown = false;
+
+    private MessageDialog messageDialog;
+    private FullSizeCard fullCard;
+
+    private ChatBottomSheet chatBottomSheet;
+    private static TextView newMessageIcon;
+    public static boolean chatIsOpen = false;
 
     //<------ LIFECYCLE EVENTS --------------------------------------------------------------------------------------------------------------->
 
@@ -244,26 +256,67 @@ public class GameScreen extends AppCompatActivity {
     //<------ GUI LOGIC --------------------------------------------------------------------------------------------------------------->
 
     private void initializeUIElements() {
-        playerOverview = findViewById(R.id.player_overview);
+        playerOverview = findViewById(R.id.game_screen_score_board_button);
         gameScreenLayout = findViewById(R.id.game_screen_layout);
         playedBlackCard = findViewById(R.id.layout_game_screen_playedBlackCard);
         playedBlackCardText = findViewById(R.id.blackCardText);
         lowerFrameLayout = findViewById(R.id.layout_game_screen_lower);
         completeFrameLayout = findViewById(R.id.game_screen_frameLayout);
-        navigationBarText = findViewById(R.id.bottom_navigation_bar_text_field);
-
+        navigationBarText = findViewById(R.id.game_screen_bottom_navigation_bar_text_field);
+        game_screen_chat = findViewById(R.id.game_screen_chat_button);
+        view_game_screen_disable = findViewById(R.id.view_game_screen_disable);
         playedBlackCardText.setText("");
+
+        newMessageIcon = findViewById(R.id.circle_btn_game_screen_chat);
+        showNewMessageIcon(false);
 
         playedWhiteCard = new FullSizeCard(this, new Card(Colour.WHITE, ""));
         userSelectionLayout = (ConstraintLayout) getLayoutInflater().inflate(R.layout.element_list_card_select, gameScreenLayout, false);
         userSelectionListView = userSelectionLayout.findViewById(R.id.cardSelectList);
         waitingScreen = (RelativeLayout) getLayoutInflater().inflate(R.layout.element_waiting_screen_with_gif, gameScreenLayout, false);
+        waitingScreenText = waitingScreen.findViewById(R.id.waiting_screen_is_cszar);
     }
 
     private void initializeUIEvents() {
         playerOverview.setOnClickListener(event -> {
-            scoreBoard = ScoreBoardDialog.create(game);
-            scoreBoard.show(getSupportFragmentManager(), "playerOverview");
+            if (scoreBoard == null) {
+                scoreBoard = ScoreBoardDialog.create(game);
+                scoreBoard.setResultListener(new ResultListener() {
+                    @Override
+                    public void onItemClick(String result) {
+                    }
+
+                    @Override
+                    public void clearReference() {
+                        scoreBoard = null;
+                    }
+                });
+                scoreBoard.show(getSupportFragmentManager(), "playerOverview");
+            }
+            disableUserInterface();
+        });
+
+        game_screen_chat.setOnClickListener(event -> {
+            if (chatBottomSheet == null) {
+                showNewMessageIcon(false);
+                chatIsOpen = true;
+                chatBottomSheet = ChatBottomSheet.create(Database.getLobby(lobbyId));
+                chatBottomSheet.setResultListener(new ResultListener() {
+                    @Override
+                    public void onItemClick(String result) {
+                        Database.sendMessageInLobby(lobbyId, player.getName(), result);
+                    }
+
+                    @Override
+                    public void clearReference() {
+                        chatBottomSheet = null;
+                        chatIsOpen = false;
+                        showNewMessageIcon(false);
+                    }
+                });
+                chatBottomSheet.show(getSupportFragmentManager(), "chatGameScreen");
+            }
+            disableUserInterface();
         });
 
         playedBlackCard.setOnClickListener(event -> {
@@ -282,8 +335,28 @@ public class GameScreen extends AppCompatActivity {
         });
     }
 
+    public static void showNewMessageIcon(boolean show) {
+        if (newMessageIcon == null) {
+            return;
+        }
+        newMessageIcon.setVisibility(show ? View.VISIBLE : View.INVISIBLE);
+    }
+
+    private void disableUserInterface() {
+        playerOverview.setEnabled(false);
+        game_screen_chat.setEnabled(false);
+        new Handler().postDelayed(() -> {
+            playerOverview.setEnabled(true);
+            game_screen_chat.setEnabled(true);
+        }, 250);
+    }
+
+
     private void deleteAllViewsFromLowerFrameLayout() {
         lowerFrameLayout.removeAllViews();
+        view_game_screen_disable.removeAllViews();
+        view_game_screen_disable.setVisibility(View.INVISIBLE);
+        view_game_screen_disable.setClickable(false);
     }
 
     private void showHandCardList() {
@@ -297,8 +370,15 @@ public class GameScreen extends AppCompatActivity {
 
             userSelectionListView.setOnItemClickListener((parent, view, position, id) -> {
                 Card card = (Card) parent.getItemAtPosition(position);
-                completeFrameLayout.addView(getFullSizeCardInstance(card, position));
+                if (fullCard == null) {
+                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                    completeFrameLayout.addView(getFullSizeCardInstance(card, position), params);
+                }
             });
+            if (currentPlayerIsCardSzar()) {
+                showWaitingScreen();
+                setWaitingTextCardSzar(true);
+            }
         }
     }
 
@@ -316,54 +396,57 @@ public class GameScreen extends AppCompatActivity {
     }
 
     public FullSizeCard getFullSizeCardInstance(Card card, int selectedPosition) {
-        if (fullSizeCardList.stream().anyMatch(f -> f.getCard().equals(card))) {
-            return fullSizeCardList.stream().filter(f -> f.getCard().equals(card)).findFirst().get();
-        } else {
-            FullSizeCard fullCard = new FullSizeCard(this, card);
-            fullCard.addOptionButton(getString(R.string.close), v -> completeFrameLayout.removeView(fullCard));
-            fullCard.setDimBackground(true);
-            fullCard.setSwipeResultListener(new SwipeResultListener() {
-                @Override
-                public void onSwipeLeft() {
-                    int nextPos = (selectedPosition + 1) % userSelectionListView.getCount();
-                    completeFrameLayout.addView(getFullSizeCardInstance((Card) userSelectionListView.getItemAtPosition(nextPos), nextPos));
-                }
-
-                @Override
-                public void onSwipeRight() {
-                    int nextPos = selectedPosition - 1;
-                    if (nextPos < 0) {
-                        nextPos = userSelectionListView.getCount() - 1;
-                    }
-                    completeFrameLayout.addView(getFullSizeCardInstance((Card) userSelectionListView.getItemAtPosition(nextPos), nextPos));
-                }
-
-                @Override
-                public void onSwipeUp() {
-                    if (!currentPlayerIsCardSzar()) {
-                        if (allowCardSubmitting) {
-                            navigationBarText.setText(R.string.waiting_for_others);
-                            submitCard(card);
-                            allowCardSubmitting = false;
-                            showHandCardList();
-                            showWaitingScreen();
-                        }
-                    }
-                }
-
-                @Override
-                public void onSwipeDown() {
-                    // do nothing
-                }
-            });
-            if (allowCardSubmitting) {
-                fullCard.setSwipeGestures(FullSizeCard.SWIPE_X_AXIS, FullSizeCard.SWIPE_UP);
-            } else {
-                fullCard.setSwipeGestures(FullSizeCard.SWIPE_X_AXIS);
+        fullCard = new FullSizeCard(this, card);
+        fullCard.addOptionButton(getString(R.string.close), v -> {
+            completeFrameLayout.removeView(fullCard);
+            fullCard = null;
+        });
+        fullCard.setDimBackground(true);
+        fullCard.setSwipeResultListener(new SwipeResultListener() {
+            @Override
+            public void onSwipeLeft() {
+                int nextPos = (selectedPosition + 1) % userSelectionListView.getCount();
+                fullCard = null;
+                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                completeFrameLayout.addView(getFullSizeCardInstance((Card) userSelectionListView.getItemAtPosition(nextPos), nextPos), params);
             }
-            fullSizeCardList.add(fullCard);
-            return fullCard;
+
+            @Override
+            public void onSwipeRight() {
+                int nextPos = selectedPosition - 1;
+                if (nextPos < 0) {
+                    nextPos = userSelectionListView.getCount() - 1;
+                }
+                fullCard = null;
+                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                completeFrameLayout.addView(getFullSizeCardInstance((Card) userSelectionListView.getItemAtPosition(nextPos), nextPos), params);
+            }
+
+            @Override
+            public void onSwipeUp() {
+                if (!currentPlayerIsCardSzar()) {
+                    if (allowCardSubmitting) {
+                        navigationBarText.setText(R.string.waiting_slogan);
+                        submitCard(card);
+                        allowCardSubmitting = false;
+                        showHandCardList();
+                        showWaitingScreen();
+                    }
+                    fullCard = null;
+                }
+            }
+
+            @Override
+            public void onSwipeDown() {
+                // do nothing
+            }
+        });
+        if (allowCardSubmitting) {
+            fullCard.setSwipeGestures(FullSizeCard.SWIPE_X_AXIS, FullSizeCard.SWIPE_UP);
+        } else {
+            fullCard.setSwipeGestures(FullSizeCard.SWIPE_X_AXIS);
         }
+        return fullCard;
     }
 
     private void hideUI() {
@@ -388,7 +471,18 @@ public class GameScreen extends AppCompatActivity {
 
     private void showWaitingScreen() {
         if (!waitingScreen.isAttachedToWindow()) {
-            lowerFrameLayout.addView(waitingScreen);
+            view_game_screen_disable.addView(waitingScreen);
+            view_game_screen_disable.setVisibility(View.VISIBLE);
+            view_game_screen_disable.setClickable(true);
+            setWaitingTextCardSzar(false);
+        }
+    }
+
+    private void setWaitingTextCardSzar(boolean cardSzar) {
+        if (cardSzar) {
+            waitingScreenText.setText(getApplicationContext().getString(R.string.you_are_cardszar));
+        } else {
+            waitingScreenText.setText(null);
         }
     }
 
@@ -401,20 +495,21 @@ public class GameScreen extends AppCompatActivity {
                 @Override
                 public void onSwipeLeft() {
                     if (currentPlayerIsCardSzar()) {
-                        lastCardSzarSwipeReference.setValue(0);
-                        lastCardSzarSwipeReference.setValue(4);
+                        lastCardSzarSwipeReference.setValue(FullSizeCard.SWIPE_DISABLE);
+                        lastCardSzarSwipeReference.setValue(FullSizeCard.SWIPE_LEFT);
                     }
 
                     int nextPos = (playedWhiteCardList.indexOf(fullCard) + 1) % playedWhiteCardList.size();
                     playedWhiteCard = playedWhiteCardList.get(nextPos);
+                    playedWhiteCard.setFirstTime(true);
                     lowerFrameLayout.addView(playedWhiteCard);
                 }
 
                 @Override
                 public void onSwipeRight() {
                     if (currentPlayerIsCardSzar()) {
-                        lastCardSzarSwipeReference.setValue(0);
-                        lastCardSzarSwipeReference.setValue(5);
+                        lastCardSzarSwipeReference.setValue(FullSizeCard.SWIPE_DISABLE);
+                        lastCardSzarSwipeReference.setValue(FullSizeCard.SWIPE_RIGHT);
                     }
 
                     int nextPos = playedWhiteCardList.indexOf(fullCard) - 1;
@@ -422,15 +517,21 @@ public class GameScreen extends AppCompatActivity {
                         nextPos = playedWhiteCardList.size() - 1;
                     }
                     playedWhiteCard = playedWhiteCardList.get(nextPos);
+                    playedWhiteCard.setFirstTime(true);
                     lowerFrameLayout.addView(playedWhiteCard);
                 }
 
                 @Override
                 public void onSwipeUp() {
-                    if (game.getGamestate().equals(Gamestate.WAITING)) {
-                        game.submitWinningCard(card);
-                        setPlayerReady();
-                        advanceGamestate();
+                    if (currentPlayerIsCardSzar()) {
+                        lastCardSzarSwipeReference.setValue(FullSizeCard.SWIPE_DISABLE);
+                        lastCardSzarSwipeReference.setValue(FullSizeCard.SWIPE_UP);
+
+                        if (game.getGamestate().equals(Gamestate.WAITING)) {
+                            game.submitWinningCard(card);
+                            setPlayerReady();
+                            advanceGamestate();
+                        }
                     }
                 }
 
@@ -513,7 +614,7 @@ public class GameScreen extends AppCompatActivity {
             navigationBarText.setText(R.string.play_card);
         } else {
             setPlayerReady();
-            navigationBarText.setText(R.string.waiting_for_others);
+            navigationBarText.setText(R.string.waiting_slogan);
             showWaitingScreen();
         }
         showHandCardList();
@@ -538,8 +639,22 @@ public class GameScreen extends AppCompatActivity {
 
     private void onRoundEndGamestate() {
         if (showUpdatedScore) {
-            scoreBoard = ScoreBoardDialog.create(game, game.getWinningCard().getOwner());
-            scoreBoard.show(getSupportFragmentManager(), "playerOverview");
+            if (scoreBoard == null) {
+                game.setRoundEndPlayedCards(playedWhiteCardList.stream().map(FullSizeCard::getCard).collect(Collectors.toList()));
+                scoreBoard = ScoreBoardDialog.create(game, game.getWinningCard().getOwner());
+                scoreBoard.setResultListener(new ResultListener() {
+                    @Override
+                    public void onItemClick(String result) {
+
+                    }
+
+                    @Override
+                    public void clearReference() {
+                        scoreBoard = null;
+                    }
+                });
+                scoreBoard.show(getSupportFragmentManager(), "playerOverview");
+            }
             showUpdatedScore = false;
         }
         playedCardsAreShown = false;
@@ -635,15 +750,25 @@ public class GameScreen extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        MessageDialog messageDialog = MessageDialog.create(getString(R.string.message_leave_game), new ArrayList<>(Arrays.asList(
-                getString(R.string.leave), getString(R.string.cancel)
-        )));
-        messageDialog.setResultListener(result -> {
-            if (result.equals(getString(R.string.leave))) {
-                quitGame(getString(R.string.leftLobby));
-            }
-        });
-        messageDialog.show(getSupportFragmentManager(), "gameLeave");
+        if (messageDialog == null) {
+            messageDialog = MessageDialog.create(getString(R.string.message_leave_game), new ArrayList<>(Arrays.asList(
+                    getString(R.string.leave), getString(R.string.cancel)
+            )));
+            messageDialog.setResultListener(new ResultListener() {
+                @Override
+                public void onItemClick(String result) {
+                    if (result.equals(getString(R.string.leave))) {
+                        quitGame(getString(R.string.leftLobby));
+                    }
+                }
+
+                @Override
+                public void clearReference() {
+                    messageDialog = null;
+                }
+            });
+            messageDialog.show(getSupportFragmentManager(), "gameLeave");
+        }
     }
 
     private void quitGame(String message) {

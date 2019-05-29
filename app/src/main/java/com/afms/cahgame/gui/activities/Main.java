@@ -3,6 +3,7 @@ package com.afms.cahgame.gui.activities;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -13,9 +14,13 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.afms.cahgame.R;
+import com.afms.cahgame.data.Message;
+import com.afms.cahgame.gui.components.ChatBottomSheet;
 import com.afms.cahgame.gui.components.MessageDialog;
+import com.afms.cahgame.gui.components.ResultListener;
 import com.afms.cahgame.gui.components.SettingsDialog;
 import com.afms.cahgame.util.Database;
+import com.afms.cahgame.util.TaskService;
 import com.afms.cahgame.util.Util;
 
 import java.util.ArrayList;
@@ -40,7 +45,7 @@ public class Main extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        startService(new Intent(getBaseContext(), TaskService.class));
         settings = getSharedPreferences("Preferences", MODE_PRIVATE);
         setContentView(R.layout.activity_main);
         contentView = findViewById(R.id.layout_main);
@@ -54,6 +59,7 @@ public class Main extends AppCompatActivity {
             playerName = settings.getString("player", Util.getRandomName());
         }
         Util.saveName(settings, playerName);
+        Util.playerName = playerName;
 
         String message = (String) getIntent().getSerializableExtra("message");
         if (message != null) {
@@ -67,13 +73,45 @@ public class Main extends AppCompatActivity {
         btn_explore_decks = findViewById(R.id.btn_main_exploreDecks);
         btn_settings = findViewById(R.id.btn_main_settings);
 
-        settingsDialog = new SettingsDialog();
-        messageDialog = MessageDialog.create(getResources().getString(R.string.title_quit), new ArrayList<>(Arrays.asList(getString(R.string.ok), getString(R.string.cancel))));
     }
 
     @Override
     public void onBackPressed() {
-        messageDialog.show(getSupportFragmentManager(), "quitMessageDialog");
+        if (messageDialog == null) {
+            messageDialog = MessageDialog.create(getResources().getString(R.string.title_quit), new ArrayList<>(Arrays.asList(getString(R.string.ok), getString(R.string.cancel))));
+            messageDialog.setResultListener(new ResultListener() {
+                @Override
+                public void onItemClick(String result) {
+                    if (result.equals(getString(R.string.ok))) {
+                        finishAffinity();
+                        exitApp();
+                    }
+                }
+
+                @Override
+                public void clearReference() {
+                    messageDialog = null;
+                }
+            });
+            messageDialog.show(getSupportFragmentManager(), "quitMessageDialog");
+        }
+    }
+
+    private void exitApp() {
+        super.onBackPressed();
+    }
+
+    private void disableUserInterface() {
+        btn_create_lobby.setEnabled(false);
+        btn_explore_decks.setEnabled(false);
+        btn_search_lobby.setEnabled(false);
+        btn_settings.setEnabled(false);
+        new Handler().postDelayed(() -> {
+            btn_create_lobby.setEnabled(true);
+            btn_explore_decks.setEnabled(true);
+            btn_search_lobby.setEnabled(true);
+            btn_settings.setEnabled(true);
+        }, 250);
     }
 
     private void initializeUIEvents() {
@@ -81,48 +119,61 @@ public class Main extends AppCompatActivity {
             Intent intent = new Intent(this, CreateLobby.class);
             intent.putExtra("player", playerName);
             startActivity(intent);
+            disableUserInterface();
         });
         btn_search_lobby.setOnClickListener(event -> {
             Intent intent = new Intent(this, SearchLobby.class);
             startActivity(intent);
+            disableUserInterface();
         });
 
         btn_explore_decks.setOnClickListener(event -> {
             Intent intent = new Intent(this, ExploreDecks.class);
             startActivity(intent);
+            disableUserInterface();
         });
         btn_settings.setOnClickListener(event -> {
-            settingsDialog.show(getSupportFragmentManager(), "settingsDialog");
-        });
+            if(settingsDialog == null){
 
-        settingsDialog.setOnClickListener(v -> {
-            EditText playerNameView = settingsDialog.getPlayerNameView();
-            if (playerNameView == null) {
-                return;
-            }
-            if (playerNameView.getText().toString().equals("")) {
-                playerName = Util.getRandomName();
-                Util.saveName(settings, playerName);
-            } else if (playerNameView.getText().toString().equals(getString(R.string.godmodeCommand))) {
-                if (Util.godMode) {
-                    Util.setGodMode(false);
-                    Toast.makeText(this, getString(R.string.disabledGodmode), Toast.LENGTH_SHORT).show();
-                } else {
-                    Util.setGodMode(true);
-                    Toast.makeText(this, getString(R.string.enabledGodmode), Toast.LENGTH_SHORT).show();
-                }
-            } else {
-                playerName = playerNameView.getText().toString();
-                Util.saveName(settings, playerName);
-            }
-            playerNameView.setText(settings.getString("player", Util.getRandomName()));
-        });
+                settingsDialog = new SettingsDialog();
+                settingsDialog.show(getSupportFragmentManager(), "settingsDialog");
 
-        messageDialog.setResultListener(result -> {
-            if (result.equals(getString(R.string.ok))) {
-                super.onBackPressed();
-                System.exit(0);
+                settingsDialog.setResultListener(new ResultListener() {
+                    @Override
+                    public void onItemClick(String result) {
+                        if(result.equals("save")) {
+                            EditText playerNameView = settingsDialog.getPlayerNameView();
+                            if (playerNameView == null) {
+                                return;
+                            }
+                            if (playerNameView.getText().toString().equals("")) {
+                                playerName = Util.getRandomName();
+                                Util.saveName(settings, playerName);
+                                Util.playerName = playerName;
+                            } else if (playerNameView.getText().toString().equals(getString(R.string.godmodeCommand))) {
+                                if (Util.godMode) {
+                                    Util.setGodMode(false);
+                                    Toast.makeText(getApplicationContext(), getString(R.string.disabledGodmode), Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Util.setGodMode(true);
+                                    Toast.makeText(getApplicationContext(), getString(R.string.enabledGodmode), Toast.LENGTH_SHORT).show();
+                                }
+                            } else {
+                                playerName = playerNameView.getText().toString();
+                                Util.saveName(settings, playerName);
+                                Util.playerName = playerName;
+                            }
+                            playerNameView.setText(settings.getString("player", Util.getRandomName()));
+                        }
+                    }
+
+                    @Override
+                    public void clearReference() {
+                        settingsDialog = null;
+                    }
+                });
             }
+            disableUserInterface();
         });
     }
 

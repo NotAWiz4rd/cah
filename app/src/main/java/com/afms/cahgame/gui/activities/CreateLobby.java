@@ -4,6 +4,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -15,6 +16,7 @@ import com.afms.cahgame.R;
 import com.afms.cahgame.game.Game;
 import com.afms.cahgame.game.Lobby;
 import com.afms.cahgame.gui.components.DeckSelectorDialog;
+import com.afms.cahgame.gui.components.ResultListener;
 import com.afms.cahgame.gui.components.ValueSelector;
 import com.afms.cahgame.util.Database;
 import com.afms.cahgame.util.Util;
@@ -53,6 +55,20 @@ public class CreateLobby extends AppCompatActivity {
 
     private DeckSelectorDialog deckSelectorDialog;
 
+    private ArrayList<String> player_count_values = new ArrayList<>();
+    {
+        for (int i = MIN_PLAYER_COUNT; i <= MAX_PLAYER_COUNT; i++) {
+            player_count_values.add(String.valueOf(i));
+        }
+    }
+
+    private ArrayList<String> handcard_count_values = new ArrayList<>();
+    {
+        for (int i = MIN_HANDCARD_COUNT; i <= MAX_HANDCARD_COUNT; i++) {
+            handcard_count_values.add(String.valueOf(i));
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,23 +99,6 @@ public class CreateLobby extends AppCompatActivity {
         input_player_count = findViewById(R.id.input_create_lobby_player_count);
         input_select_deck = findViewById(R.id.input_create_lobby_select_deck);
         input_create_lobby_password = findViewById(R.id.input_create_lobby_password);
-
-        ArrayList<String> player_count_values = new ArrayList<>();
-        for (int i = MIN_PLAYER_COUNT; i <= MAX_PLAYER_COUNT; i++) {
-            player_count_values.add(String.valueOf(i));
-        }
-        value_selector_player_count = ValueSelector.create(getString(R.string.select_player_count), player_count_values);
-        value_selector_player_count.setResultListener(result -> value_player_count.setValue(Integer.valueOf(result)));
-
-
-        ArrayList<String> handcard_count_values = new ArrayList<>();
-        for (int i = MIN_HANDCARD_COUNT; i <= MAX_HANDCARD_COUNT; i++) {
-            handcard_count_values.add(String.valueOf(i));
-        }
-        value_selector_handcard_count = ValueSelector.create(getString(R.string.select_handcard_count), handcard_count_values);
-        value_selector_handcard_count.setResultListener(result -> value_handcard_count.setValue(Integer.valueOf(result)));
-
-        deckSelectorDialog = DeckSelectorDialog.create(getString(R.string.title_deck_select));
     }
 
     private void initializeUIEvents() {
@@ -137,17 +136,73 @@ public class CreateLobby extends AppCompatActivity {
             intent.putExtra(getString(R.string.lobbyId), lobbyId);
             startActivity(intent);
             finish();
+            disableUserInterface();
         });
-        btn_select_deck.setOnClickListener(event -> deckSelectorDialog.show(getSupportFragmentManager(), "deck_selector"));
+        btn_select_deck.setOnClickListener(event -> {
+            if(deckSelectorDialog == null){
+                deckSelectorDialog = DeckSelectorDialog.create(getString(R.string.title_deck_select));
+                deckSelectorDialog.setResultListener(new ResultListener() {
+                    @Override
+                    public void onItemClick(String result) {
+                        input_select_deck.setText(result);
+                    }
+
+                    @Override
+                    public void clearReference() {
+                        deckSelectorDialog = null;
+                    }
+                });
+                deckSelectorDialog.show(getSupportFragmentManager(), "deck_selector");
+            }
+        });
         btn_back.setOnClickListener(event -> {
             finish();
+            disableUserInterface();
         });
-        input_player_count.setOnClickListener(event -> value_selector_player_count.show(getSupportFragmentManager(), "value_selector_player_count"));
-        input_handcard_count.setOnClickListener(event -> value_selector_handcard_count.show(getSupportFragmentManager(), "value_selector_handcard_count"));
+        input_player_count.setOnClickListener(event -> {
+            if(value_selector_player_count == null){
+                value_selector_player_count = ValueSelector.create(getString(R.string.select_player_count), player_count_values);
+                value_selector_player_count.setResultListener(new ResultListener() {
+                    @Override
+                    public void onItemClick(String result) {
+                        value_player_count.setValue(Integer.valueOf(result));
+                    }
 
-        deckSelectorDialog.setResultListener(result -> {
-            input_select_deck.setText(result);
+                    @Override
+                    public void clearReference() {
+                        value_selector_player_count = null;
+                    }
+                });
+                value_selector_player_count.show(getSupportFragmentManager(), "value_selector_player_count");
+            }
         });
+        input_handcard_count.setOnClickListener(event -> {
+            if(value_selector_handcard_count == null){
+                value_selector_handcard_count = ValueSelector.create(getString(R.string.select_handcard_count), handcard_count_values);
+                value_selector_handcard_count.setResultListener(new ResultListener() {
+                    @Override
+                    public void onItemClick(String result) {
+                        value_handcard_count.setValue(Integer.valueOf(result));
+                    }
+
+                    @Override
+                    public void clearReference() {
+                        value_selector_handcard_count = null;
+                    }
+                });
+                value_selector_handcard_count.show(getSupportFragmentManager(), "value_selector_handcard_count");
+            }
+        });
+
+    }
+
+    private void disableUserInterface(){
+        btn_create_lobby.setEnabled(false);
+        btn_back.setEnabled(false);
+        new Handler().postDelayed(() -> {
+            btn_create_lobby.setEnabled(true);
+            btn_back.setEnabled(true);
+        }, 250);
     }
 
     private void hideUI() {

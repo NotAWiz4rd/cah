@@ -2,8 +2,7 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/waiting_screen_gif"
-    android:background="@color/black_overlay">
+    android:id="@+id/waiting_screen_gif">
 
     <pl.droidsonroids.gif.GifImageView
         android:id="@+id/gif_waiting"
@@ -22,5 +21,15 @@
         android:fontFamily="@font/helveticaneuebold"
         android:textColor="@android:color/white"
         android:text="@string/waiting_screen_text"/>
+    <TextView
+        android:id="@+id/waiting_screen_is_cszar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:layout_centerInParent="true"
+        android:layout_above="@+id/gif_waiting"
+        android:fontFamily="@font/helveticaneuebold"
+        android:textColor="@android:color/white"
+        android:text="@string/you_are_cardszar"/>
 
 </RelativeLayout>

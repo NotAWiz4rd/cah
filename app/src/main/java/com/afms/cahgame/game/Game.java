@@ -32,6 +32,9 @@ public class Game implements Serializable {
     private Card winningCard;
     private List<Card> playedCards;
 
+    private List<Card> roundEndPlayedCards;
+
+
     private String lastCommitter = "";
 
     public Game() {
@@ -40,6 +43,7 @@ public class Game implements Serializable {
         this.newCardsPile = new ArrayList<>();
         this.blackCardsPile = new ArrayList<>();
         this.playedCards = new ArrayList<>();
+        this.roundEndPlayedCards = new ArrayList<>();
     }
 
     public Game(Deck deck, List<String> playerNames, int handCardCount) {
@@ -291,5 +295,13 @@ public class Game implements Serializable {
 
     public void setLastCardSzarSwipe(int lastCardSzarSwipe) {
         this.lastCardSzarSwipe = lastCardSzarSwipe;
+    }
+
+    public List<Card> getRoundEndPlayedCards() {
+        return roundEndPlayedCards;
+    }
+
+    public void setRoundEndPlayedCards(List<Card> roundEndPlayedCards) {
+        this.roundEndPlayedCards = roundEndPlayedCards;
     }
 }
