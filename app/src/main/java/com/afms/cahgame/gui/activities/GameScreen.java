@@ -18,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.afms.cahgame.R;
 import com.afms.cahgame.data.Colour;
@@ -73,8 +74,9 @@ public class GameScreen extends AppCompatActivity {
     private TextView playedBlackCardText;
     private FullSizeCard playedWhiteCard;
     private FrameLayout lowerFrameLayout;
-    private FrameLayout completeFrameLayout;
+    private RelativeLayout completeFrameLayout;
     private TextView navigationBarText;
+    private FrameLayout view_game_screen_disable;
 
     private ConstraintLayout userSelectionLayout;
     private ListView userSelectionListView;
@@ -262,6 +264,7 @@ public class GameScreen extends AppCompatActivity {
         completeFrameLayout = findViewById(R.id.game_screen_frameLayout);
         navigationBarText = findViewById(R.id.game_screen_bottom_navigation_bar_text_field);
         game_screen_chat = findViewById(R.id.game_screen_chat_button);
+        view_game_screen_disable = findViewById(R.id.view_game_screen_disable);
         playedBlackCardText.setText("");
 
         playedWhiteCard = new FullSizeCard(this, new Card(Colour.WHITE, ""));
@@ -338,6 +341,9 @@ public class GameScreen extends AppCompatActivity {
 
     private void deleteAllViewsFromLowerFrameLayout() {
         lowerFrameLayout.removeAllViews();
+        view_game_screen_disable.removeAllViews();
+        view_game_screen_disable.setVisibility(View.INVISIBLE);
+        view_game_screen_disable.setClickable(false);
     }
 
     private void showHandCardList() {
@@ -352,7 +358,8 @@ public class GameScreen extends AppCompatActivity {
             userSelectionListView.setOnItemClickListener((parent, view, position, id) -> {
                 Card card = (Card) parent.getItemAtPosition(position);
                 if(fullCard == null){
-                    completeFrameLayout.addView(getFullSizeCardInstance(card, position));
+                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                    completeFrameLayout.addView(getFullSizeCardInstance(card, position), params);
                 }
             });
             if (currentPlayerIsCardSzar()){
@@ -376,60 +383,57 @@ public class GameScreen extends AppCompatActivity {
     }
 
     public FullSizeCard getFullSizeCardInstance(Card card, int selectedPosition) {
-        if (fullSizeCardList.stream().anyMatch(f -> f.getCard().equals(card))) {
-            return fullSizeCardList.stream().filter(f -> f.getCard().equals(card)).findFirst().get();
-        } else {
-            fullCard = new FullSizeCard(this, card);
-            fullCard.addOptionButton(getString(R.string.close), v -> {
-                completeFrameLayout.removeView(fullCard);
+        fullCard = new FullSizeCard(this, card);
+        fullCard.addOptionButton(getString(R.string.close), v -> {
+            completeFrameLayout.removeView(fullCard);
+            fullCard = null;
+        });
+        fullCard.setDimBackground(true);
+        fullCard.setSwipeResultListener(new SwipeResultListener() {
+            @Override
+            public void onSwipeLeft() {
+                int nextPos = (selectedPosition + 1) % userSelectionListView.getCount();
                 fullCard = null;
-            });
-            fullCard.setDimBackground(true);
-            fullCard.setSwipeResultListener(new SwipeResultListener() {
-                @Override
-                public void onSwipeLeft() {
-                    int nextPos = (selectedPosition + 1) % userSelectionListView.getCount();
-                    fullCard = null;
-                    completeFrameLayout.addView(getFullSizeCardInstance((Card) userSelectionListView.getItemAtPosition(nextPos), nextPos));
-                }
-
-                @Override
-                public void onSwipeRight() {
-                    int nextPos = selectedPosition - 1;
-                    if (nextPos < 0) {
-                        nextPos = userSelectionListView.getCount() - 1;
-                    }
-                    fullCard = null;
-                    completeFrameLayout.addView(getFullSizeCardInstance((Card) userSelectionListView.getItemAtPosition(nextPos), nextPos));
-                }
-
-                @Override
-                public void onSwipeUp() {
-                    if (!currentPlayerIsCardSzar()) {
-                        if (allowCardSubmitting) {
-                            navigationBarText.setText(R.string.waiting_slogan);
-                            submitCard(card);
-                            allowCardSubmitting = false;
-                            showHandCardList();
-                            showWaitingScreen();
-                        }
-                        fullCard = null;
-                    }
-                }
-
-                @Override
-                public void onSwipeDown() {
-                    // do nothing
-                }
-            });
-            if (allowCardSubmitting) {
-                fullCard.setSwipeGestures(FullSizeCard.SWIPE_X_AXIS, FullSizeCard.SWIPE_UP);
-            } else {
-                fullCard.setSwipeGestures(FullSizeCard.SWIPE_X_AXIS);
+                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                completeFrameLayout.addView(getFullSizeCardInstance((Card) userSelectionListView.getItemAtPosition(nextPos), nextPos), params);
             }
-            fullSizeCardList.add(fullCard);
-            return fullCard;
+
+            @Override
+            public void onSwipeRight() {
+                int nextPos = selectedPosition - 1;
+                if (nextPos < 0) {
+                    nextPos = userSelectionListView.getCount() - 1;
+                }
+                fullCard = null;
+                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                completeFrameLayout.addView(getFullSizeCardInstance((Card) userSelectionListView.getItemAtPosition(nextPos), nextPos), params);
+            }
+
+            @Override
+            public void onSwipeUp() {
+                if (!currentPlayerIsCardSzar()) {
+                    if (allowCardSubmitting) {
+                        navigationBarText.setText(R.string.waiting_slogan);
+                        submitCard(card);
+                        allowCardSubmitting = false;
+                        showHandCardList();
+                        showWaitingScreen();
+                    }
+                    fullCard = null;
+                }
+            }
+
+            @Override
+            public void onSwipeDown() {
+                // do nothing
+            }
+        });
+        if (allowCardSubmitting) {
+            fullCard.setSwipeGestures(FullSizeCard.SWIPE_X_AXIS, FullSizeCard.SWIPE_UP);
+        } else {
+            fullCard.setSwipeGestures(FullSizeCard.SWIPE_X_AXIS);
         }
+        return fullCard;
     }
 
     private void hideUI() {
@@ -454,7 +458,9 @@ public class GameScreen extends AppCompatActivity {
 
     private void showWaitingScreen() {
         if (!waitingScreen.isAttachedToWindow()) {
-            lowerFrameLayout.addView(waitingScreen);
+            view_game_screen_disable.addView(waitingScreen);
+            view_game_screen_disable.setVisibility(View.VISIBLE);
+            view_game_screen_disable.setClickable(true);
             setWaitingTextCardSzar(false);
         }
     }
