@@ -51,7 +51,7 @@
     <string name="getGameFailure">Failed to get game.</string>
     <string name="getBlackCardFailure">Failed to get blackCard.</string>
     <string name="leftLobby">You left the lobby.</string>
-    <string name="cantFindLobby">Your lobby couldn\'t be found.</string>
+    <string name="cantFindLobby">Your lobby couldn\'t be found or was full.</string>
     <string name="lobbyId">lobbyId</string>
     <string name="cantGetLobbies">Failed to get lobbies from server.</string>
     <string name="lobbyNameExists">A lobby with this name already exists</string>
