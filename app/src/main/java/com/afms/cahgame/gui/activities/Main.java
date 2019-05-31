@@ -2,11 +2,13 @@ package com.afms.cahgame.gui.activities;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.WindowInsets;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -188,7 +190,6 @@ public class Main extends AppCompatActivity {
         // This work only for android 4.4+
 
         getWindow().getDecorView().setSystemUiVisibility(flags);
-
         // Code below is to handle presses of Volume up or Volume down.
         // Without this, after pressing volume buttons, the navigation bar will
         // show up and won't hide

@@ -3,7 +3,7 @@
 
     <style name="cahLayout" parent="AppTheme">
         <item name="android:windowFullscreen">true</item>
-        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
+        <item name="android:windowLayoutInDisplayCutoutMode">never</item>
         <item name="windowNoTitle">true</item>
     </style>
 </resources>
