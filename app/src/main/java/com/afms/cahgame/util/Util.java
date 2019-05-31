@@ -589,7 +589,7 @@ public class Util {
         Database.addNewCards(cards);
     }
 
-    private static Deck get_lucas_deck(){
+    private static Deck get_lucas_deck() {
         Deck lucas_deck = new Deck();
         lucas_deck.setName("German #2");
         lucas_deck.addBlackCard(new com.afms.cahgame.game.Card(Colour.BLACK, "Alles ist besser mit ___."));
@@ -851,7 +851,7 @@ public class Util {
         return lucas_deck;
     }
 
-    private static Deck get_pia_deck(){
+    private static Deck get_pia_deck() {
         Deck pia_deck = new Deck();
         pia_deck.setName("German #1");
         pia_deck.addBlackCard(new com.afms.cahgame.game.Card(Colour.BLACK, "Vielleicht wurde sie damit gebore vielleicht is es ____."));
