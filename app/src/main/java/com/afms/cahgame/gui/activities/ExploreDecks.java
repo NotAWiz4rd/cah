@@ -109,9 +109,9 @@ public class ExploreDecks extends AppCompatActivity {
                         @Override
                         public void onItemClick(String result) {
                             if (result.equals(getString(R.string.black))) {
-                                customFullSizeCard = new FullSizeCard(getApplicationContext(), new Card(Colour.BLACK, getString(R.string.enterCardText)));
+                                customFullSizeCard = new FullSizeCard(getApplicationContext(), new Card(Colour.BLACK, ""));
                             } else if (result.equals(getString(R.string.white))) {
-                                customFullSizeCard = new FullSizeCard(getApplicationContext(), new Card(Colour.WHITE, getString(R.string.enterCardText)));
+                                customFullSizeCard = new FullSizeCard(getApplicationContext(), new Card(Colour.WHITE, ""));
                             } else {
                                 return;
                             }
