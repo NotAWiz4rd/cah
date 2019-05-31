@@ -2,13 +2,11 @@ package com.afms.cahgame.gui.activities;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.view.WindowInsets;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -16,8 +14,6 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.afms.cahgame.R;
-import com.afms.cahgame.data.Message;
-import com.afms.cahgame.gui.components.ChatBottomSheet;
 import com.afms.cahgame.gui.components.MessageDialog;
 import com.afms.cahgame.gui.components.ResultListener;
 import com.afms.cahgame.gui.components.SettingsDialog;
@@ -135,7 +131,7 @@ public class Main extends AppCompatActivity {
             disableUserInterface();
         });
         btn_settings.setOnClickListener(event -> {
-            if(settingsDialog == null){
+            if (settingsDialog == null) {
 
                 settingsDialog = new SettingsDialog();
                 settingsDialog.show(getSupportFragmentManager(), "settingsDialog");
@@ -143,7 +139,7 @@ public class Main extends AppCompatActivity {
                 settingsDialog.setResultListener(new ResultListener() {
                     @Override
                     public void onItemClick(String result) {
-                        if(result.equals("save")) {
+                        if (result.equals("save")) {
                             EditText playerNameView = settingsDialog.getPlayerNameView();
                             if (playerNameView == null) {
                                 return;
