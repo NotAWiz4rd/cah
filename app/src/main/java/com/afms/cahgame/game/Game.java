@@ -106,6 +106,7 @@ public class Game implements Serializable {
         }
 
         playedCards.add(card);
+        Collections.shuffle(playedCards);
     }
 
     public void submitWinningCard(Card card) {
