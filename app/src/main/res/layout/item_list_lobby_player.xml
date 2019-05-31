@@ -21,6 +21,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
         android:layout_toEndOf="@+id/img_item_waiting_players_host"
+        android:layout_toStartOf="@+id/label_item_waiting_players_ready"
         android:fontFamily="@font/helveticaneuebold"
         android:text="PlayerName"
         android:textColor="@color/cardTextColorWhite"

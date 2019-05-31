@@ -54,13 +54,13 @@ public class SettingsDialog extends DialogFragment {
         });
 
         btn_save.setOnClickListener(v -> {
-            if(playerNameView.getText().length() >= 1 && playerNameView.getText().length() <= 24){
+            if(playerNameView.getText().length() >= 1 && playerNameView.getText().length() <= 50){
                 if (resultListener != null) {
                     resultListener.onItemClick("save");
                 }
                 getDialog().cancel();
             } else {
-                Toast.makeText(getContext(), "Your playername length must between 1 and 24 characters.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Your playername length must between 1 and 50 characters.", Toast.LENGTH_SHORT).show();
             }
         });
 
