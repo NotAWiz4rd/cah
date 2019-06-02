@@ -173,7 +173,7 @@ public class ExploreDecks extends AppCompatActivity {
                                 List<Card> gameCards = new ArrayList<>();
                                 gameCards.addAll(selectedDeck.getBlackCards());
                                 gameCards.addAll(selectedDeck.getWhiteCards());
-                                List<Integer> dataCardIds = gameCards.stream().map(e -> Database.createNewCard(e.getText(), e.getColour()).getId()).collect(Collectors.toList());
+                                List<Integer> dataCardIds = gameCards.stream().map(e -> Database.createNewCard(e.getText(), e.getColour())).collect(Collectors.toList());
                                 gameCards.clear();
                                 com.afms.cahgame.data.Deck deck = new com.afms.cahgame.data.Deck();
                                 deck.setName(label_explore_decks_name.getText().toString());
@@ -201,7 +201,7 @@ public class ExploreDecks extends AppCompatActivity {
                     deckSelectorDialog.setResultListener(new ResultListener() {
                         @Override
                         public void onItemClick(String result) {
-                            selectedDeck = Util.convertDataDeckToPlayDeck(Util.getDataDeckFromName(result));
+                            selectedDeck = Database.getDeck(result);
                             updateCardList();
                         }
 

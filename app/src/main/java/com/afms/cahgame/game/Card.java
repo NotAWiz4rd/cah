@@ -10,14 +10,12 @@ public class Card extends com.afms.cahgame.data.Card implements Serializable {
     public Card() {
     }
 
-    public Card(int id, Colour colour, String text) {
-        super(id, colour, text);
+    public Card(Colour colour, String text) {
+        super(colour, text);
     }
 
-    public Card(Colour colour, String text) {
-        super();
-        setColour(colour);
-        setText(text);
+    public Card(com.afms.cahgame.data.Card dataCard) {
+        super(dataCard.getColour(), dataCard.getText());
     }
 
     public Player getOwner() {
