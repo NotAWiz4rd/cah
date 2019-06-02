@@ -56,6 +56,7 @@ public class CreateLobby extends AppCompatActivity {
     private DeckSelectorDialog deckSelectorDialog;
 
     private ArrayList<String> player_count_values = new ArrayList<>();
+
     {
         for (int i = MIN_PLAYER_COUNT; i <= MAX_PLAYER_COUNT; i++) {
             player_count_values.add(String.valueOf(i));
@@ -63,6 +64,7 @@ public class CreateLobby extends AppCompatActivity {
     }
 
     private ArrayList<String> handcard_count_values = new ArrayList<>();
+
     {
         for (int i = MIN_HANDCARD_COUNT; i <= MAX_HANDCARD_COUNT; i++) {
             handcard_count_values.add(String.valueOf(i));
@@ -139,7 +141,7 @@ public class CreateLobby extends AppCompatActivity {
             disableUserInterface();
         });
         btn_select_deck.setOnClickListener(event -> {
-            if(deckSelectorDialog == null){
+            if (deckSelectorDialog == null) {
                 deckSelectorDialog = DeckSelectorDialog.create(getString(R.string.title_deck_select));
                 deckSelectorDialog.setResultListener(new ResultListener() {
                     @Override
@@ -160,7 +162,7 @@ public class CreateLobby extends AppCompatActivity {
             disableUserInterface();
         });
         input_player_count.setOnClickListener(event -> {
-            if(value_selector_player_count == null){
+            if (value_selector_player_count == null) {
                 value_selector_player_count = ValueSelector.create(getString(R.string.select_player_count), player_count_values);
                 value_selector_player_count.setResultListener(new ResultListener() {
                     @Override
@@ -177,7 +179,7 @@ public class CreateLobby extends AppCompatActivity {
             }
         });
         input_handcard_count.setOnClickListener(event -> {
-            if(value_selector_handcard_count == null){
+            if (value_selector_handcard_count == null) {
                 value_selector_handcard_count = ValueSelector.create(getString(R.string.select_handcard_count), handcard_count_values);
                 value_selector_handcard_count.setResultListener(new ResultListener() {
                     @Override
@@ -196,7 +198,7 @@ public class CreateLobby extends AppCompatActivity {
 
     }
 
-    private void disableUserInterface(){
+    private void disableUserInterface() {
         btn_create_lobby.setEnabled(false);
         btn_back.setEnabled(false);
         new Handler().postDelayed(() -> {

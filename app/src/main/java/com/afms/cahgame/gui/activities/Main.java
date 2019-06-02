@@ -14,8 +14,6 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.afms.cahgame.R;
-import com.afms.cahgame.data.Message;
-import com.afms.cahgame.gui.components.ChatBottomSheet;
 import com.afms.cahgame.gui.components.MessageDialog;
 import com.afms.cahgame.gui.components.ResultListener;
 import com.afms.cahgame.gui.components.SettingsDialog;
@@ -133,7 +131,7 @@ public class Main extends AppCompatActivity {
             disableUserInterface();
         });
         btn_settings.setOnClickListener(event -> {
-            if(settingsDialog == null){
+            if (settingsDialog == null) {
 
                 settingsDialog = new SettingsDialog();
                 settingsDialog.show(getSupportFragmentManager(), "settingsDialog");
@@ -141,7 +139,7 @@ public class Main extends AppCompatActivity {
                 settingsDialog.setResultListener(new ResultListener() {
                     @Override
                     public void onItemClick(String result) {
-                        if(result.equals("save")) {
+                        if (result.equals("save")) {
                             EditText playerNameView = settingsDialog.getPlayerNameView();
                             if (playerNameView == null) {
                                 return;
@@ -188,7 +186,6 @@ public class Main extends AppCompatActivity {
         // This work only for android 4.4+
 
         getWindow().getDecorView().setSystemUiVisibility(flags);
-
         // Code below is to handle presses of Volume up or Volume down.
         // Without this, after pressing volume buttons, the navigation bar will
         // show up and won't hide

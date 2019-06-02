@@ -17,6 +17,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.afms.cahgame.R;
 import com.afms.cahgame.util.Util;
@@ -53,10 +54,14 @@ public class SettingsDialog extends DialogFragment {
         });
 
         btn_save.setOnClickListener(v -> {
-            if (resultListener != null) {
-                resultListener.onItemClick("save");
+            if(playerNameView.getText().length() >= 1 && playerNameView.getText().length() <= 50){
+                if (resultListener != null) {
+                    resultListener.onItemClick("save");
+                }
+                getDialog().cancel();
+            } else {
+                Toast.makeText(getContext(), "Your playername length must between 1 and 50 characters.", Toast.LENGTH_SHORT).show();
             }
-            getDialog().cancel();
         });
 
         playerNameView.setSelection(playerNameView.getText().length());

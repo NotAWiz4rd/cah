@@ -22,8 +22,8 @@ import java.util.Map;
 import java.util.Objects;
 
 public class Database {
-    private static List<Deck> decks = new ArrayList<>();
-    private static List<Card> cards = new ArrayList<>();
+    private static Map<String, Deck> decks = new HashMap<>();
+    private static ArrayList<Card> cards = new ArrayList<>();
     private static Map<String, Lobby> lobbies = new HashMap<>();
 
     private static FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -49,13 +49,15 @@ public class Database {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 // this interesting construct is here to suffice Firebases need for type safety
-                GenericTypeIndicator<ArrayList<Deck>> genericTypeIndicator = new GenericTypeIndicator<ArrayList<Deck>>() {
+                GenericTypeIndicator<Map<String, Deck>> genericTypeIndicator = new GenericTypeIndicator<Map<String, Deck>>() {
                 };
                 decks = dataSnapshot.getValue(genericTypeIndicator);
                 if (decks == null) {
-                    decks = new ArrayList<>();
-                } else if (decks.size() == 0) {
-                    Util.createAllCardsDeck();
+                    decks = new HashMap<>();
+                } else if (decks.size() < 3) {
+                    Util.createStandardDeck();
+                    Util.createGerman1();
+                    Util.createGerman2();
                 }
             }
 
@@ -101,9 +103,6 @@ public class Database {
                 cards = dataSnapshot.getValue(genericTypeIndicator);
                 if (cards == null) {
                     cards = new ArrayList<>();
-                } else if (cards.size() < 400) {
-                    Util.createStandardCards();
-                    Util.createAllCardsDeck();
                 }
             }
 
@@ -212,10 +211,9 @@ public class Database {
      * @param deckName Name of the deck.
      */
     public static void addCardToDeck(Integer cardId, String deckName) {
-        Deck deck = Util.getDataDeckFromName(deckName);
+        Deck deck = decks.get(deckName);
         if (deck != null) {
-            int deckIndex = Database.getDecks().indexOf(deck);
-            decks.get(deckIndex).addCard(cardId);
+            deck.addCard(cardId);
             decksReference.setValue(decks);
         }
     }
@@ -285,16 +283,12 @@ public class Database {
      * @param text   Text of the card.
      * @param colour Colour of the card.
      */
-    public static Card createNewCard(String text, Colour colour) {
-        boolean cardExists = cards.stream().anyMatch(card -> card.getText().equals(text));
-        if (cardExists) {
-            return cards.stream().filter(card -> card.getText().equals(text)).findAny().get();
-        }
+    public static int createNewCard(String text, Colour colour) {
         int id = cards.size() == 0 ? 0 : cards.get(cards.size() - 1).getId() + 1;
         Card card = new Card(id, colour, text);
         cards.add(card);
         cardsReference.setValue(cards);
-        return card;
+        return id;
     }
 
     /**
@@ -303,15 +297,18 @@ public class Database {
      *
      * @param newCards A list of cards without proper IDs.
      */
-    public static void addNewCards(List<Card> newCards) {
+    public static ArrayList<Integer> addNewCards(List<Card> newCards) {
         int id = cards.size() == 0 ? 0 : cards.get(cards.size() - 1).getId() + 1;
+        ArrayList<Integer> ids = new ArrayList<>();
         for (Card card : newCards) {
             card.setId(id);
+            ids.add(id);
             id++;
         }
 
         cards.addAll(newCards);
         cardsReference.setValue(cards);
+        return ids;
     }
 
     /**
@@ -321,10 +318,9 @@ public class Database {
      * @param cardId   CardId of the card which is to be removed.
      */
     public static void removeCardFromDeck(String deckName, Integer cardId) {
-        Deck deck = Util.getDataDeckFromName(deckName);
+        Deck deck = decks.get(deckName);
         if (deck != null) {
-            int deckIndex = decks.indexOf(deck);
-            decks.get(deckIndex).removeCard(cardId);
+            deck.removeCard(cardId);
             decksReference.setValue(decks);
         }
     }
@@ -335,11 +331,8 @@ public class Database {
      * @param deckName The name of the deck.
      */
     public static void removeDeck(String deckName) {
-        Deck deck = Util.getDataDeckFromName(deckName);
-        if (deck != null) {
-            decks.remove(deck);
-            decksReference.setValue(decks);
-        }
+        decks.remove(deckName);
+        decksReference.setValue(decks);
     }
 
     /**
@@ -348,7 +341,7 @@ public class Database {
      * @param deckName The name of the new deck.
      */
     public static void addDeck(String deckName) {
-        decks.add(new Deck(deckName));
+        decks.put(deckName, new Deck(deckName));
         decksReference.setValue(decks);
     }
 
@@ -358,7 +351,7 @@ public class Database {
      * @param deck The new deck.
      */
     public static void addDeck(Deck deck) {
-        decks.add(deck);
+        decks.put(deck.getName(), deck);
         decksReference.setValue(decks);
     }
 
@@ -369,7 +362,7 @@ public class Database {
      * @return GameDeck of the given deckname.
      */
     public static com.afms.cahgame.game.Deck getDeck(String deckname) {
-        return Util.convertDataDeckToPlayDeck(Util.getDataDeckFromName(deckname));
+        return Util.convertDataDeckToPlayDeck(decks.get(deckname));
     }
 
     //....................................Getters and Setters......................................
@@ -379,7 +372,7 @@ public class Database {
      *
      * @return Current list of all decks.
      */
-    public static List<Deck> getDecks() {
+    public static Map<String, Deck> getDecks() {
         if (decks == null) {
             initializeDecksDatabaseConnection();
         }
@@ -391,7 +384,7 @@ public class Database {
      *
      * @return Current list of all cards.
      */
-    public static List<Card> getCards() {
+    public static ArrayList<Card> getCards() {
         if (cards == null) {
             initializeCardsDatabaseConnection();
         }
@@ -415,7 +408,7 @@ public class Database {
      *
      * @param decks Decks.
      */
-    public static void setDecks(List<Deck> decks) {
+    public static void setDecks(Map<String, Deck> decks) {
         Database.decks = decks;
         decksReference.setValue(Database.decks);
     }
@@ -425,7 +418,7 @@ public class Database {
      *
      * @param cards Cards.
      */
-    public static void setCards(List<Card> cards) {
+    public static void setCards(ArrayList<Card> cards) {
         Database.cards = cards;
         cardsReference.setValue(Database.cards);
     }

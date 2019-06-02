@@ -39,7 +39,7 @@ public class DeckSelectorDialog extends DialogFragment {
 
         label_dialog_deckselector_title.setText(Objects.requireNonNull(getArguments()).getString("title"));
         DeckListAdapter deckListAdapter = new DeckListAdapter(Objects.requireNonNull(getContext()), new ArrayList<>());
-        deckListAdapter.addAll(Database.getDecks().stream().map(Util::convertDataDeckToPlayDeck).collect(Collectors.toList()));
+        deckListAdapter.addAll(Database.getDecks().values().stream().map(Util::convertDataDeckToPlayDeck).collect(Collectors.toList()));
         list_dialog_deckselector.setAdapter(deckListAdapter);
         list_dialog_deckselector.setOnItemClickListener((parent, view1, position, id) -> {
             String deckName = ((TextView) view1.findViewById(R.id.item_deckselector_name)).getText().toString();
